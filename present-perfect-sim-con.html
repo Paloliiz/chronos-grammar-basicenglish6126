@@ -754,14 +754,7 @@
 
     function showResult() {
         if (hasSubmitted) return;
-        
-        if (timeLeft > 0) {
-            const unans = userAnswers.filter(a => a === null || a === "").length;
-            if(unans > 0) {
-                if(!confirm(`คุณยังมีข้อสอบที่ไม่ได้ทำอีก ${unans} ข้อ ยืนยันที่จะส่งกระดาษคำตอบใช่หรือไม่?`)) return;
-            }
-        }
-
+                
         hasSubmitted = true;
         clearInterval(timerInterval);
         calculateFinalScore();
