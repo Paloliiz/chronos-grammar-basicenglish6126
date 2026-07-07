@@ -853,17 +853,25 @@
     // 🛡️ ระบบ Anti-Cheat: ตรวจจับการสลับแท็บ หรือ พับหน้าจอ (Page Visibility API)
     let tabSwitchCount = 0;
     let finalCalculatedScore = 0;
+    let pendingModalData = null; // ตัวแปรเก็บคิวป๊อปอัพที่จะเด้งตอนกลับมาหน้าจอ
 
     document.addEventListener("visibilitychange", function() {
         const isTakingQuiz = document.getElementById('screen-quiz').classList.contains('active');
         
+        // ตอนพับจอหนี (ซ่อนหน้าจอ)
         if (document.hidden && isTakingQuiz && !hasSubmitted) {
             tabSwitchCount++;
             
             if (tabSwitchCount === 1) {
-                showCustomModal("⚠️", "TIME ANOMALY", "ตรวจพบการสลับหน้าจอ พับจอ หรือเปิดแอปพลิเคชันอื่นทับซ้อน<br>หากตรวจพบอีกเป็นครั้งที่ 2 ระบบจะส่งข้อสอบทันที!");
+                // เก็บข้อมูลเตือนครั้งที่ 1 ไว้รอเด้งตอนกลับมา
+                pendingModalData = {
+                    icon: "⚠️",
+                    title: "TIME ANOMALY",
+                    message: "ตรวจพบการสลับหน้าจอ พับจอ หรือเปิดแอปพลิเคชันอื่นทับซ้อน<br>หากตรวจพบอีกเป็นครั้งที่ 2 ระบบจะส่งข้อสอบทันที!"
+                };
             } 
             else if (tabSwitchCount >= 2) {
+                // เก็บข้อเขียนและสั่งส่งข้อสอบออโต้ทันทีแบบเงียบๆ เบื้องหลัง
                 const q = currentQuestions[currentIdx];
                 if (q && q.type === "fib") {
                     userAnswers[currentIdx] = document.getElementById('fib-input').value;
@@ -877,7 +885,6 @@
                 finalCalculatedScore = rawScore - penaltyScore;
                 if(finalCalculatedScore < 0) finalCalculatedScore = 0;
                 
-                // โชว์หน้าจอผลลัพธ์และป๊อปอัพทันที
                 showScreen('screen-result');
                 const reviewBtn = document.getElementById('btn-review-answers');
                 
@@ -895,14 +902,23 @@
                 document.getElementById('display-penalty').innerText = `-${penaltyScore}`;
                 
                 generateReviewList(); 
-                
-                // ยิงข้อมูลเข้า Sheet แบบเบื้องหลัง ไม่บล็อก UI
-                setTimeout(() => {
-                    submitScoreToSheet(reviewBtn);
-                }, 100);
+                setTimeout(() => { submitScoreToSheet(reviewBtn); }, 100);
 
-                showCustomModal("🚨", "SECURITY BREACH", "ตรวจพบการสลับหน้าจอซ้ำซ้อนเกินกำหนด!<br>ระบบได้ทำการยึดกระดาษคำตอบและส่งผลลัพธ์โดยอัตโนมัติแล้ว");
+                // เก็บข้อมูลเตือนครั้งที่ 2 ไว้รอเด้งตอนกลับมาหน้าจอ
+                pendingModalData = {
+                    icon: "🚨",
+                    title: "SECURITY BREACH",
+                    message: "ตรวจพบการสลับหน้าจอซ้ำซ้อนเกินกำหนด!<br>ระบบได้ทำการยึดกระดาษคำตอบและส่งผลลัพธ์โดยอัตโนมัติแล้ว"
+                };
             }
+        } 
+        // 🌟 เมื่อเด็กสลับหน้าจอกลับมาที่เว็บ (Visible) แล้วมีคิวแจ้งเตือนค้างอยู่ ให้เด้งทันที
+        else if (!document.hidden && pendingModalData) {
+            const data = pendingModalData;
+            pendingModalData = null; // ล้างคิว
+            setTimeout(() => {
+                showCustomModal(data.icon, data.title, data.message);
+            }, 300);
         }
     });
 
@@ -914,7 +930,7 @@
         }
     });
 
-    // 🌟 ฟังก์ชันป๊อปอัพแจ้งเตือนแบบอิสระทันใจ
+    // 🌟 ฟังก์ชันป๊อปอัพแจ้งเตือนแบบอิสระ กดรับทราบได้ทันที
     function showCustomModal(icon, title, message, callback) {
         const existing = document.getElementById('custom-modal-overlay');
         if (existing) existing.remove();
