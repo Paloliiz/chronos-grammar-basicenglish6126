@@ -804,6 +804,44 @@
     }
 
     window.addEventListener('beforeunload', function (e) { if (currentIdx > 0 && !hasSubmitted) { e.preventDefault(); e.returnValue = ''; } });
+    // 🛡️ ระบบ Anti-Cheat: ตรวจจับการสลับแท็บ หรือ พับหน้าจอ (Page Visibility API)
+    let tabSwitchCount = 0;
+
+    document.addEventListener("visibilitychange", function() {
+        // เช็กว่าเด็กอยู่ในหน้าทำข้อสอบ (screen-quiz) และยังไม่ได้ส่งข้อสอบใช่หรือไม่
+        const isTakingQuiz = document.getElementById('screen-quiz').classList.contains('active');
+        
+        // ถ้าพับจอ หรือ สลับแท็บ
+        if (document.hidden && isTakingQuiz && !hasSubmitted) {
+            tabSwitchCount++;
+            
+            // สลับจอครั้งที่ 1: แจ้งเตือนอย่างรุนแรง
+            if (tabSwitchCount === 1) {
+                alert("⚠️ คำเตือนจากระบบความปลอดภัย!\n\nตรวจพบการสลับหน้าจอ พับจอ หรือเปิดแอปพลิเคชันอื่นทับซ้อน\n\nหากตรวจพบอีกเป็นครั้งที่ 2 ระบบจะทำการ 'ส่งข้อสอบทันที' โดยอัตโนมัติ!");
+            } 
+            // สลับจอครั้งที่ 2: ตัดจบ ยึดข้อสอบทันที
+            else if (tabSwitchCount >= 2) {
+                alert("🚨 ตรวจพบการสลับหน้าจอซ้ำ!\n\nระบบถือว่ามีการพยายามเข้าถึงข้อมูลภายนอก\nทำการยึดกระดาษคำตอบและส่งข้อมูลโดยอัตโนมัติ!");
+                
+                // เซฟคำตอบในกล่องข้อเขียนที่อาจจะพิมพ์ค้างไว้
+                const q = currentQuestions[currentIdx];
+                if (q && q.type === "fib") {
+                    userAnswers[currentIdx] = document.getElementById('fib-input').value;
+                }
+                
+                showResult(); // บังคับส่งคะแนน
+            }
+        }
+    });
+
+    // 🛡️ เสริมเกราะป้องกันอีกชั้น: ตรวจจับการคลิกออกนอกหน้าจอเว็บ (Blur Event)
+    window.addEventListener('blur', function() {
+        const isTakingQuiz = document.getElementById('screen-quiz').classList.contains('active');
+        if (isTakingQuiz && !hasSubmitted && tabSwitchCount === 0) {
+            // บางเบราว์เซอร์ไม่รองรับ visibilitychange จึงใช้ blur ช่วยจับการคลิกไปโปรแกรมอื่น
+            console.log("Loss of focus detected.");
+        }
+    });
 </script>
 
 </body>
