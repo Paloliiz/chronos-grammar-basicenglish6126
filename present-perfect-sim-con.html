@@ -877,9 +877,9 @@
                 finalCalculatedScore = rawScore - penaltyScore;
                 if(finalCalculatedScore < 0) finalCalculatedScore = 0;
                 
+                // โชว์หน้าจอผลลัพธ์และป๊อปอัพทันที
                 showScreen('screen-result');
                 const reviewBtn = document.getElementById('btn-review-answers');
-                if (reviewBtn) reviewBtn.classList.add('hidden');
                 
                 if (finalCalculatedScore >= PASS_CRITERIA) {
                     document.getElementById('result-pass').classList.remove('hidden');
@@ -895,7 +895,11 @@
                 document.getElementById('display-penalty').innerText = `-${penaltyScore}`;
                 
                 generateReviewList(); 
-                submitScoreToSheet(reviewBtn);
+                
+                // ยิงข้อมูลเข้า Sheet แบบเบื้องหลัง ไม่บล็อก UI
+                setTimeout(() => {
+                    submitScoreToSheet(reviewBtn);
+                }, 100);
 
                 showCustomModal("🚨", "SECURITY BREACH", "ตรวจพบการสลับหน้าจอซ้ำซ้อนเกินกำหนด!<br>ระบบได้ทำการยึดกระดาษคำตอบและส่งผลลัพธ์โดยอัตโนมัติแล้ว");
             }
@@ -910,7 +914,7 @@
         }
     });
 
-    // 🌟 ฟังก์ชันป๊อปอัพแจ้งเตือนแบบอิสระ (กดปุ๊บหายทันที ไม่หน่วงเวลา)
+    // 🌟 ฟังก์ชันป๊อปอัพแจ้งเตือนแบบอิสระทันใจ
     function showCustomModal(icon, title, message, callback) {
         const existing = document.getElementById('custom-modal-overlay');
         if (existing) existing.remove();
