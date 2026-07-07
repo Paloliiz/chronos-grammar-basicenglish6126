@@ -852,28 +852,23 @@
     window.addEventListener('beforeunload', function (e) { if (currentIdx > 0 && !hasSubmitted) { e.preventDefault(); e.returnValue = ''; } });
     // 🛡️ ระบบ Anti-Cheat: ตรวจจับการสลับแท็บ หรือ พับหน้าจอ (Page Visibility API)
     let tabSwitchCount = 0;
+    let finalCalculatedScore = 0; // ประกาศตัวแปรป้องกัน Scope Error
 
     document.addEventListener("visibilitychange", function() {
-        // เช็กว่าเด็กอยู่ในหน้าทำข้อสอบ (screen-quiz) และยังไม่ได้ส่งข้อสอบใช่หรือไม่
         const isTakingQuiz = document.getElementById('screen-quiz').classList.contains('active');
         
-        // ถ้าพับจอ หรือ สลับแท็บ
         if (document.hidden && isTakingQuiz && !hasSubmitted) {
             tabSwitchCount++;
             
-            // สลับจอครั้งที่ 1: แจ้งเตือนอย่างรุนแรง
             if (tabSwitchCount === 1) {
                 showCustomModal("⚠️", "TIME ANOMALY", "ตรวจพบการสลับหน้าจอ พับจอ หรือเปิดแอปพลิเคชันอื่นทับซ้อน<br>หากตรวจพบอีกเป็นครั้งที่ 2 ระบบจะส่งข้อสอบทันที!");
             } 
-            // สลับจอครั้งที่ 2: ตัดจบ บังคับส่งออโต้ทันที ไม่รอคลิก
             else if (tabSwitchCount >= 2) {
-                // 1. เก็บค่าข้อเขียนข้อปัจจุบันก่อน
                 const q = currentQuestions[currentIdx];
                 if (q && q.type === "fib") {
                     userAnswers[currentIdx] = document.getElementById('fib-input').value;
                 }
                 
-                // 2. สั่งส่งข้อสอบทันทีเบื้องหลังแบบไม่รอปุ่ม
                 hasSubmitted = true;
                 if (typeof timerInterval !== 'undefined') clearInterval(timerInterval);
                 calculateFinalScore();
@@ -902,22 +897,21 @@
                 generateReviewList(); 
                 submitScoreToSheet(reviewBtn);
 
-                // 3. เด้งป๊อปอัพแจ้งเตือนแบบแสดงผลเพื่อบอกว่าโดนยึดกระดาษคำตอบแล้ว
                 showCustomModal("🚨", "SECURITY BREACH", "ตรวจพบการสลับหน้าจอซ้ำซ้อนเกินกำหนด!<br>ระบบได้ทำการยึดกระดาษคำตอบและส่งผลลัพธ์โดยอัตโนมัติแล้ว");
             }
-    });
+        }
+    }); // ปิดปีกกา visibilitychange ให้ถูกต้องครบถ้วน
 
     // 🛡️ เสริมเกราะป้องกันอีกชั้น: ตรวจจับการคลิกออกนอกหน้าจอเว็บ (Blur Event)
     window.addEventListener('blur', function() {
         const isTakingQuiz = document.getElementById('screen-quiz').classList.contains('active');
         if (isTakingQuiz && !hasSubmitted && tabSwitchCount === 0) {
-            // บางเบราว์เซอร์ไม่รองรับ visibilitychange จึงใช้ blur ช่วยจับการคลิกไปโปรแกรมอื่น
             console.log("Loss of focus detected.");
         }
     });
+
     // 🌟 ฟังก์ชันเรียกหน้าต่างป๊อปอัพกราฟิกแทน alert() แบบเดิม
     function showCustomModal(icon, title, message, callback) {
-        // ลบอันเก่าทิ้งก่อนถ้ามีค้างอยู่
         const existing = document.getElementById('custom-modal-overlay');
         if (existing) existing.remove();
 
