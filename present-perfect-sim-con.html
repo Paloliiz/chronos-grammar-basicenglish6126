@@ -865,17 +865,46 @@
             if (tabSwitchCount === 1) {
                 showCustomModal("⚠️", "TIME ANOMALY", "ตรวจพบการสลับหน้าจอ พับจอ หรือเปิดแอปพลิเคชันอื่นทับซ้อน<br>หากตรวจพบอีกเป็นครั้งที่ 2 ระบบจะส่งข้อสอบทันที!");
             } 
-            // สลับจอครั้งที่ 2: ตัดจบ ยึดข้อสอบทันที
+            // สลับจอครั้งที่ 2: ตัดจบ บังคับส่งออโต้ทันที ไม่รอคลิก
             else if (tabSwitchCount >= 2) {
-    showCustomModal("🚨", "SECURITY BREACH", "ตรวจพบการสลับหน้าจอซ้ำ!<br>ทำการยึดกระดาษคำตอบและส่งข้อมูลโดยอัตโนมัติ", function() {
-        const q = currentQuestions[currentIdx];
-        if (q && q.type === "fib") {
-            userAnswers[currentIdx] = document.getElementById('fib-input').value;
-        }
-        showResult(); // ส่งข้อสอบหลังจากเด็กกดรับทราบที่ป๊อปอัพ
-    });
-}
-        }
+                // 1. เก็บค่าข้อเขียนข้อปัจจุบันก่อน
+                const q = currentQuestions[currentIdx];
+                if (q && q.type === "fib") {
+                    userAnswers[currentIdx] = document.getElementById('fib-input').value;
+                }
+                
+                // 2. สั่งส่งข้อสอบทันทีเบื้องหลังแบบไม่รอปุ่ม
+                hasSubmitted = true;
+                if (typeof timerInterval !== 'undefined') clearInterval(timerInterval);
+                calculateFinalScore();
+                
+                let rawScore = scores.total;
+                finalCalculatedScore = rawScore - penaltyScore;
+                if(finalCalculatedScore < 0) finalCalculatedScore = 0;
+                
+                showScreen('screen-result');
+                const reviewBtn = document.getElementById('btn-review-answers');
+                if (reviewBtn) reviewBtn.classList.add('hidden');
+                
+                if (finalCalculatedScore >= PASS_CRITERIA) {
+                    document.getElementById('result-pass').classList.remove('hidden');
+                    document.getElementById('cert-id').innerText = document.getElementById('student-id').value;
+                    document.getElementById('cert-name').innerText = studentName;
+                    document.getElementById('final-score-pass').innerText = finalCalculatedScore;
+                } else {
+                    document.getElementById('result-fail').classList.remove('hidden');
+                    document.getElementById('final-score-fail').innerText = finalCalculatedScore;
+                }
+                
+                document.getElementById('display-raw').innerText = rawScore;
+                document.getElementById('display-penalty').innerText = `-${penaltyScore}`;
+                
+                generateReviewList(); 
+                submitScoreToSheet(reviewBtn);
+
+                // 3. เด้งป๊อปอัพแจ้งเตือนแบบแสดงผลเพื่อบอกว่าโดนยึดกระดาษคำตอบแล้ว
+                showCustomModal("🚨", "SECURITY BREACH", "ตรวจพบการสลับหน้าจอซ้ำซ้อนเกินกำหนด!<br>ระบบได้ทำการยึดกระดาษคำตอบและส่งผลลัพธ์โดยอัตโนมัติแล้ว");
+            }
     });
 
     // 🛡️ เสริมเกราะป้องกันอีกชั้น: ตรวจจับการคลิกออกนอกหน้าจอเว็บ (Blur Event)
