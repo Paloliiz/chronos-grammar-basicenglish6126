@@ -267,38 +267,7 @@
 </div>
 
 <script>
-    // 🛡️ ระบบบล็อก In-App Browser (บังคับเปิดใน Safari/Chrome)
     function detectInAppBrowser() {
-        const ua = navigator.userAgent || navigator.vendor || window.opera;
-        if ((ua.indexOf("FBAN") > -1) || (ua.indexOf("FBAV") > -1) || (ua.indexOf("Line") > -1) || (ua.indexOf("Instagram") > -1)) {
-            
-            const loginScreen = document.getElementById('screen-login');
-            if (loginScreen) {
-                loginScreen.classList.remove('hidden');
-                loginScreen.innerHTML = `
-                    <div style="text-align: center; margin-top: 30px; padding: 20px;">
-                        <div style="font-size: 4rem; margin-bottom: 15px; text-shadow: 0 0 20px rgba(239,68,68,0.5);">🚫</div>
-                        <h2 style="color: var(--danger); font-family: 'Poppins', sans-serif; font-size: 1.5rem;">ACCESS DENIED</h2>
-                        <p style="color: var(--neon-cyan); font-weight: bold; margin-bottom: 20px;">ไม่สามารถทำภารกิจผ่านแอป LINE / Facebook ได้</p>
-                        
-                        <div style="background: rgba(239,68,68,0.1); border: 1px solid var(--danger); padding: 20px; border-radius: 12px; text-align: left;">
-                            <p style="color: white; font-size: 1rem; margin-bottom: 10px;"><b>วิธีแก้ไขเพื่อเข้าสู่ระบบ:</b></p>
-                            <p style="color: var(--text-muted); font-size: 0.95rem;">
-                                1. มองหาปุ่ม <b>จุด 3 จุด (...)</b> หรือปุ่มแชร์ ที่มุมหน้าจอ<br><br>
-                                2. เลือกเมนู <b>"เปิดในเบราว์เซอร์เริ่มต้น"</b> หรือ <b>"Open in Safari / Chrome"</b>
-                            </p>
-                        </div>
-                    </div>
-                `;
-            }
-            return true;
-        }
-        return false;
-    }
-
-    window.addEventListener('DOMContentLoaded', (event) => {
-        detectInAppBrowser();
-    });function detectInAppBrowser() {
         const ua = navigator.userAgent || navigator.vendor || window.opera;
         if ((ua.indexOf("FBAN") > -1) || (ua.indexOf("FBAV") > -1) || (ua.indexOf("Line") > -1) || (ua.indexOf("Instagram") > -1)) {
             
@@ -785,7 +754,14 @@
 
     function showResult() {
         if (hasSubmitted) return;
-                
+        
+        if (timeLeft > 0) {
+            const unans = userAnswers.filter(a => a === null || a === "").length;
+            if(unans > 0) {
+                if(!confirm(`คุณยังมีข้อสอบที่ไม่ได้ทำอีก ${unans} ข้อ ยืนยันที่จะส่งกระดาษคำตอบใช่หรือไม่?`)) return;
+            }
+        }
+
         hasSubmitted = true;
         clearInterval(timerInterval);
         calculateFinalScore();
