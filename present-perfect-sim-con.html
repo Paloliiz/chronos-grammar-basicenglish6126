@@ -118,6 +118,22 @@
         .count-number { font-size: 8rem; font-weight: 800; color: var(--neon-cyan); font-family: 'Poppins', sans-serif; text-shadow: 0 0 30px rgba(6,182,212,0.5); }
 
         .hidden { display: none !important; }
+        /* 🌌 Custom Modal Pop-up (ป๊อปอัพจำลองภายในหน้าเว็บ) */
+        #custom-modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(2, 6, 23, 0.9); backdrop-filter: blur(5px);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 10000; animation: fadeIn 0.3s ease forwards;
+        }
+        .custom-modal-card {
+            width: 90%; max-width: 400px; background: var(--bg-panel);
+            border: 2px solid var(--neon-cyan); border-radius: var(--radius);
+            padding: 25px 20px; text-align: center; box-shadow: 0 0 30px rgba(6, 182, 212, 0.2);
+            animation: slideUp 0.3s ease forwards;
+        }
+        .custom-modal-icon { font-size: 3.5rem; margin-bottom: 10px; }
+        .custom-modal-title { font-family: 'Poppins', sans-serif; font-size: 1.3rem; font-weight: 700; color: white; margin-bottom: 8px; }
+        .custom-modal-msg { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 20px; line-height: 1.6; text-align: center; }
     </style>
 </head>
 <body oncontextmenu="return false;" oncopy="return false;" oncut="return false;" onpaste="return false;">
@@ -582,16 +598,15 @@
             if (timeLeft <= 180) document.getElementById('timer-box').classList.add('warning');
             
             if (timeLeft <= 0) { 
-                clearInterval(timerInterval); 
-                alert("⏳ หมดเวลาภารกิจ! ระบบกำลังดึงตัวคุณกลับและส่งคำตอบโดยอัตโนมัติ...");
-                
-                const q = currentQuestions[currentIdx];
-                if (q && q.type === "fib") {
-                    userAnswers[currentIdx] = document.getElementById('fib-input').value;
-                }
-                
-                showResult(); 
-            }
+    clearInterval(timerInterval); 
+    showCustomModal("⏳", "MISSION TIME OVER", "หมดเวลาภารกิจ!<br>ระบบกำลังส่งกระดาษคำตอบโดยอัตโนมัติ", function() {
+        const q = currentQuestions[currentIdx];
+        if (q && q.type === "fib") {
+            userAnswers[currentIdx] = document.getElementById('fib-input').value;
+        }
+        showResult(); 
+    });
+}
         }, 1000);
     }
 
@@ -848,20 +863,18 @@
             
             // สลับจอครั้งที่ 1: แจ้งเตือนอย่างรุนแรง
             if (tabSwitchCount === 1) {
-                alert("⚠️ คำเตือนจากระบบความปลอดภัย!\n\nตรวจพบการสลับหน้าจอ พับจอ หรือเปิดแอปพลิเคชันอื่นทับซ้อน\n\nหากตรวจพบอีกเป็นครั้งที่ 2 ระบบจะทำการ 'ส่งข้อสอบทันที' โดยอัตโนมัติ!");
+                showCustomModal("⚠️", "TIME ANOMALY", "ตรวจพบการสลับหน้าจอ พับจอ หรือเปิดแอปพลิเคชันอื่นทับซ้อน<br>หากตรวจพบอีกเป็นครั้งที่ 2 ระบบจะส่งข้อสอบทันที!");
             } 
             // สลับจอครั้งที่ 2: ตัดจบ ยึดข้อสอบทันที
             else if (tabSwitchCount >= 2) {
-                alert("🚨 ตรวจพบการสลับหน้าจอซ้ำ!\n\nระบบถือว่ามีการพยายามเข้าถึงข้อมูลภายนอก\nทำการยึดกระดาษคำตอบและส่งข้อมูลโดยอัตโนมัติ!");
-                
-                // เซฟคำตอบในกล่องข้อเขียนที่อาจจะพิมพ์ค้างไว้
-                const q = currentQuestions[currentIdx];
-                if (q && q.type === "fib") {
-                    userAnswers[currentIdx] = document.getElementById('fib-input').value;
-                }
-                
-                showResult(); // บังคับส่งคะแนน
-            }
+    showCustomModal("🚨", "SECURITY BREACH", "ตรวจพบการสลับหน้าจอซ้ำ!<br>ทำการยึดกระดาษคำตอบและส่งข้อมูลโดยอัตโนมัติ", function() {
+        const q = currentQuestions[currentIdx];
+        if (q && q.type === "fib") {
+            userAnswers[currentIdx] = document.getElementById('fib-input').value;
+        }
+        showResult(); // ส่งข้อสอบหลังจากเด็กกดรับทราบที่ป๊อปอัพ
+    });
+}
         }
     });
 
@@ -873,6 +886,29 @@
             console.log("Loss of focus detected.");
         }
     });
+    // 🌟 ฟังก์ชันเรียกหน้าต่างป๊อปอัพกราฟิกแทน alert() แบบเดิม
+    function showCustomModal(icon, title, message, callback) {
+        // ลบอันเก่าทิ้งก่อนถ้ามีค้างอยู่
+        const existing = document.getElementById('custom-modal-overlay');
+        if (existing) existing.remove();
+
+        const overlay = document.createElement('div');
+        overlay.id = 'custom-modal-overlay';
+        overlay.innerHTML = `
+            <div class="custom-modal-card">
+                <div class="custom-modal-icon">${icon}</div>
+                <div class="custom-modal-title">${title}</div>
+                <div class="custom-modal-msg">${message}</div>
+                <button class="btn-action btn-cyan" id="modal-ok-btn">รับทราบ (ACKNOWLEDGE) ⚡</button>
+            </div>
+        `;
+        document.body.appendChild(overlay);
+
+        document.getElementById('modal-ok-btn').onclick = function() {
+            overlay.remove();
+            if (typeof callback === 'function') callback();
+        };
+    }
 </script>
 
 </body>
