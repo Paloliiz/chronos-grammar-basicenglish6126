@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CHRONOS HQ - Khao Chakan Witthayakhom</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-space: #020617; --bg-panel: #0f172a; --bg-card: #1e293b;
+            --neon-cyan: #06b6d4; --neon-purple: #a855f7; --gold: #facc15;
+            --text-main: #f8fafc; --text-muted: #94a3b8; --radius: 16px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        
+        body { 
+            font-family: 'Kanit', 'Poppins', sans-serif; 
+            background-color: var(--bg-space); color: var(--text-main); line-height: 1.6;
+            background-image: radial-gradient(circle at 50% 30%, rgba(6, 182, 212, 0.1) 0%, transparent 60%);
+            min-height: 100vh; padding: 20px; display: flex; justify-content: center; align-items: flex-start;
+        }
+
+        .hub-container {
+            width: 100%; max-width: 650px; background-color: var(--bg-panel); margin-top: 20px;
+            border-radius: var(--radius); box-shadow: 0 20px 40px rgba(0,0,0,0.7);
+            border: 1px solid #334155; padding: 35px 25px; text-align: center;
+        }
+
+        .hq-icon { font-size: 4rem; margin-bottom: 10px; text-shadow: 0 0 20px rgba(6,182,212,0.4); }
+        h1.title { font-family: 'Poppins', sans-serif; font-size: 1.8rem; font-weight: 800; letter-spacing: 2px; color: white; }
+        h1.title span { color: var(--neon-cyan); }
+        .subtitle { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 30px; border-bottom: 1px solid #334155; padding-bottom: 15px; }
+
+        .section-title { text-align: left; font-size: 1rem; color: var(--neon-cyan); font-weight: 600; margin-bottom: 15px; letter-spacing: 1px; text-transform: uppercase; display: flex; align-items: center; justify-content: space-between;}
+
+        /* Mission List */
+        .mission-list { display: grid; gap: 15px; text-align: left; margin-bottom: 30px;}
+        .mission-card {
+            background: var(--bg-card); border: 1px solid #334155; border-radius: 12px;
+            padding: 20px; display: flex; justify-content: space-between; align-items: center;
+            text-decoration: none; color: white; transition: all 0.25s ease; cursor: pointer;
+        }
+        .mission-card:hover { border-color: var(--neon-cyan); transform: translateY(-2px); box-shadow: 0 5px 15px rgba(6, 182, 212, 0.15); }
+        .mission-card:active { transform: translateY(0); }
+        .mission-info h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 4px; color: #fff; }
+        .mission-info p { font-size: 0.85rem; color: var(--text-muted); }
+        .mission-status { background: rgba(6, 182, 212, 0.1); border: 1px solid var(--neon-cyan); color: var(--neon-cyan); padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; font-family: 'Poppins', sans-serif; }
+
+        /* Locked Mission */
+        .mission-card.locked { opacity: 0.5; cursor: not-allowed; border-style: dashed; }
+        .mission-card.locked:hover { border-color: #334155; transform: none; box-shadow: none; }
+        .mission-card.locked .mission-status { background: #1e293b; border-color: #475569; color: #64748b; }
+
+        /* Leaderboard */
+        .leaderboard-box { background: rgba(2, 6, 23, 0.6); border: 1px solid #334155; border-radius: 12px; padding: 15px; }
+        .rank-item { display: flex; align-items: center; justify-content: space-between; padding: 12px; border-bottom: 1px dashed #334155; }
+        .rank-item:last-child { border-bottom: none; }
+        .rank-info { display: flex; align-items: center; gap: 15px; }
+        .rank-number { font-family: 'Poppins', sans-serif; font-size: 1.2rem; font-weight: bold; width: 30px; text-align: center; }
+        .rank-1 .rank-number { color: var(--gold); text-shadow: 0 0 10px rgba(250, 204, 21, 0.5); font-size: 1.5rem;}
+        .rank-2 .rank-number { color: #cbd5e1; }
+        .rank-3 .rank-number { color: #d97706; }
+        .agent-name { font-size: 0.95rem; color: #f8fafc; font-weight: 500; text-align: left; }
+        .agent-score { font-family: 'Poppins', sans-serif; font-size: 1.1rem; font-weight: bold; color: var(--neon-cyan); }
+        
+        .loading-text { font-size: 0.9rem; color: var(--text-muted); padding: 20px 0; font-family: 'Poppins', sans-serif; }
+
+        footer { margin-top: 40px; font-size: 0.8rem; color: #475569; font-family: 'Poppins', 'Kanit', sans-serif; }
+    </style>
+</head>
+<body>
+
+<div class="hub-container">
+    <div class="hq-icon">🌌</div>
+    <h1 class="title">CHRONOS <span>HQ</span></h1>
+    <p class="subtitle">ระบบกู้คืนเส้นเวลาไวยากรณ์ภาษาอังกฤษ • ม.6</p>
+    
+    <div class="section-title">📡 Available Missions</div>
+    
+    <div class="mission-list">
+        <a href="present-perfect.html" class="mission-card">
+            <div class="mission-info">
+                <h3>Mission 01: Present Perfect Anomalies</h3>
+                <p>ระดับความบิดเบี้ยว: Present Perfect Simple vs. Continuous</p>
+            </div>
+            <div class="mission-status">ONLINE 🚀</div>
+        </a>
+
+        <div class="mission-card locked">
+            <div class="mission-info">
+                <h3>Mission 02: ????????</h3>
+                <p>ระดับความบิดเบี้ยว: ?????????????????</p>
+            </div>
+            <div class="mission-status">LOCKED 🔐</div>
+        </div>
+    </div>
+
+    <!-- 🌟 ส่วนกระดานผู้นำ (Leaderboard) -->
+    <div class="section-title">
+        <span>🏆 HALL OF FAME</span>
+        <span style="font-size: 0.8rem; color: var(--text-muted); cursor: pointer;" onclick="fetchLeaderboard()">↻ REFRESH</span>
+    </div>
+    
+    <div class="leaderboard-box" id="leaderboard-container">
+        <div class="loading-text">SYNCING DATA... ⏳</div>
+    </div>
+
+    <footer>
+        BASIC ENGLISH | Teacher Saruta J.| Semester 1 Year 2026<br>Official Property of English Dept. • Khao Chakan Witthayakhom School
+    </footer>
+</div>
+
+<script>
+    // ⚠️ นำ URL ของ Apps Script อันใหม่ (ที่แก้โค้ด doGet แล้ว) มาวางตรงนี้ครับ
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbw3tA1nGO5FLWYgxdL-dAC-I0DyYmAurmd_zQG4CJMlUem8TpZB-Ubdrvauj2oqJIya/exec';
+
+    // 🗄️ ฐานข้อมูลรายชื่อ เพื่อแปลง ID เป็นชื่อจริงโชว์บนกระดาน
+    const studentDB = {
+        "11702": { name: "นาย นที ภัสสรรัชนีกร" }, "11703": { name: "นาย เบญจมิณทร์ เชิดฉิน" }, "11710": { name: "นาย ศักดิธัช ทิพย์โอสถ" },
+        "11736": { name: "นาย พงศกร อานุการ" }, "11763": { name: "นาย ทวีรัตน์ สิงห์โต" }, "11796": { name: "นาย ภูมิพัฒน์ คณาญาติ" },
+        "11824": { name: "นาย จีรวัตร คีรีวงษ์" }, "11958": { name: "นาย พชรพล หนสมสุข" }, "12733": { name: "นาย ภัทรชนน นาทีชัยชนะ" },
+        "11713": { name: "นางสาว กนกพร อินอุ่นโชติ" }, "11714": { name: "นางสาว กัญญารัตน์ จึงตระกูล" }, "11715": { name: "นางสาว กัลยารัตน์ ไชยจำ" },
+        "11717": { name: "นางสาว ญารินดา เลื่อนลอย" }, "11719": { name: "นางสาว นทีกานต์ สอาดศรี" }, "11723": { name: "นางสาว วารี มานะประสพสุข" },
+        "11726": { name: "นางสาว อุรชา อสิพงษ์" }, "11740": { name: "นางสาว กนกวรรณ สืบสุนทร" }, "11743": { name: "นางสาว ฐิตินันท์ เชียงไข่แก้ว" },
+        "11748": { name: "นางสาว พรนภัส พลเสนา" }, "11750": { name: "นางสาว มุจิรานันท์ ปักกาเวสูง" }, "11758": { name: "นางสาว ไอริณ ศรีชุมพล" },
+        "11773": { name: "นางสาว กวินธิดา นวลตา" }, "11775": { name: "นางสาว ฐิติมา คณาญาติ" }, "11784": { name: "นางสาว ศวิตรี แก้วกลม" },
+        "11785": { name: "นางสาว ศุภิสรา หลักทรัพย์" }, "11788": { name: "นางสาว อัจฉรียา ดอกพิกุล" }, "11802": { name: "นางสาว กนกวรรณ เกื้อกูล" },
+        "11812": { name: "นางสาว ปิยะธิดา บุญชาเรียง" }, "11816": { name: "นางสาว วิชยาพร โพธิ์นิมิตร" }, "11818": { name: "นางสาว ศิรภัสทรา ไชยชาติ" },
+        "11847": { name: "นางสาว พิชญ์สินี สุภโส" }, "11927": { name: "นางสาว ณัฐกานต์ ผายอุบล" }, "11934": { name: "นางสาว วันนาวี นะ" },
+        "12734": { name: "นางสาว จิราภรณ์ สมบุญ" }, "12737": { name: "นางสาว วิไลวรรณ จันดี" },
+        "11698": { name: "นาย ก้องภพ หนาแน่น" }, "11707": { name: "นาย ภูริณัฐ สุวรรณสน" }, "11730": { name: "นาย เจษฎา พรมวงษา" },
+        "11737": { name: "นาย ศิวกร สุขประสงค์" }, "11792": { name: "นาย ธราวัฒน์ สืบจาก" }, "11794": { name: "นาย พีรัชชัย สอนจันดา" },
+        "11822": { name: "นาย ขวัญชัย ทับทิม" }, "11825": { name: "นาย ชัยสิทธิ์ ภู่แสร์" }, "11828": { name: "นาย ธีรเดช รูปสะอาด" },
+        "11867": { name: "นาย อัษฎางค์ จันทร์ศรี" }, "11942": { name: "นาย ศิรวิชญ์ พูลสวัสดิ์" }, "12738": { name: "นาย ชินวุฒิ รกไพร" },
+        "11720": { name: "นางสาว น้ำฝน อุ่มกิ่ง" }, "11742": { name: "นางสาว ฐานิดา วาดถนน" }, "11751": { name: "นางสาว วริศรา บุบผามาลา" },
+        "11752": { name: "นางสาว วันฉัตร ศิริบุญคุณ" }, "11753": { name: "นางสาว วิลัยพร หวังกุลกลาง" }, "11754": { name: "นางสาว สาธิตา สีหามาตร" },
+        "11772": { name: "นางสาว กมลลักษณ์ บุญมา" }, "11781": { name: "นางสาว พิชญาภา เถื่อนทุ่ง" }, "11782": { name: "นางสาว เพชรน้ำหนึ่ง ตู้ทอง" },
+        "11787": { name: "นางสาว อนันตญา อินทะนัย" }, "11804": { name: "นางสาว ฐิติมา ภูเดช" }, "11808": { name: "นางสาว ประภาพรรณ ภูเงิน" },
+        "11811": { name: "นางสาว ปิยมาส บุตรเอื้อ" }, "11813": { name: "นางสาว เปรมยุดา พรมมา" }, "11840": { name: "นางสาว ขวัญข้าว แสนดี" },
+        "11841": { name: "นางสาว ขวัญพร พรมสมบุญ" }, "11871": { name: "นางสาว จรรยนาถ จันทร์ศรี" }, "11928": { name: "นางสาว สุพรรษา จันทร์สอน" },
+        "12739": { name: "นางสาว กัญญารัตน์ มูลกระจก" }, "12740": { name: "นางสาว ปนัดดา ศรีจำปา" }, "12741": { name: "นางสาว ยศยา ผดุงวาฬ" },
+        "12742": { name: "นางสาว วนิสา พูลเพิ่ม" }, "12743": { name: "นางสาว ศศินิภา สีม่วง" }, "12744": { name: "นางสาว ศิรินทิพย์ ชาติวงค์" },
+        "11699": { name: "นาย กิตติชัย หัสดง" }, "11712": { name: "นาย สิรภัทร นุ่มนวล" }, "11798": { name: "นาย ศรัณต์ อำไพวรรณ" },
+        "11800": { name: "นาย เศรษฐพิชญ์ ศรีหงษา" }, "11830": { name: "นาย ปิติภัทร แผนคง" }, "11855": { name: "นาย เจษฎา สมจิตร" },
+        "11857": { name: "นาย ชุติพนธ์ เพิ่มศรี" }, "11859": { name: "นาย ทัศนัย เรียงนอก" }, "12747": { name: "นาย ราชันย์ บัวสิม" },
+        "11716": { name: "นางสาว ชลลดา วาปีกัง" }, "11721": { name: "นางสาว ปิยะธิดา ธิกูล" }, "11755": { name: "นางสาว สุชานันท์ อินธิมาศ" },
+        "11786": { name: "นางสาว สุดาทิพย์ สีแก้ว" }, "11806": { name: "นางสาว นลิน เผือกสีสุก" }, "11810": { name: "นางสาว ปาริตา ดารักษ์" },
+        "11815": { name: "นางสาว รพีพรรณ พันนาม" }, "11836": { name: "นางสาว กมลฉัตร เขามะหิงษ์" }, "11842": { name: "นางสาว ญาณภัทร สุขประสงค์" },
+        "11845": { name: "นางสาว นันทวรรณ สีหราช" }, "11870": { name: "นางสาว กุลนิภา ศรีแพน" }, "11875": { name: "นางสาว ปัทติมา สีทอง" },
+        "11876": { name: "นางสาว ปาริชาติ เที่ยงธรรม" }, "11882": { name: "นางสาว อภิชญา สำรวจวงค์" }, "11883": { name: "นางสาว อุ่นชยา พงษ์ไทย" },
+        "11926": { name: "นางสาว พิชชาพร เดชพลกรัง" }, "11929": { name: "นางสาว ธันยพร อริสุ" }, "12749": { name: "นางสาว กุสุมา กันหานุ" },
+        "12750": { name: "นางสาว ธีญดา ครองหมู่" }, "12751": { name: "นางสาว สุพัชชา ปุราถาเน" }, "12752": { name: "นางสาว สุภารัตน์ ปาระมัส" },
+        "12754": { name: "นางสาว อริศรา รูปพรม" }, "12781": { name: "นางสาว พิจิตรา แน่นอน" }, "12786": { name: "นางสาว สลิล สุวภากุลเศรษฐ์" },
+        "11700": { name: "นาย ณัฐวุฒิ น่ารัก" }, "11701": { name: "นาย ดนุสรณ์ นันทะสาโร" }, "11704": { name: "นาย ไพรรัตน์ เวชมะโน" },
+        "11734": { name: "นาย ปกรณ์ แก้วอุดร" }, "11770": { name: "นาย ศิวกรณ์ สระแก้ว" }, "11853": { name: "นาย กฤติพงศ์ พลไพ" },
+        "11854": { name: "นาย กิตติกรณ์ โพธิ์แก้ว" }, "11860": { name: "นาย ธีรภัทร แซ่งั่น" }, "11925": { name: "นาย อภิเดช บุตรแสน" },
+        "11953": { name: "นาย ธีรนัยน์ แก้วหิน" }, "12755": { name: "นาย กฤษฎา กงแก้ว" }, "12756": { name: "นาย ชัยวัฒน์ เอิบผักแว่น" },
+        "12757": { name: "นาย ชาญณรงค์ เชื้อจำพร" }, "12758": { name: "นาย ทีฆายุ พูนกลางวิโรจน์" }, "12760": { name: "นาย ณัฐวุฒิ วิทวิบูรณ์" },
+        "12762": { name: "นาย สายน้ำ พนารินทร์" }, "11817": { name: "นางสาว ศรีพัฒน์ การบรรจง" }, "11837": { name: "นางสาว กรณ์ชนก พระพรม" },
+        "11838": { name: "นางสาว กัญญารัตน์ นาโฮม" }, "11846": { name: "นางสาว ปนัดดา ทุมมี" }, "11851": { name: "นางสาว สาวิกา เทียบแก้ว" },
+        "11877": { name: "นางสาว มุธิตา ชูญาติ" }, "11879": { name: "นางสาว วิภาภร ถาวจตุรัส" }, "12763": { name: "นางสาว ขวัญฤดี นรชาญ" },
+        "12764": { name: "นางสาว จิตรา นงค์กระโทก" }, "12765": { name: "นางสาว ช่อฟ้า หายะกุล" }, "12766": { name: "นางสาว รติมา จิราพงษ์" },
+        "12767": { name: "นางสาว วรางคณา ดอกกลอย" }, "12768": { name: "นางสาว วิภาวดี บุตรไธสง" }, "12769": { name: "นางสาว แสงอรุณ พิงไธสง" }
+    };
+
+    function fetchLeaderboard() {
+        const container = document.getElementById('leaderboard-container');
+        
+        if (scriptURL === 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE') {
+            container.innerHTML = '<div class="loading-text" style="color:var(--warning);">⚠️ ขาดการเชื่อมต่อ Database (โหมดออฟไลน์)</div>';
+            return;
+        }
+        
+        container.innerHTML = '<div class="loading-text">SYNCING DATA... ⏳</div>';
+
+        fetch(scriptURL + "?action=getLeaderboard")
+            .then(res => res.json())
+            .then(data => {
+                if(data.length === 0) {
+                    container.innerHTML = '<div class="loading-text">ยังไม่มีข้อมูลภารกิจ (No data available)</div>';
+                    return;
+                }
+
+                let html = '';
+                data.forEach((student, index) => {
+                    // ดึงชื่อจาก DB ถ้าไม่เจอให้โชว์รหัสแทน
+                    let agentName = studentDB[student.id] ? studentDB[student.id].name : `Agent ${student.id}`;
+                    // ทำตัวหนังสือให้สั้นลง กรณียาวไป
+                    if(agentName.length > 20) agentName = agentName.substring(0, 18) + '...';
+                    
+                    let rankClass = index < 3 ? `rank-${index + 1}` : '';
+                    let trophy = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '';
+
+                    html += `
+                        <div class="rank-item ${rankClass}">
+                            <div class="rank-info">
+                                <span class="rank-number">${index + 1}</span>
+                                <span class="agent-name">${trophy} ${agentName}</span>
+                            </div>
+                            <span class="agent-score">${student.score} PTS</span>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            })
+            .catch(err => {
+                container.innerHTML = '<div class="loading-text" style="color:var(--danger);">❌ การซิงค์ข้อมูลล้มเหลว กรุณาลองใหม่</div>';
+            });
+    }
+
+    // โหลดข้อมูลอัตโนมัติเมื่อเปิดหน้าเว็บ
+    window.onload = fetchLeaderboard;
+</script>
+
+</body>
+</html>
