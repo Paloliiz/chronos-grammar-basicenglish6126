@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CHRONOS: Lexicon Decryption - Khao Chakan Witthayakhom</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --bg-space: #020617; --bg-panel: #0f172a; --bg-card: #1e293b;  
+            --neon-cyan: #06b6d4; --neon-purple: #a855f7; --neon-green: #22c55e;
+            --text-main: #f8fafc; --text-muted: #94a3b8;
+            --success: #10b981; --danger: #ef4444; --warning: #f59e0b;
+            --radius: 16px;
+        }
+
+        * { 
+            box-sizing: border-box; margin: 0; padding: 0; 
+            -webkit-tap-highlight-color: transparent;
+            user-select: none; -webkit-user-select: none; 
+            -moz-user-select: none; -ms-user-select: none;
+            -webkit-touch-callout: none;
+        }
+        
+        body { 
+            font-family: 'Kanit', 'Poppins', sans-serif; background-color: var(--bg-space); color: var(--text-main); line-height: 1.6;
+            background-image: radial-gradient(circle at 15% 50%, rgba(6, 182, 212, 0.08) 0%, transparent 50%), radial-gradient(circle at 85% 30%, rgba(34, 197, 94, 0.08) 0%, transparent 50%);
+            display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 15px;
+        }
+
+        .app-container {
+            width: 100%; max-width: 800px; background-color: var(--bg-panel); border-radius: var(--radius); 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.8); border: 1px solid #334155; overflow: hidden; position: relative;
+        }
+
+        .top-bar {
+            display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background-color: #020617;
+            border-bottom: 2px solid var(--neon-green); box-shadow: 0 4px 15px rgba(34, 197, 94, 0.15);
+        }
+        .logo { font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 1.2rem; color: var(--neon-green); letter-spacing: 2px; }
+        .logo span { color: var(--neon-cyan); }
+        .agent-badge { border: 1px solid #475569; padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; color: var(--text-muted); background: #0f172a; }
+
+        .app-screen { display: none; padding: 30px 20px; min-height: 450px; }
+        .app-screen.active { display: block; animation: slideUp 0.4s ease forwards; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-in { animation: fadeIn 0.4s ease forwards; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        h2.title { text-align: center; font-family: 'Poppins', sans-serif; font-size: 1.6rem; font-weight: 700; margin-bottom: 5px; color: white;}
+        .subtitle { text-align: center; color: var(--text-muted); font-size: 0.95rem; margin-bottom: 30px; }
+        
+        .input-field {
+            width: 100%; max-width: 350px; padding: 16px; font-size: 1.1rem; background: #1e293b; border: 2px solid #334155; border-radius: 12px;
+            color: var(--neon-cyan); text-align: center; margin: 0 auto 15px auto; display: block; font-family: 'Poppins', 'Kanit', sans-serif; transition: all 0.3s;
+        }
+        .input-field:focus { border-color: var(--neon-green); outline: none; box-shadow: 0 0 10px rgba(34,197,94,0.2); }
+        .input-field::placeholder { color: #475569; letter-spacing: normal; }
+        .input-field, #fib-input { user-select: text !important; -webkit-user-select: text !important; }
+
+        .btn-action {
+            display: block; width: 100%; padding: 16px; border: none; border-radius: 12px; font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: all 0.2s; text-align: center; font-family: 'Kanit', sans-serif; letter-spacing: 1px;
+        }
+        .btn-cyan { background: var(--neon-cyan); color: #020617; }
+        .btn-green { background: var(--neon-green); color: #020617; box-shadow: 0 4px 15px rgba(34,197,94,0.3); }
+        .btn-green:active:not(:disabled) { transform: scale(0.98); background: #16a34a; }
+        .btn-green:disabled { background: #1e293b; color: #475569; box-shadow: none; cursor: not-allowed; border: 1px solid #334155;}
+        .btn-dark { background: #334155; color: white; }
+        .btn-dark:active:not(:disabled) { background: #475569; }
+
+        .btn-nav-container { display: flex; justify-content: space-between; gap: 10px; margin-top: 20px; }
+
+        .review-content { background: var(--bg-card); padding: 25px 20px; border-radius: 12px; min-height: 320px; border: 1px solid #334155; }
+        .penalty-alert { background: rgba(239,68,68,0.1); border: 1px solid var(--danger); padding: 12px; border-radius: 8px; text-align: center; color: #fca5a5; margin-bottom: 20px; font-size: 0.95rem; }
+
+        .status-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #334155; padding-bottom: 10px; }
+        .timer-box { font-family: 'Poppins', sans-serif; font-weight: 700; color: var(--neon-green); font-size: 1.2rem; background: #020617; padding: 4px 12px; border-radius: 8px; border: 1px solid #334155; }
+        .timer-box.warning { color: var(--danger); border-color: var(--danger); animation: pulse 1s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+
+        .question-wrapper { position: relative; margin-bottom: 25px; }
+        .question-text { font-size: 1.25rem; font-weight: 500; line-height: 1.6; text-align: center; color: #f8fafc; position: relative; z-index: 1;}
+        
+        .scramble-box { font-family: 'Poppins', sans-serif; font-size: 2.2rem; letter-spacing: 8px; text-align: center; color: var(--neon-cyan); font-weight: 800; margin: 15px 0 25px 0; text-shadow: 0 0 15px rgba(6,182,212,0.4); }
+        .hint-text { text-align: center; color: var(--warning); font-size: 1rem; margin-bottom: 15px; background: rgba(245, 158, 11, 0.1); border: 1px solid var(--warning); border-radius: 8px; padding: 10px; display: inline-block;}
+
+        .options-grid { display: grid; gap: 12px; margin-bottom: 25px; position: relative; }
+        .option-btn { padding: 16px 20px; background: #0f172a; border: 2px solid #334155; border-radius: 12px; font-size: 1rem; text-align: left; cursor: pointer; transition: all 0.2s; color: var(--text-main); font-family: 'Poppins', 'Kanit', sans-serif; position: relative; z-index: 1; }
+        .option-btn.selected { border-color: var(--neon-green); background: rgba(34,197,94,0.1); font-weight: 600; color: white; }
+
+        .summary-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 25px; margin-top: 15px; }
+        .sum-item { background: #334155; color: white; text-align: center; padding: 10px 0; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; border: 2px solid transparent;}
+        .sum-item.answered { background: rgba(34,197,94,0.2); color: var(--neon-green); border-color: var(--neon-green); }
+        .sum-item:active { transform: scale(0.9); }
+
+        .cert-box { background: linear-gradient(135deg, #0f172a, #1e293b); padding: 30px 20px; border-radius: 16px; text-align: center; color: white; border: 2px solid var(--neon-green); margin-bottom: 25px; box-shadow: 0 0 30px rgba(34,197,94,0.15); position: relative; overflow: hidden; }
+        .cert-title { font-size: 1.2rem; font-weight: 700; color: var(--neon-green); margin-bottom: 10px; letter-spacing: 2px; }
+        .cert-name { font-size: 1.6rem; font-weight: bold; color: white; margin: 10px 0; }
+        .score-display { font-size: 4.5rem; font-weight: 800; color: var(--success); font-family: 'Poppins', sans-serif; line-height: 1; margin: 15px 0; text-shadow: 0 0 20px rgba(16,185,129,0.3); }
+        .score-display.fail { color: var(--danger); text-shadow: 0 0 20px rgba(239,68,68,0.3); }
+
+        .review-list { margin-top: 30px; text-align: left; }
+        .review-item { padding: 15px; border-radius: 12px; margin-bottom: 15px; background: #1e293b; border-left: 4px solid; }
+        .review-correct { border-color: var(--success); }
+        .review-wrong { border-color: var(--danger); background: rgba(239,68,68,0.05); }
+
+        #countdown-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(2,6,23,0.95); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; }
+        .count-number { font-size: 8rem; font-weight: 800; color: var(--neon-green); font-family: 'Poppins', sans-serif; text-shadow: 0 0 30px rgba(34,197,94,0.5); }
+
+        .hidden { display: none !important; }
+        
+        /* 🌌 Custom Modal Pop-up */
+        #custom-modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(2, 6, 23, 0.9); backdrop-filter: blur(5px);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 10000; animation: fadeIn 0.3s ease forwards;
+        }
+        .custom-modal-card {
+            width: 90%; max-width: 400px; background: var(--bg-panel);
+            border: 2px solid var(--neon-green); border-radius: var(--radius);
+            padding: 25px 20px; text-align: center; box-shadow: 0 0 30px rgba(34, 197, 94, 0.2);
+            animation: slideUp 0.3s ease forwards;
+        }
+        .custom-modal-icon { font-size: 3.5rem; margin-bottom: 10px; }
+        .custom-modal-title { font-family: 'Poppins', sans-serif; font-size: 1.3rem; font-weight: 700; color: white; margin-bottom: 8px; }
+        .custom-modal-msg { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 20px; line-height: 1.6; text-align: center; }
+    </style>
+</head>
+<body oncontextmenu="return false;" oncopy="return false;" oncut="return false;" onpaste="return false;">
+
+<div class="app-container">
+    <div class="top-bar">
+        <div class="logo">CHRONOS<span>.</span>LEXICON</div>
+        <div class="agent-badge" id="user-badge">UNIDENTIFIED</div>
+    </div>
+
+    <!-- SCREEN 1: LOGIN -->
+    <div id="screen-login" class="app-screen active">
+        <div style="text-align: center; margin-top: 20px;">
+            <div style="font-size: 4rem; margin-bottom: 10px; text-shadow: 0 0 20px rgba(34,197,94,0.4);">🔤</div>
+            <h2 class="title">DATA DECRYPTION</h2>
+            <p class="subtitle">Unit 1: Getting Ready for College<br>BASIC ENGLISH 6 | Teacher Saruta</p>
+            
+            <div style="margin-bottom: 30px;">
+                <p style="color: var(--text-muted); margin-bottom: 5px; font-size: 0.95rem;">Agent ID (รหัสประจำตัวนักเรียน 5 หลัก)</p>
+                <input type="number" id="student-id" class="input-field" placeholder="_ _ _ _ _" required>
+                
+                <p style="color: var(--text-muted); margin-bottom: 5px; font-size: 0.95rem;">First Name (ชื่อจริง ไม่ต้องใส่คำนำหน้า)</p>
+                <input type="text" id="student-firstname" class="input-field" placeholder="เช่น ... พรประภา" style="letter-spacing: normal;" required>
+            </div>
+            
+            <button class="btn-action btn-green" id="btn-login" onclick="handleLogin()">INITIALIZE LINK 🚀</button>
+        </div>
+    </div>
+
+    <!-- SCREEN 2: BRIEFING -->
+    <div id="screen-review" class="app-screen">
+        <div id="retake-warning" class="penalty-alert hidden">
+            ⚠️ <b>TIME ANOMALY DETECTED (การซ่อมครั้งที่ <span id="warn-attempt"></span>)</b><br>
+            ระบบจะหักพลังงาน <span id="warn-penalty"></span> แต้มจากคะแนนดิบของคุณ
+        </div>
+
+        <div class="review-content" id="review-content">
+            <div style="text-align: center; padding-top: 10px;">
+                <h2 style="color: white; font-size: 1.5rem; margin-bottom: 5px;">AGENT BRIEFING</h2>
+                <p style="color: var(--neon-green); margin-bottom: 25px;">ภารกิจ: ถอดรหัสคำศัพท์ (Lexicon Decryption)</p>
+                <div style="text-align: left; background: #020617; padding: 20px; border-radius: 12px; border: 1px solid #334155;">
+                    <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 10px;">รูปแบบข้อมูลที่ต้องถอดรหัสในวันนี้:</p>
+                    <p style="color: #cbd5e1; margin-bottom: 8px;">1. <b>Synonyms & Antonyms</b>: ระบุคำที่มีความหมายเหมือนหรือตรงข้าม</p>
+                    <p style="color: #cbd5e1; margin-bottom: 8px;">2. <b>Word Forms</b>: เติมคำศัพท์ให้ถูกรูป (Noun/Verb)</p>
+                    <p style="color: #cbd5e1; margin-bottom: 8px;">3. <b>Word Scramble</b>: เรียงตัวอักษรที่ถูกแทรกแซงให้กลับมาเป็นคำศัพท์ที่ถูกต้อง</p>
+                    <br>
+                    <b style="color: var(--neon-green);">พารามิเตอร์ภารกิจ:</b>
+                    <ul style="margin-left: 20px; margin-top: 5px; font-size: 0.95rem; color: var(--text-muted); line-height: 1.8;">
+                        <li>แบบทดสอบ 15 ข้อ / เวลา 15 นาที</li>
+                        <li>เกณฑ์การผ่าน (Restore Timeline) คือ <b>10/15</b></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <button class="btn-action btn-green" id="btn-start-mission" style="margin-top: 20px;" onclick="startCountdown()" disabled>DECRYPTING... (3s)</button>
+    </div>
+
+    <!-- SCREEN 3: QUIZ -->
+    <div id="screen-quiz" class="app-screen anti-cheat">
+        <div class="status-bar">
+            <span id="question-type" style="color: var(--text-muted); font-weight: 500;">Sector 1/15</span>
+            <div class="timer-box" id="timer-box">⏱️ <span id="time-left">15:00</span></div>
+        </div>
+        
+        <div class="question-wrapper">
+            <div class="question-text" id="question-text">Loading temporal data...</div>
+            
+            <!-- โซนสำหรับ Word Scramble -->
+            <div id="scramble-display" class="hidden">
+                <div class="scramble-box" id="s-word">T I S N I T U O N T I</div>
+                <div style="text-align: center;"><span class="hint-text" id="s-hint">💡 Hint: สถาบัน / องค์กร</span></div>
+            </div>
+        </div>
+        
+        <div id="options-container" class="options-grid"></div>
+        
+        <div id="fib-container" class="hidden">
+            <input type="text" id="fib-input" class="input-field" style="border-color: #475569;" placeholder="พิมพ์คำตอบภาษาอังกฤษที่นี่..." autocomplete="off">
+            <p style="text-align: center; color: var(--danger); font-size: 0.85rem; margin-top: -15px; margin-bottom: 15px;">* พิมพ์ตัวพิมพ์เล็กทั้งหมด ไม่ต้องเว้นวรรค</p>
+        </div>
+        
+        <div class="btn-nav-container" id="quiz-nav-controls">
+            <button class="btn-action btn-dark" style="flex: 1;" id="btn-prev-q" onclick="navigateQuiz(-1)">&lt; ย้อนกลับ</button>
+            <button class="btn-action btn-cyan hidden" style="flex: 1.5;" id="btn-return-sum" onclick="showSummaryScreen()">กลับหน้าสรุป 📋</button>
+            <button class="btn-action btn-green" style="flex: 2;" id="btn-next-q" onclick="navigateQuiz(1)">ถัดไป ➡️</button>
+        </div>
+    </div>
+
+    <!-- SCREEN 3.5: SUMMARY BEFORE SUBMIT -->
+    <div id="screen-summary" class="app-screen">
+        <h2 class="title" style="color: var(--neon-green);">MISSION SUMMARY</h2>
+        <p class="subtitle" style="margin-bottom: 10px;">ตรวจสอบความเรียบร้อยก่อนกู้เส้นเวลา</p>
+        
+        <div style="background: var(--bg-card); padding: 20px; border-radius: 12px; border: 1px solid #334155;">
+            <p style="text-align: center; color: var(--text-muted); font-size: 0.9rem;">คลิกที่ตัวเลขเพื่อกลับไปทบทวนแก้ไขข้อนั้น</p>
+            <div class="summary-grid" id="summary-grid"></div>
+            <div style="display: flex; justify-content: center; gap: 15px; font-size: 0.85rem; margin-top: 10px;">
+                <span style="color: var(--neon-green);">🟩 ทำแล้ว</span>
+                <span style="color: #64748b;">⬛ ยังไม่ได้ทำ</span>
+            </div>
+        </div>
+
+        <div class="btn-nav-container">
+            <button class="btn-action btn-dark" style="flex: 1;" onclick="goToQuestion(currentQuestions.length - 1)">&lt; ย้อนกลับ</button>
+            <button class="btn-action btn-green" style="flex: 2;" onclick="showResult()">SUBMIT (ส่งข้อสอบ) 🚀</button>
+        </div>
+    </div>
+
+    <!-- SCREEN 4: RESULT -->
+    <div id="screen-result" class="app-screen">
+        <div id="result-pass" class="hidden text-center">
+            <h2 class="title" style="color: var(--success); margin-bottom: 20px;">TIMELINE RESTORED! 🌌</h2>
+            <div class="cert-box">
+                <div class="cert-title">CHRONOS AGENCY</div>
+                <div class="cert-name" id="cert-name">Name</div>
+                <div style="font-size: 0.95rem; color: var(--neon-green); margin-bottom: 15px;">Agent ID: <span id="cert-id" style="font-weight:bold;">00000</span></div>
+                <div class="score-display"><span id="final-score-pass">10</span></div>
+            </div>
+        </div>
+
+        <div id="result-fail" class="hidden text-center">
+            <div style="font-size: 4rem; text-align: center; margin-bottom: 10px;">💥</div>
+            <h2 class="title" style="color: var(--danger);">TEMPORAL PARADOX</h2>
+            <div class="score-display fail" style="text-align: center;"><span id="final-score-fail">5</span></div>
+            <button class="btn-action btn-dark" onclick="window.location.href='index.html'">RETURN TO HQ (กลับหน้าหลัก)</button>
+        </div>
+        
+        <div class="stat-box" style="display: flex; justify-content: space-around; background: #020617; padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #334155;">
+            <div style="text-align: center; font-size: 0.9rem; color: var(--text-muted);">Raw Score<b id="display-raw" style="display: block; font-size: 1.2rem; color: white;">0</b></div>
+            <div style="text-align: center; font-size: 0.9rem; color: var(--text-muted);">Penalty<b id="display-penalty" style="display: block; font-size: 1.2rem; color: var(--danger);">0</b></div>
+            <div style="text-align: center; font-size: 0.9rem; color: var(--text-muted);">Target<b style="display: block; font-size: 1.2rem; color: white;">10</b></div>
+        </div>
+
+        <div id="score-message" style="text-align: center; margin-bottom: 20px; font-size: 0.95rem; color: var(--neon-green);"></div>
+        
+        <button class="btn-action btn-cyan hidden" id="btn-review-answers" style="margin-bottom: 15px;" onclick="toggleReview()">🔍 VIEW LOGS (ดูเฉลย)</button>
+        <button class="btn-action btn-dark" onclick="location.reload()">DISCONNECT</button>
+        <div id="review-answers-box" class="review-list hidden"></div>
+    </div>
+</div>
+
+<div id="countdown-overlay" class="hidden">
+    <div class="count-number" id="count-number">3</div>
+    <p style="color: var(--neon-green); margin-top: 20px; font-size: 1.2rem; font-family: 'Poppins';">SYNCING TIMELINE...</p>
+</div>
+
+<script>
+    // 🛡️ ระบบบล็อก In-App Browser (บังคับเปิดใน Safari/Chrome)
+    function detectInAppBrowser() {
+        const ua = navigator.userAgent || navigator.vendor || window.opera;
+        if ((ua.indexOf("FBAN") > -1) || (ua.indexOf("FBAV") > -1) || (ua.indexOf("Line") > -1) || (ua.indexOf("Instagram") > -1)) {
+            const loginScreen = document.getElementById('screen-login');
+            if (loginScreen) {
+                loginScreen.classList.remove('hidden');
+                loginScreen.innerHTML = `
+                    <div style="text-align: center; margin-top: 30px; padding: 20px;">
+                        <div style="font-size: 4rem; margin-bottom: 15px; text-shadow: 0 0 20px rgba(239,68,68,0.5);">🚫</div>
+                        <h2 style="color: var(--danger); font-family: 'Poppins', sans-serif; font-size: 1.5rem;">ACCESS DENIED</h2>
+                        <p style="color: var(--neon-green); font-weight: bold; margin-bottom: 20px;">ไม่สามารถทำภารกิจผ่านแอป LINE / Facebook ได้</p>
+                        <div style="background: rgba(239,68,68,0.1); border: 1px solid var(--danger); padding: 20px; border-radius: 12px; text-align: left;">
+                            <p style="color: white; font-size: 1rem; margin-bottom: 10px;"><b>วิธีแก้ไขเพื่อเข้าสู่ระบบ:</b></p>
+                            <p style="color: var(--text-muted); font-size: 0.95rem;">1. มองหาปุ่ม <b>จุด 3 จุด (...)</b> หรือปุ่มแชร์ ที่มุมหน้าจอ<br><br>2. เลือกเมนู <b>"เปิดในเบราว์เซอร์เริ่มต้น"</b> หรือ <b>"Open in Safari / Chrome"</b></p>
+                        </div>
+                    </div>
+                `;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    window.addEventListener('DOMContentLoaded', (event) => { detectInAppBrowser(); });
+    
+    // ⚠️ นำ URL ของ Apps Script ชีทใหม่มาใส่ตรงนี้ค่ะ
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbyiXD0W7A_YRBzgDAj01KqLsPCB4pW1IJMIKmOkSfvGbCu28Fz1GV-RCPfEvPfpMX3I/exec'; 
+    const PASS_CRITERIA = 10; 
+
+    // ฐานข้อมูลนักเรียน ม.6
+    const studentDB = {
+        // ม.6/1
+        "11702": { name: "นาย นที ภัสสรรัชนีกร" }, "11703": { name: "นาย เบญจมิณทร์ เชิดฉิน" }, "11710": { name: "นาย ศักดิธัช ทิพย์โอสถ" },
+        "11736": { name: "นาย พงศกร อานุการ" }, "11763": { name: "นาย ทวีรัตน์ สิงห์โต" }, "11796": { name: "นาย ภูมิพัฒน์ คณาญาติ" },
+        "11824": { name: "นาย จีรวัตร คีรีวงษ์" }, "11958": { name: "นาย พชรพล หนสมสุข" }, "12733": { name: "นาย ภัทรชนน นาทีชัยชนะ" },
+        "11713": { name: "นางสาว กนกพร อินอุ่นโชติ" }, "11714": { name: "นางสาว กัญญารัตน์ จึงตระกูล" }, "11715": { name: "นางสาว กัลยารัตน์ ไชยจำ" },
+        "11717": { name: "นางสาว ญารินดา เลื่อนลอย" }, "11719": { name: "นางสาว นทีกานต์ สอาดศรี" }, "11723": { name: "นางสาว วารี มานะประสพสุข" },
+        "11726": { name: "นางสาว อุรชา อสิพงษ์" }, "11740": { name: "นางสาว กนกวรรณ สืบสุนทร" }, "11743": { name: "นางสาว ฐิตินันท์ เชียงไข่แก้ว" },
+        "11748": { name: "นางสาว พรนภัส พลเสนา" }, "11750": { name: "นางสาว มุจิรานันท์ ปักกาเวสูง" }, "11758": { name: "นางสาว ไอริณ ศรีชุมพล" },
+        "11773": { name: "นางสาว กวินธิดา นวลตา" }, "11775": { name: "นางสาว ฐิติมา คณาญาติ" }, "11784": { name: "นางสาว ศวิตรี แก้วกลม" },
+        "11785": { name: "นางสาว ศุภิสรา หลักทรัพย์" }, "11788": { name: "นางสาว อัจฉรียา ดอกพิกุล" }, "11802": { name: "นางสาว กนกวรรณ เกื้อกูล" },
+        "11812": { name: "นางสาว ปิยะธิดา บุญชาเรียง" }, "11816": { name: "นางสาว วิชยาพร โพธิ์นิมิตร" }, "11818": { name: "นางสาว ศิรภัสทรา ไชยชาติ" },
+        "11847": { name: "นางสาว พิชญ์สินี สุภโส" }, "11927": { name: "นางสาว ณัฐกานต์ ผายอุบล" }, "11934": { name: "นางสาว วันนาวี นะ" },
+        "12734": { name: "นางสาว จิราภรณ์ สมบุญ" }, "12737": { name: "นางสาว วิไลวรรณ จันดี" },
+        // ม.6/2
+        "11698": { name: "นาย ก้องภพ หนาแน่น" }, "11707": { name: "นาย ภูริณัฐ สุวรรณสน" }, "11730": { name: "นาย เจษฎา พรมวงษา" },
+        "11737": { name: "นาย ศิวกร สุขประสงค์" }, "11792": { name: "นาย ธราวัฒน์ สืบจาก" }, "11794": { name: "นาย พีรัชชัย สอนจันดา" },
+        "11822": { name: "นาย ขวัญชัย ทับทิม" }, "11825": { name: "นาย ชัยสิทธิ์ ภู่แสร์" }, "11828": { name: "นาย ธีรเดช รูปสะอาด" },
+        "11867": { name: "นาย อัษฎางค์ จันทร์ศรี" }, "11942": { name: "นาย ศิรวิชญ์ พูลสวัสดิ์" }, "12738": { name: "นาย ชินวุฒิ รกไพร" },
+        "11720": { name: "นางสาว น้ำฝน อุ่มกิ่ง" }, "11742": { name: "นางสาว ฐานิดา วาดถนน" }, "11751": { name: "นางสาว วริศรา บุบผามาลา" },
+        "11752": { name: "นางสาว วันฉัตร ศิริบุญคุณ" }, "11753": { name: "นางสาว วิลัยพร หวังกุลกลาง" }, "11754": { name: "นางสาว สาธิตา สีหามาตร" },
+        "11772": { name: "นางสาว กมลลักษณ์ บุญมา" }, "11781": { name: "นางสาว พิชญาภา เถื่อนทุ่ง" }, "11782": { name: "นางสาว เพชรน้ำหนึ่ง ตู้ทอง" },
+        "11787": { name: "นางสาว อนันตญา อินทะนัย" }, "11804": { name: "นางสาว ฐิติมา ภูเดช" }, "11808": { name: "นางสาว ประภาพรรณ ภูเงิน" },
+        "11811": { name: "นางสาว ปิยมาส บุตรเอื้อ" }, "11813": { name: "นางสาว เปรมยุดา พรมมา" }, "11840": { name: "นางสาว ขวัญข้าว แสนดี" },
+        "11841": { name: "นางสาว ขวัญพร พรมสมบุญ" }, "11871": { name: "นางสาว จรรยนาถ จันทร์ศรี" }, "11928": { name: "นางสาว สุพรรษา จันทร์สอน" },
+        "12739": { name: "นางสาว กัญญารัตน์ มูลกระจก" }, "12740": { name: "นางสาว ปนัดดา ศรีจำปา" }, "12741": { name: "นางสาว ยศยา ผดุงวาฬ" },
+        "12742": { name: "นางสาว วนิสา พูลเพิ่ม" }, "12743": { name: "นางสาว ศศินิภา สีม่วง" }, "12744": { name: "นางสาว ศิรินทิพย์ ชาติวงค์" },
+        // ม.6/3
+        "11699": { name: "นาย กิตติชัย หัสดง" }, "11712": { name: "นาย สิรภัทร นุ่มนวล" }, "11798": { name: "นาย ศรัณต์ อำไพวรรณ" },
+        "11800": { name: "นาย เศรษฐพิชญ์ ศรีหงษา" }, "11830": { name: "นาย ปิติภัทร แผนคง" }, "11855": { name: "นาย เจษฎา สมจิตร" },
+        "11857": { name: "นาย ชุติพนธ์ เพิ่มศรี" }, "11859": { name: "นาย ทัศนัย เรียงนอก" }, "12747": { name: "นาย ราชันย์ บัวสิม" },
+        "11716": { name: "นางสาว ชลลดา วาปีกัง" }, "11721": { name: "นางสาว ปิยะธิดา ธิกูล" }, "11755": { name: "นางสาว สุชานันท์ อินธิมาศ" },
+        "11786": { name: "นางสาว สุดาทิพย์ สีแก้ว" }, "11806": { name: "นางสาว นลิน เผือกสีสุก" }, "11810": { name: "นางสาว ปาริตา ดารักษ์" },
+        "11815": { name: "นางสาว รพีพรรณ พันนาม" }, "11836": { name: "นางสาว กมลฉัตร เขามะหิงษ์" }, "11842": { name: "นางสาว ญาณภัทร สุขประสงค์" },
+        "11845": { name: "นางสาว นันทวรรณ สีหราช" }, "11870": { name: "นางสาว กุลนิภา ศรีแพน" }, "11875": { name: "นางสาว ปัทติมา สีทอง" },
+        "11876": { name: "นางสาว ปาริชาติ เที่ยงธรรม" }, "11882": { name: "นางสาว อภิชญา สำรวจวงค์" }, "11883": { name: "นางสาว อุ่นชยา พงษ์ไทย" },
+        "11926": { name: "นางสาว พิชชาพร เดชพลกรัง" }, "11929": { name: "นางสาว ธันยพร อริสุ" }, "12749": { name: "นางสาว กุสุมา กันหานุ" },
+        "12750": { name: "นางสาว ธีญดา ครองหมู่" }, "12751": { name: "นางสาว สุพัชชา ปุราถาเน" }, "12752": { name: "นางสาว สุภารัตน์ ปาระมัส" },
+        "12754": { name: "นางสาว อริศรา รูปพรม" }, "12781": { name: "นางสาว พิจิตรา แน่นอน" }, "12786": { name: "นางสาว สลิล สุวภากุลเศรษฐ์" },
+        // ม.6/4
+        "11700": { name: "นาย ณัฐวุฒิ น่ารัก" }, "11701": { name: "นาย ดนุสรณ์ นันทะสาโร" }, "11704": { name: "นาย ไพรรัตน์ เวชมะโน" },
+        "11734": { name: "นาย ปกรณ์ แก้วอุดร" }, "11770": { name: "นาย ศิวกรณ์ สระแก้ว" }, "11853": { name: "นาย กฤติพงศ์ พลไพ" },
+        "11854": { name: "นาย กิตติกรณ์ โพธิ์แก้ว" }, "11860": { name: "นาย ธีรภัทร แซ่งั่น" }, "11925": { name: "นาย อภิเดช บุตรแสน" },
+        "11953": { name: "นาย ธีรนัยน์ แก้วหิน" }, "12755": { name: "นาย กฤษฎา กงแก้ว" }, "12756": { name: "นาย ชัยวัฒน์ เอิบผักแว่น" },
+        "12757": { name: "นาย ชาญณรงค์ เชื้อจำพร" }, "12758": { name: "นาย ทีฆายุ พูนกลางวิโรจน์" }, "12760": { name: "นาย ณัฐวุฒิ วิทวิบูรณ์" },
+        "12762": { name: "นาย สายน้ำ พนารินทร์" }, "11817": { name: "นางสาว ศรีพัฒน์ การบรรจง" }, "11837": { name: "นางสาว กรณ์ชนก พระพรม" },
+        "11838": { name: "นางสาว กัญญารัตน์ นาโฮม" }, "11846": { name: "นางสาว ปนัดดา ทุมมี" }, "11851": { name: "นางสาว สาวิกา เทียบแก้ว" },
+        "11877": { name: "นางสาว มุธิตา ชูญาติ" }, "11879": { name: "นางสาว วิภาภร ถาวจตุรัส" }, "12763": { name: "นางสาว ขวัญฤดี นรชาญ" },
+        "12764": { name: "นางสาว จิตรา นงค์กระโทก" }, "12765": { name: "นางสาว ช่อฟ้า หายะกุล" }, "12766": { name: "นางสาว รติมา จิราพงษ์" },
+        "12767": { name: "นางสาว วรางคณา ดอกกลอย" }, "12768": { name: "นางสาว วิภาวดี บุตรไธสง" }, "12769": { name: "นางสาว แสงอรุณ พิงไธสง" }
+    };
+
+    // 🌟 คลังข้อสอบคำศัพท์ 15 ข้อ
+    // 🌟 คลังข้อสอบคำศัพท์ 15 ข้อ (ฉบับคำใบ้เชิงวิเคราะห์)
+    const vocabPool = [
+        // MCQ - Synonyms & Antonyms
+        { type: "mcq", q: "Which word is a synonym for <b>'enough'</b>?", options: ["outstanding", "sufficient", "truly", "deliberate"], ans: 1, exp: "คำนี้แปลว่า 'เพียงพอ' ลองนึกถึงคำศัพท์ที่มีความหมายเชิงบวกเกี่ยวกับการเติมเต็ม หรือขึ้นต้นด้วยตัว s ดูนะ" },
+        { type: "mcq", q: "What is the antonym of <b>'certain'</b>?", options: ["suspicious", "ideal", "capable", "competitive"], ans: 0, exp: "certain แปลว่า 'แน่ใจ/มั่นใจ' ดังนั้นคำตรงข้ามจะต้องหมายถึง 'การตั้งข้อสงสัยหรือไม่ไว้วางใจ' ลองหาคำที่ให้ความรู้สึกระแวงดูสิ" },
+        { type: "mcq", q: "Which word is a synonym for <b>'excellent'</b>?", options: ["awful", "tough", "outstanding", "overall"], ans: 2, exp: "คำนี้แปลว่า 'ยอดเยี่ยม' ลองหาคำที่มีความหมายลึกซึ้งแปลว่า 'โดดเด่นออกมาจากกลุ่ม' (out-...) ดูสิ" },
+        { type: "mcq", q: "What is the antonym of <b>'tension'</b>?", options: ["strength", "relief", "intention", "circumstance"], ans: 1, exp: "tension คือ 'ความตึงเครียด' คำตรงข้ามจะต้องหมายถึง 'ความรู้สึกโล่งใจหรือผ่อนคลายจากความกังวล' (เช่น ความรู้สึกหลังสอบเสร็จ)" },
+        { type: "mcq", q: "Which word is a synonym for <b>'happen'</b>?", options: ["occur", "abandon", "encounter", "assume"], ans: 0, exp: "คำนี้แปลว่า 'เกิดขึ้น' มักใช้ในบริบทที่เป็นทางการมากกว่า happen เป็นคำที่ขึ้นต้นด้วยตัว o และมี c สองตัว" },
+
+        // FIB - Noun/Verb Forms & Meaning
+        { type: "fib", q: "Type the verb form of the word <b>'association'</b>.", ans: ["associate"], exp: "association (คำนาม: สมาคม/การรวมกลุ่ม) ลงท้ายด้วย -tion ลองตัดปัจจัย (suffix) ท้ายคำออกเพื่อเปลี่ยนให้กลับไปเป็นรูปคำกริยา (Verb) ดูนะ" },
+        { type: "fib", q: "Type the synonym of the word <b>'answer'</b> (begins with r).", ans: ["respond"], exp: "มีความหมายว่า 'ตอบสนอง หรือ ตอบกลับ' ขึ้นต้นด้วย r และลงท้ายด้วย d" },
+        { type: "fib", q: "Type the antonym of the word <b>'downside'</b>.", ans: ["strength"], exp: "downside แปลว่า ข้อเสีย/จุดด้อย คำตรงข้ามจะต้องแปลว่า 'จุดแข็ง' หรือความแข็งแกร่ง" },
+        { type: "fib", q: "Type the antonym of the phrase <b>'positive attribute'</b>.", ans: ["weakness"], exp: "positive attribute (คุณลักษณะเชิงบวก) คำตรงข้ามคือ 'จุดอ่อน' หรือข้อบกพร่อง (ลงท้ายด้วย -ness)" },
+        { type: "fib", q: "Type the synonym of the word <b>'first'</b> (begins with i).", ans: ["initially"], exp: "แปลว่า 'ในตอนแรก หรือ เบื้องต้น' เป็นคำวิเศษณ์ (Adverb) ที่ต้องลงท้ายด้วย -ly" },
+
+        // Scramble - Decryption
+        { type: "scramble", q: "ถอดรหัสข้อมูลต่อไปนี้ให้เป็นคำศัพท์ที่ถูกต้อง", scramble: "T I S N I T U O N T I", hint: "สถาบัน / องค์กร", ans: ["institution"], exp: "เป็นคำนามที่หมายถึงองค์กรขนาดใหญ่ เช่น มหาวิทยาลัย หรือโรงพยาบาล ขึ้นต้นด้วย in- และลงท้ายด้วย -tion" },
+        { type: "scramble", q: "ถอดรหัสข้อมูลต่อไปนี้ให้เป็นคำศัพท์ที่ถูกต้อง", scramble: "C E N R T O U N E", hint: "พบเจอ / meet", ans: ["encounter"], exp: "หมายถึง 'การเผชิญหน้าหรือพบเจอโดยบังเอิญ' ขึ้นต้นด้วย en- และลงท้ายด้วย -er" },
+        { type: "scramble", q: "ถอดรหัสข้อมูลต่อไปนี้ให้เป็นคำศัพท์ที่ถูกต้อง", scramble: "M A R C I C U S E T N C", hint: "สถานการณ์ / situation", ans: ["circumstance"], exp: "คำนี้แปลว่าสถานการณ์หรือสภาพแวดล้อม เริ่มต้นด้วย circum- ที่รากศัพท์แปลว่า 'รอบๆ'" },
+        { type: "scramble", q: "ถอดรหัสข้อมูลต่อไปนี้ให้เป็นคำศัพท์ที่ถูกต้อง", scramble: "O N D A B A N", hint: "ละทิ้ง / leave", ans: ["abandon"], exp: "แปลว่าการทอดทิ้ง หรือปล่อยทิ้งไว้ มี 3 พยางค์ ออกเสียงนำหน้าด้วย a-ban-..." },
+        { type: "scramble", q: "ถอดรหัสข้อมูลต่อไปนี้ให้เป็นคำศัพท์ที่ถูกต้อง", scramble: "T O N I N E T I N", hint: "ความตั้งใจ / ความมุ่งมั่น", ans: ["intention"], exp: "หมายถึงความตั้งใจหรือเจตนา รากศัพท์มาจากคำกริยา intend แล้วเปลี่ยนเป็นคำนาม (-tion)" }
+    ];
+
+    let currentQuestions = [];
+    let currentIdx = 0;
+    let scores = { total: 0 };
+    let hasSubmitted = false;
+    let timerInterval;
+    let timeLeft = 900; // 15 นาที
+    let studentName = ""; 
+    let userAnswers = []; 
+    let attemptCount = 1; let penaltyScore = 0; 
+    let reviewCooldownTimer;
+    let isProcessingCooldown = false; 
+
+    function showScreen(screenId) {
+        document.querySelectorAll('.app-screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(screenId).classList.add('active');
+        window.scrollTo(0, 0);
+    }
+
+    async function handleLogin() {
+        const studentId = document.getElementById('student-id').value.trim();
+        const studentFirstName = document.getElementById('student-firstname').value.trim();
+        const btnLogin = document.getElementById('btn-login');
+
+        if(!studentId || !studentFirstName) { alert("กรุณากรอกรหัสประจำตัว และชื่อจริงให้ครบถ้วนค่ะ"); return; }
+        
+        // แอดมิน (Director Ploy)
+        if(studentId === "7238") {
+            if(studentFirstName !== "พะโล้") { alert("❌ Clearance Denied: ชื่อ Director ไม่ถูกต้อง"); return; }
+            studentName = "คุณครูศรุตา จันทเกตุ"; attemptCount = 1; penaltyScore = 0;
+            document.getElementById('user-badge').innerText = "DIRECTOR";
+            startReviewPhase(); return;
+        }
+
+        if(!studentDB[studentId]) { alert("❌ ไม่พบ Agent ID นี้ในระบบฐานข้อมูล"); return; }
+        if(!studentDB[studentId].name.includes(studentFirstName)) {
+            alert("❌ การยืนยันตัวตนล้มเหลว!\nชื่อจริงไม่ตรงกับรหัสประจำตัวนี้ กรุณาตรวจสอบการสะกดคำ (ไม่ต้องใส่คำนำหน้า)"); return; 
+        }
+
+        btnLogin.innerText = "CONNECTING... ⏳"; btnLogin.disabled = true;
+
+        try {
+            const response = await fetch(scriptURL + "?studentId=" + studentId);
+            const data = await response.json();
+            
+            if(data.exists) {
+                if(data.maxScore >= PASS_CRITERIA) {
+                    alert(`✅ คุณสอบผ่านเกณฑ์แล้วด้วยคะแนน ${data.maxScore}/15\nTimeline ของคุณเสถียรแล้ว ไม่สามารถกู้ซ้ำได้ค่ะ`);
+                    document.getElementById('student-id').value = ''; document.getElementById('student-firstname').value = ''; 
+                } else {
+                    attemptCount = data.attempts + 1; penaltyScore = attemptCount - 1; 
+                    studentName = studentDB[studentId].name; 
+                    document.getElementById('user-badge').innerText = studentName; startReviewPhase();
+                }
+            } else {
+                attemptCount = 1; penaltyScore = 0; studentName = studentDB[studentId].name;
+                document.getElementById('user-badge').innerText = studentName; startReviewPhase();
+            }
+        } catch (error) {
+            studentName = studentDB[studentId].name; attemptCount = 1; penaltyScore = 0;
+            document.getElementById('user-badge').innerText = studentName; startReviewPhase();
+        }
+
+        btnLogin.innerText = "INITIALIZE LINK 🚀"; btnLogin.disabled = false;
+    }
+
+    function startReviewPhase() {
+        if(penaltyScore > 0) document.getElementById('retake-warning').classList.remove('hidden');
+        showScreen('screen-review');
+        
+        const btnStart = document.getElementById('btn-start-mission');
+        const studentId = document.getElementById('student-id').value.trim();
+        let cd = (studentId === "7238") ? 0 : 3; 
+
+        btnStart.disabled = true;
+        btnStart.innerText = `DECRYPTING... (${cd}s)`;
+
+        if(cd === 0) { btnStart.disabled = false; btnStart.innerText = "BEGIN MISSION ⏱️"; } 
+        else {
+            reviewCooldownTimer = setInterval(() => {
+                cd--;
+                if (cd > 0) { btnStart.innerText = `DECRYPTING... (${cd}s)`; } 
+                else { clearInterval(reviewCooldownTimer); btnStart.disabled = false; btnStart.innerText = "BEGIN MISSION ⏱️"; }
+            }, 1000);
+        }
+    }
+
+    function startCountdown() {
+        document.getElementById('countdown-overlay').classList.remove('hidden'); 
+        let count = 3; document.getElementById('count-number').innerText = count;
+        
+        const cInt = setInterval(() => {
+            count--;
+            if (count > 0) { document.getElementById('count-number').innerText = count; } 
+            else if (count === 0) { document.getElementById('count-number').innerText = "JUMP!"; } 
+            else {
+                clearInterval(cInt); document.getElementById('countdown-overlay').classList.add('hidden');
+                generateQuizSession(); 
+                document.getElementById('btn-return-sum').classList.add('hidden'); 
+                showScreen('screen-quiz'); renderQuestion(); startTimer();
+            }
+        }, 1000);
+    }
+
+    function generateQuizSession() {
+        // นำทั้ง 15 ข้อมาสลับตำแหน่ง
+        currentQuestions = [...vocabPool].sort(() => Math.random() - 0.5);
+        userAnswers = new Array(currentQuestions.length).fill(null);
+        currentIdx = 0;
+    }
+
+    function startTimer() {
+        clearInterval(timerInterval); 
+        timeLeft = 900; // 900 วินาที = 15 นาที
+        
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            let m = Math.floor(timeLeft / 60); let s = timeLeft % 60;
+            document.getElementById('time-left').innerText = `${m}:${s < 10 ? '0'+s : s}`;
+            
+            if (timeLeft <= 180) document.getElementById('timer-box').classList.add('warning');
+            
+            if (timeLeft <= 0) { 
+                clearInterval(timerInterval); 
+                showCustomModal("⏳", "MISSION TIME OVER", "หมดเวลาภารกิจ!<br>ระบบกำลังส่งกระดาษคำตอบโดยอัตโนมัติ", function() {
+                    const q = currentQuestions[currentIdx];
+                    if (q && (q.type === "fib" || q.type === "scramble")) {
+                        userAnswers[currentIdx] = document.getElementById('fib-input').value;
+                    }
+                    showResult(); 
+                });
+            }
+        }, 1000);
+    }
+
+    function renderQuestion() {
+        const q = currentQuestions[currentIdx];
+        document.getElementById('question-type').innerText = `Data ${currentIdx + 1}/${currentQuestions.length}`;
+        
+        const qText = document.getElementById('question-text');
+        qText.classList.remove('fade-in'); void qText.offsetWidth; qText.classList.add('fade-in');
+        qText.innerHTML = q.q; 
+        
+        const optionsContainer = document.getElementById('options-container');
+        const fibContainer = document.getElementById('fib-container');
+        const scrambleDisplay = document.getElementById('scramble-display');
+        const fibInput = document.getElementById('fib-input');
+        const btnPrev = document.getElementById('btn-prev-q');
+        const btnNext = document.getElementById('btn-next-q');
+
+        optionsContainer.innerHTML = '';
+        btnNext.disabled = false; 
+        
+        btnPrev.style.visibility = (currentIdx === 0) ? 'hidden' : 'visible';
+        btnNext.innerText = (currentIdx === currentQuestions.length - 1) ? "ตรวจสอบคำตอบ 📝" : "ถัดไป ➡️";
+
+        if (q.type === "mcq") {
+            optionsContainer.classList.remove('hidden'); 
+            fibContainer.classList.add('hidden');
+            scrambleDisplay.classList.add('hidden');
+            
+            q.options.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn fade-in';
+                btn.innerText = opt;
+                if(userAnswers[currentIdx] === index) btn.classList.add('selected');
+                
+                btn.onclick = () => {
+                    if (isProcessingCooldown) return;
+                    document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                    userAnswers[currentIdx] = index; 
+                };
+                optionsContainer.appendChild(btn);
+            });
+        } else {
+            // สำหรับ FIB และ Scramble ใช้กล่องพิมพ์เดียวกัน
+            optionsContainer.classList.add('hidden'); 
+            fibContainer.classList.remove('hidden');
+            fibInput.value = userAnswers[currentIdx] !== null ? userAnswers[currentIdx] : '';
+            
+            if(q.type === "scramble") {
+                scrambleDisplay.classList.remove('hidden');
+                document.getElementById('s-word').innerText = q.scramble;
+                document.getElementById('s-hint').innerText = "💡 Hint: " + q.hint;
+            } else {
+                scrambleDisplay.classList.add('hidden');
+            }
+
+            fibInput.oninput = () => { userAnswers[currentIdx] = fibInput.value; };
+            fibInput.onkeypress = function(e) { 
+                if(e.key === 'Enter') { e.preventDefault(); navigateQuiz(1); }
+            };
+        }
+    }
+
+    function navigateQuiz(step) {
+        if (isProcessingCooldown) return; 
+        isProcessingCooldown = true; 
+        
+        const q = currentQuestions[currentIdx];
+        if (q && (q.type === "fib" || q.type === "scramble")) {
+            userAnswers[currentIdx] = document.getElementById('fib-input').value;
+        }
+
+        const nextBtn = document.getElementById('btn-next-q');
+        const originalText = nextBtn.innerText;
+        nextBtn.disabled = true; 
+        nextBtn.innerText = "⚡ JUMPING..."; 
+
+        setTimeout(() => {
+            currentIdx += step;
+            
+            if (currentIdx >= currentQuestions.length) { 
+                showSummaryScreen(); 
+            } else if (currentIdx < 0) {
+                currentIdx = 0; renderQuestion();
+            } else { 
+                renderQuestion(); 
+            }
+            
+            isProcessingCooldown = false; 
+            nextBtn.disabled = false;
+            nextBtn.innerText = originalText;
+        }, 300); 
+    }
+
+    function showSummaryScreen() {
+        showScreen('screen-summary');
+        const grid = document.getElementById('summary-grid');
+        grid.innerHTML = '';
+        
+        for(let i = 0; i < currentQuestions.length; i++) {
+            const item = document.createElement('div');
+            item.className = 'sum-item';
+            item.innerText = i + 1;
+            
+            let isAnswered = false;
+            if(userAnswers[i] !== null) {
+                if(typeof userAnswers[i] === 'number') isAnswered = true; 
+                else if(userAnswers[i].trim() !== '') isAnswered = true; 
+            }
+            
+            if(isAnswered) item.classList.add('answered');
+            item.onclick = () => goToQuestion(i); 
+            grid.appendChild(item);
+        }
+    }
+
+    function goToQuestion(index) {
+        currentIdx = index;
+        showScreen('screen-quiz');
+        document.getElementById('btn-return-sum').classList.remove('hidden'); 
+        renderQuestion();
+    }
+
+    function calculateFinalScore() {
+        scores = { total: 0 };
+        userAnswersRecord = [];
+
+        currentQuestions.forEach((q, i) => {
+            let isCorrect = false;
+            let userAnswerText = "";
+            let ans = userAnswers[i];
+
+            if (q.type === "mcq") {
+                isCorrect = (ans === q.ans);
+                userAnswerText = (ans !== null && ans !== undefined) ? q.options[ans] : "-";
+            } else {
+                if(ans) {
+                    const cleanAns = ans.trim().toLowerCase().replace(/\s+/g, '');
+                    isCorrect = q.ans.some(a => a.toLowerCase() === cleanAns);
+                    userAnswerText = ans;
+                } else {
+                    userAnswerText = "-";
+                }
+            }
+
+            if(isCorrect) { scores.total++; }
+
+            userAnswersRecord.push({
+                question: q.type === "scramble" ? `${q.q} [${q.scramble}]` : q.q, 
+                userAnswer: userAnswerText, isCorrect: isCorrect, 
+                correctAnswer: (q.type === "mcq") ? q.options[q.ans] : q.ans.join(" / "),
+                explanation: q.exp
+            });
+        });
+    }
+
+    function showResult() {
+        if (hasSubmitted) return;
+        hasSubmitted = true;
+        if (typeof timerInterval !== 'undefined') clearInterval(timerInterval);
+        calculateFinalScore();
+
+        let rawScore = scores.total;
+        finalCalculatedScore = rawScore - penaltyScore;
+        if(finalCalculatedScore < 0) finalCalculatedScore = 0;
+
+        showScreen('screen-result');
+        const reviewBtn = document.getElementById('btn-review-answers');
+        reviewBtn.classList.add('hidden'); 
+        
+        if (finalCalculatedScore >= PASS_CRITERIA) {
+            document.getElementById('result-pass').classList.remove('hidden');
+            document.getElementById('cert-id').innerText = document.getElementById('student-id').value;
+            document.getElementById('cert-name').innerText = studentName;
+            document.getElementById('final-score-pass').innerText = finalCalculatedScore;
+            
+            var duration = 3 * 1000; var end = Date.now() + duration;
+            (function frame() {
+                confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#22c55e', '#06b6d4'] });
+                confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#22c55e', '#06b6d4'] });
+                if (Date.now() < end) requestAnimationFrame(frame);
+            }());
+        } else {
+            document.getElementById('result-fail').classList.remove('hidden');
+            document.getElementById('final-score-fail').innerText = finalCalculatedScore;
+        }
+        
+        document.getElementById('display-raw').innerText = rawScore;
+        document.getElementById('display-penalty').innerText = `-${penaltyScore}`;
+        
+        generateReviewList(); submitScoreToSheet(reviewBtn);
+    }
+
+    function generateReviewList() {
+        const reviewBox = document.getElementById('review-answers-box');
+        reviewBox.innerHTML = '';
+        
+        // เช็กว่าเป็นคุณครูล็อกอินหรือไม่
+        const isAdmin = (document.getElementById('student-id').value === "7238");
+
+        userAnswersRecord.forEach((record, index) => {
+            const itemDiv = document.createElement('div');
+            itemDiv.className = `review-item ${record.isCorrect ? 'review-correct' : 'review-wrong'}`;
+            let html = `<div style="font-weight: 600; margin-bottom: 5px; color:#fff;">Data ${index + 1}: ${record.question}</div>
+                <div style="color: ${record.isCorrect ? 'var(--success)' : 'var(--danger)'};"><b>คำตอบของคุณ:</b> ${record.userAnswer} ${record.isCorrect ? '✅' : '❌'}</div>`;
+
+            if (!record.isCorrect) {
+                // หากตอบผิด แอดมินจะเห็นเฉลยตรงๆ แต่นักเรียนจะไม่เห็นเฉลยเลย
+                if (isAdmin) {
+                    html += `<div style="color: var(--neon-cyan); margin-top: 5px;"><b>[DIRECTOR ONLY] เฉลย:</b> ${record.correctAnswer}</div>`;
+                }
+                
+                // สิ่งที่นักเรียนเห็นเมื่อตอบผิด: กรอบคำใบ้เชิงวิเคราะห์
+                html += `
+                    <div style="background: rgba(245, 158, 11, 0.1); border: 1px dashed var(--warning); padding: 12px; border-radius: 8px; margin-top: 10px;">
+                        <b style="color: var(--warning); font-size: 0.95rem;">💡 คำใบ้เพื่อวิเคราะห์:</b>
+                        <div style="color: #cbd5e1; font-size: 0.95rem; margin-top: 5px;">${record.explanation}</div>
+                    </div>`;
+            } else {
+                // หากตอบถูก แสดงเกร็ดความรู้เพื่อยืนยันความเข้าใจ
+                html += `<div style="color: var(--text-muted); font-size: 0.95rem; margin-top: 5px;"><b>เกร็ดความรู้:</b> ${record.explanation}</div>`;
+            }
+            
+            itemDiv.innerHTML = html; 
+            reviewBox.appendChild(itemDiv);
+        });
+    }
+
+    function toggleReview() { document.getElementById('review-answers-box').classList.toggle('hidden'); }
+
+    function submitScoreToSheet(reviewBtn) {
+        const studentId = document.getElementById('student-id').value;
+        const messageEl = document.getElementById('score-message');
+        
+        if(scriptURL === 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE') { 
+            messageEl.innerHTML = "⚠️ ทดสอบระบบออฟไลน์"; messageEl.style.color = "var(--warning)";
+            if(reviewBtn) reviewBtn.classList.remove('hidden'); return; 
+        }
+
+        messageEl.innerHTML = "กำลังส่งข้อมูลเข้าระบบศูนย์กลาง... ⏳";
+        const formData = new FormData();
+        formData.append('studentId', studentId); formData.append('scoreTotal', finalCalculatedScore); 
+
+        fetch(scriptURL, { method: 'POST', body: formData })
+            .then(response => {
+                messageEl.innerHTML = "✅ บันทึกข้อมูลเส้นเวลาสำเร็จ!"; messageEl.style.color = "var(--success)";
+                if(reviewBtn) reviewBtn.classList.remove('hidden'); 
+            }).catch(error => {
+                messageEl.innerHTML = `❌ การส่งข้อมูลล้มเหลว <br><button onclick="submitScoreToSheet(document.getElementById('btn-review-answers'))" style="background:none; border:none; color:var(--neon-green); text-decoration:underline; font-weight:bold; cursor:pointer; margin-top:10px;">🔄 ลองส่งอีกครั้ง</button>`;
+                messageEl.style.color = "var(--danger)";
+            });
+    }
+
+    // 🛡️ ระบบ Anti-Cheat ที่สมบูรณ์แบบ
+    let tabSwitchCount = 0;
+    let finalCalculatedScore = 0;
+    let pendingModalData = null; 
+
+    document.addEventListener("visibilitychange", function() {
+        const isTakingQuiz = document.getElementById('screen-quiz').classList.contains('active');
+        
+        if (document.hidden && isTakingQuiz && !hasSubmitted) {
+            tabSwitchCount++;
+            
+            if (tabSwitchCount === 1) {
+                pendingModalData = {
+                    icon: "⚠️", title: "TIME ANOMALY",
+                    message: "ตรวจพบการสลับหน้าจอ พับจอ หรือเปิดแอปพลิเคชันอื่นทับซ้อน<br>หากตรวจพบอีกเป็นครั้งที่ 2 ระบบจะส่งข้อสอบทันที!"
+                };
+            } 
+            else if (tabSwitchCount >= 2) {
+                const q = currentQuestions[currentIdx];
+                if (q && (q.type === "fib" || q.type === "scramble")) {
+                    userAnswers[currentIdx] = document.getElementById('fib-input').value;
+                }
+                
+                hasSubmitted = true;
+                if (typeof timerInterval !== 'undefined') clearInterval(timerInterval);
+                calculateFinalScore();
+                
+                let rawScore = scores.total;
+                finalCalculatedScore = rawScore - penaltyScore;
+                if(finalCalculatedScore < 0) finalCalculatedScore = 0;
+                
+                showScreen('screen-result');
+                const reviewBtn = document.getElementById('btn-review-answers');
+                
+                if (finalCalculatedScore >= PASS_CRITERIA) {
+                    document.getElementById('result-pass').classList.remove('hidden');
+                    document.getElementById('cert-id').innerText = document.getElementById('student-id').value;
+                    document.getElementById('cert-name').innerText = studentName;
+                    document.getElementById('final-score-pass').innerText = finalCalculatedScore;
+                } else {
+                    document.getElementById('result-fail').classList.remove('hidden');
+                    document.getElementById('final-score-fail').innerText = finalCalculatedScore;
+                }
+                
+                document.getElementById('display-raw').innerText = rawScore;
+                document.getElementById('display-penalty').innerText = `-${penaltyScore}`;
+                
+                generateReviewList(); 
+                setTimeout(() => { submitScoreToSheet(reviewBtn); }, 100);
+
+                pendingModalData = {
+                    icon: "🚨", title: "SECURITY BREACH",
+                    message: "ตรวจพบการสลับหน้าจอซ้ำซ้อนเกินกำหนด!<br>ระบบได้ทำการยึดกระดาษคำตอบและส่งผลลัพธ์โดยอัตโนมัติแล้ว"
+                };
+            }
+        } 
+        else if (!document.hidden && pendingModalData) {
+            const data = pendingModalData;
+            pendingModalData = null; 
+            setTimeout(() => { showCustomModal(data.icon, data.title, data.message); }, 300);
+        }
+    });
+
+    window.addEventListener('blur', function() {
+        const isTakingQuiz = document.getElementById('screen-quiz').classList.contains('active');
+        if (isTakingQuiz && !hasSubmitted && tabSwitchCount === 0) { console.log("Loss of focus detected."); }
+    });
+
+    function showCustomModal(icon, title, message, callback) {
+        const existing = document.getElementById('custom-modal-overlay');
+        if (existing) existing.remove();
+
+        const overlay = document.createElement('div');
+        overlay.id = 'custom-modal-overlay';
+        overlay.innerHTML = `
+            <div class="custom-modal-card">
+                <div class="custom-modal-icon">${icon}</div>
+                <div class="custom-modal-title">${title}</div>
+                <div class="custom-modal-msg">${message}</div>
+                <button class="btn-action btn-green" id="modal-ok-btn">รับทราบ (ACKNOWLEDGE) ⚡</button>
+            </div>
+        `;
+        document.body.appendChild(overlay);
+
+        document.getElementById('modal-ok-btn').onclick = function() {
+            overlay.remove();
+            if (typeof callback === 'function') callback();
+        };
+    }
+</script>
+</body>
+</html>
