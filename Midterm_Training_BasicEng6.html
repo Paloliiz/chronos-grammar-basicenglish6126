@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>CHRONOS: Midterm Training Simulator</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Kanit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<style>
+  :root{
+    --cyan:#06b6d4;
+    --cyan-soft: rgba(6,182,212,0.5);
+    --purple:#a855f7;
+    --purple-soft: rgba(168,85,247,0.5);
+    --bg:#0f172a;
+    --panel: rgba(21,32,53,0.86);
+  }
+  *{ -webkit-tap-highlight-color: transparent; }
+  html,body{
+    background:var(--bg);
+    font-family:'Poppins','Kanit',sans-serif;
+    color:#e2e8f0;
+    min-height:100vh;
+    overflow-x:hidden;
+  }
+  .font-display{ font-family:'Kanit',sans-serif; }
+  .font-mono{ font-family:'JetBrains Mono', monospace; }
+
+  #bg-grid{
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+    background-image:
+      linear-gradient(rgba(6,182,212,0.07) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(6,182,212,0.07) 1px, transparent 1px);
+    background-size: 44px 44px;
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 30%, black 40%, transparent 90%);
+    animation: gridDrift 30s linear infinite;
+  }
+  #bg-glow{
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+    background:
+      radial-gradient(circle at 15% 20%, rgba(168,85,247,0.16), transparent 45%),
+      radial-gradient(circle at 85% 80%, rgba(6,182,212,0.16), transparent 45%);
+  }
+  @keyframes gridDrift{
+    0%{ background-position: 0 0, 0 0; }
+    100%{ background-position: 44px 44px, 44px 44px; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    #bg-grid{ animation:none; }
+    *{ animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+  }
+
+  .hud-panel{
+    position:relative;
+    background: linear-gradient(155deg, rgba(30,41,59,0.92), rgba(12,19,36,0.94));
+    border:1px solid rgba(148,163,184,0.14);
+    border-radius: 1.1rem;
+    box-shadow: 0 0 60px -18px rgba(6,182,212,0.25), inset 0 1px 0 rgba(255,255,255,0.04);
+    backdrop-filter: blur(8px);
+  }
+  .hud-corner{ position:absolute; width:16px; height:16px; pointer-events:none; }
+  .hud-corner.tl{ top:-1px; left:-1px; border-top:2px solid var(--cyan); border-left:2px solid var(--cyan); border-top-left-radius:10px; }
+  .hud-corner.tr{ top:-1px; right:-1px; border-top:2px solid var(--purple); border-right:2px solid var(--purple); border-top-right-radius:10px; }
+  .hud-corner.bl{ bottom:-1px; left:-1px; border-bottom:2px solid var(--purple); border-left:2px solid var(--purple); border-bottom-left-radius:10px; }
+  .hud-corner.br{ bottom:-1px; right:-1px; border-bottom:2px solid var(--cyan); border-right:2px solid var(--cyan); border-bottom-right-radius:10px; }
+  .hud-corner.alert.tl, .hud-corner.alert.bl{ border-color:#f87171 !important; }
+  .hud-corner.alert.tr, .hud-corner.alert.br{ border-color:#fb923c !important; }
+
+  .eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    letter-spacing:0.14em;
+    font-size:0.68rem;
+    color: var(--cyan);
+    text-transform:uppercase;
+  }
+
+  .btn-primary{
+    font-family:'Kanit',sans-serif;
+    background: linear-gradient(135deg, var(--cyan), var(--purple));
+    color:#04101f;
+    font-weight:700;
+    padding: 0.85rem 1.5rem;
+    border-radius: 0.85rem;
+    box-shadow: 0 8px 24px -8px rgba(6,182,212,0.55);
+    transition: transform .15s ease, box-shadow .15s ease, opacity .15s ease;
+  }
+  .btn-primary:hover{ transform: translateY(-2px); box-shadow: 0 12px 30px -8px rgba(168,85,247,0.6); }
+  .btn-primary:active{ transform: translateY(0); }
+  .btn-primary:disabled{ opacity:0.35; cursor:not-allowed; transform:none; box-shadow:none; }
+  .btn-primary:focus-visible, .btn-choice:focus-visible, .btn-ghost:focus-visible, .block-tile:focus-visible{
+    outline: 2px solid var(--cyan); outline-offset: 2px;
+  }
+
+  .btn-ghost{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.78rem;
+    letter-spacing:0.06em;
+    color:#94a3b8;
+    padding:0.6rem 1rem;
+    border-radius:0.7rem;
+    border:1px solid rgba(148,163,184,0.25);
+    transition: all .15s ease;
+  }
+  .btn-ghost:hover:not(:disabled){ color:var(--cyan); border-color: var(--cyan-soft); }
+  .btn-ghost:disabled{ opacity:0.25; cursor:not-allowed; }
+
+  .btn-choice{
+    text-align:left; width:100%;
+    padding: 0.85rem 1.1rem;
+    border-radius: 0.85rem;
+    border: 1px solid rgba(148,163,184,0.18);
+    background: rgba(30,41,59,0.55);
+    color:#e2e8f0;
+    font-size:0.94rem;
+    transition: all .18s ease;
+  }
+  .btn-choice:hover{ border-color: var(--cyan); background: rgba(6,182,212,0.09); transform: translateX(3px); }
+
+  .block-tile{
+    width:100%; text-align:left;
+    padding: 0.75rem 1rem;
+    border-radius: 0.75rem;
+    border: 1px solid rgba(148,163,184,0.18);
+    background: rgba(30,41,59,0.55);
+    transition: all .18s ease;
+    cursor:pointer;
+  }
+  .block-tile:hover{ border-color: var(--purple-soft); }
+  .block-tile.selected{ border-color: var(--cyan); box-shadow: 0 0 0 2px var(--cyan-soft) inset; background: rgba(6,182,212,0.1); }
+
+  .tile-label{
+    font-family:'JetBrains Mono', monospace;
+    color: var(--purple);
+    font-weight:700;
+    margin-right:0.5rem;
+  }
+
+  .dot{ width:8px; height:8px; border-radius:999px; background:rgba(148,163,184,0.3); transition: all .2s ease; }
+  .dot.active{ background: var(--cyan); width:22px; border-radius:999px; }
+
+  .blank-tag{
+    display:inline-block;
+    padding: 0.05rem 0.6rem;
+    border-bottom: 2px dashed var(--cyan);
+    color: var(--cyan);
+    font-family:'JetBrains Mono', monospace;
+  }
+
+  .scramble-letters{
+    font-family:'JetBrains Mono', monospace;
+    letter-spacing: 0.35em;
+    font-size: 1.6rem;
+    font-weight:700;
+    color: transparent;
+    background: linear-gradient(90deg, var(--cyan), var(--purple));
+    -webkit-background-clip:text;
+    background-clip:text;
+  }
+
+  input.scramble-input{
+    width:100%;
+    background: rgba(15,23,42,0.7);
+    border: 1px solid rgba(148,163,184,0.3);
+    border-radius: 0.75rem;
+    padding: 0.8rem 1rem;
+    color:#e2e8f0;
+    font-family:'JetBrains Mono', monospace;
+    letter-spacing:0.05em;
+  }
+  input.scramble-input:focus{ outline:none; border-color: var(--cyan); box-shadow: 0 0 0 3px var(--cyan-soft); }
+
+  .fade-in{ animation: fadeIn .35s ease both; }
+  @keyframes fadeIn{ from{ opacity:0; transform: translateY(6px);} to{ opacity:1; transform:none; } }
+
+  .shake{ animation: shake .4s ease; }
+  @keyframes shake{
+    0%,100%{ transform: translateX(0); }
+    20%{ transform: translateX(-6px); }
+    40%{ transform: translateX(6px); }
+    60%{ transform: translateX(-4px); }
+    80%{ transform: translateX(4px); }
+  }
+
+  #feedback-overlay{ animation: fadeIn .2s ease both; }
+
+  ::-webkit-scrollbar{ width:8px; }
+  ::-webkit-scrollbar-thumb{ background: rgba(6,182,212,0.35); border-radius:999px; }
+</style>
+</head>
+<body>
+
+<div id="bg-grid"></div>
+<div id="bg-glow"></div>
+
+<div id="app" class="relative z-10 min-h-screen flex flex-col items-center justify-center p-4 py-10">
+
+  <div class="mb-6 text-center">
+    <p class="eyebrow mb-1">KHAO CHAKAN WITTHAYAKHOM SCHOOL — GRADE 12 ENGLISH</p>
+    <h1 class="font-display text-2xl md:text-3xl font-extrabold tracking-wide">
+      <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-white to-purple-300">CHRONOS</span>
+      <span class="text-slate-400 font-medium text-base md:text-lg align-middle ml-2">Midterm Training Simulator</span>
+    </h1>
+  </div>
+
+  <!-- PHASE 1: BRIEFING -->
+  <section id="phase1" class="w-full max-w-2xl">
+    <div class="hud-panel p-6 md:p-10">
+      <span class="hud-corner tl"></span><span class="hud-corner tr"></span><span class="hud-corner bl"></span><span class="hud-corner br"></span>
+
+      <div class="mb-6 flex items-center justify-between">
+        <span class="eyebrow">BRIEFING FILE <span id="slide-num">01</span>/04</span>
+        <span class="eyebrow text-purple-300">CHRONOS OS</span>
+      </div>
+
+      <div id="slide-content" class="fade-in min-h-[320px] md:min-h-[300px]"></div>
+
+      <div class="mt-8 flex items-center justify-between gap-3">
+        <button id="prevBtn" class="btn-ghost">◀ PREV</button>
+        <div id="dots" class="flex items-center gap-2"></div>
+        <button id="nextBtn" class="btn-ghost">NEXT ▶</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- PHASE 2: SIMULATION -->
+  <section id="phase2" class="hidden w-full max-w-2xl">
+    <div class="flex items-center justify-between mb-3 px-1">
+      <div class="flex items-center gap-2 font-mono text-sm text-orange-300">
+        <span>🔥</span><span>Streak: <span id="streakCount">0</span></span>
+      </div>
+      <div class="eyebrow">DATA <span id="qIndex">1</span> / <span id="qTotal">10</span></div>
+    </div>
+    <div class="w-full h-2 bg-slate-800/80 rounded-full overflow-hidden mb-5 border border-slate-700/50">
+      <div id="progressBar" class="h-full bg-gradient-to-r from-cyan-400 to-purple-500 transition-all duration-500" style="width:0%"></div>
+    </div>
+
+    <div class="hud-panel p-6 md:p-8" id="questionCard">
+      <span class="hud-corner tl"></span><span class="hud-corner tr"></span><span class="hud-corner bl"></span><span class="hud-corner br"></span>
+      <div class="eyebrow mb-4" id="mechanicLabel">PROTOCOL</div>
+      <div id="questionContent" class="fade-in"></div>
+    </div>
+  </section>
+
+  <!-- PHASE 3: MISSION COMPLETE -->
+  <section id="phase3" class="hidden w-full max-w-lg text-center">
+    <div class="hud-panel p-8 md:p-12">
+      <span class="hud-corner tl"></span><span class="hud-corner tr"></span><span class="hud-corner bl"></span><span class="hud-corner br"></span>
+      <div class="text-5xl mb-4">🌌</div>
+      <h2 class="font-display text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-purple-300 mb-2">
+        TIMELINE RESTORED!
+      </h2>
+      <p class="text-slate-400 mb-8 text-sm">Mission complete — English protocol fully synchronized</p>
+      <div class="font-display font-extrabold mb-10">
+        <span class="text-6xl text-white" id="finalScore">10</span><span class="text-2xl text-slate-500">/10</span>
+      </div>
+      <button id="rebootBtn" class="btn-primary w-full">REBOOT SYSTEM (ฝึกซ้อมอีกครั้ง) 🔄</button>
+    </div>
+  </section>
+
+</div>
+
+<!-- FEEDBACK OVERLAY -->
+<div id="feedback-overlay" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+  <div class="hud-panel max-w-md w-full p-6">
+    <span class="hud-corner alert tl"></span><span class="hud-corner alert tr"></span><span class="hud-corner alert bl"></span><span class="hud-corner alert br"></span>
+    <div class="flex items-center gap-2 mb-3 text-red-400 font-mono text-xs tracking-wider">
+      <span>⚠</span><span>SYSTEM ALERT — SEQUENCE REJECTED</span>
+    </div>
+    <p id="feedbackText" class="text-slate-200 text-sm leading-relaxed mb-6"></p>
+    <button id="feedbackRetryBtn" class="btn-primary w-full">TRY AGAIN</button>
+  </div>
+</div>
+
+<script>
+/* ============================= DATA ============================= */
+
+const SLIDES = [
+  {
+    title: "GRAMMAR ARSENAL 1: Tense Repair",
+    html: `
+      <h2 class="font-display text-xl md:text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-purple-300 mb-5">GRAMMAR ARSENAL 1: Tense Repair</h2>
+      <div class="space-y-4 text-sm md:text-base leading-relaxed">
+        <div class="bg-slate-800/50 border-l-4 border-cyan-400 rounded-r-lg p-4">
+          <p class="font-semibold text-cyan-300 mb-1">Present Perfect Simple <span class="font-mono text-xs text-slate-400">(S + have/has + V.3)</span></p>
+          <p>เน้น <b>"ผลลัพธ์"</b> หรือ <b>"จำนวนครั้ง"</b></p>
+          <p class="text-slate-400 text-xs mt-1">Keywords: already, just, yet, กริยาที่ทำเสร็จแล้ว</p>
+        </div>
+        <div class="bg-slate-800/50 border-l-4 border-purple-400 rounded-r-lg p-4">
+          <p class="font-semibold text-purple-300 mb-1">Present Perfect Continuous <span class="font-mono text-xs text-slate-400">(S + have/has + been + V.ing)</span></p>
+          <p>เน้น <b>"ความต่อเนื่อง"</b></p>
+          <p class="text-slate-400 text-xs mt-1">Keywords: for, since, all day, หรือมีร่องรอยความเหนื่อยล้าให้เห็นในปัจจุบัน</p>
+        </div>
+      </div>`
+  },
+  {
+    title: "GRAMMAR ARSENAL 2: Stative Verbs",
+    html: `
+      <h2 class="font-display text-xl md:text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-purple-300 mb-5">GRAMMAR ARSENAL 2: Stative Verbs ⚠️</h2>
+      <div class="space-y-4 text-sm md:text-base leading-relaxed">
+        <div class="bg-slate-800/50 border-l-4 border-purple-400 rounded-r-lg p-4">
+          <p>คำกริยาที่แสดง<b>ความรู้สึก ความคิด หรือการรับรู้</b> เช่น <span class="font-mono text-cyan-300">know, want, like, belong</span></p>
+        </div>
+        <div class="bg-red-500/10 border-l-4 border-red-400 rounded-r-lg p-4">
+          <p class="font-semibold text-red-300 mb-1">⚠️ ห้ามเติม -ing เด็ดขาด!</p>
+          <p class="text-slate-300">เช่น ห้ามใช้ <span class="font-mono line-through text-red-300">have been knowing</span> ต้องใช้ <span class="font-mono text-cyan-300">have known</span> เท่านั้น</p>
+        </div>
+      </div>`
+  },
+  {
+    title: "LEXICON DECRYPTION (Vocabulary)",
+    html: `
+      <h2 class="font-display text-xl md:text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-purple-300 mb-5">LEXICON DECRYPTION (Vocabulary)</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+        <div class="bg-slate-800/50 border-l-4 border-cyan-400 rounded-r-lg p-4">
+          <p class="font-semibold text-cyan-300 mb-2">Synonyms (คำเหมือน)</p>
+          <ul class="space-y-1 text-slate-300">
+            <li>Excellent = Outstanding</li>
+            <li>Happen = Occur</li>
+            <li>Enough = Sufficient</li>
+            <li>Intentional = Deliberate</li>
+            <li>Leave = Abandon</li>
+          </ul>
+        </div>
+        <div class="bg-slate-800/50 border-l-4 border-purple-400 rounded-r-lg p-4">
+          <p class="font-semibold text-purple-300 mb-2">Antonyms (คำตรงข้าม)</p>
+          <ul class="space-y-1 text-slate-300">
+            <li>Tension (ความเครียด) ⇄ Relief (ความโล่งใจ)</li>
+            <li>Downside (ข้อเสีย) ⇄ Strength (จุดแข็ง)</li>
+            <li>Certain (แน่ใจ) ⇄ Suspicious (น่าสงสัย)</li>
+          </ul>
+        </div>
+      </div>`
+  },
+  {
+    title: "SITUATIONAL SURVIVAL",
+    html: `
+      <h2 class="font-display text-xl md:text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-purple-300 mb-5">SITUATIONAL SURVIVAL</h2>
+      <div class="space-y-3 text-sm md:text-base leading-relaxed mb-6">
+        <div class="bg-slate-800/50 border-l-4 border-cyan-400 rounded-r-lg p-4">
+          <p class="font-semibold text-cyan-300">College Interview (การสอบสัมภาษณ์เข้ามหาวิทยาลัย)</p>
+        </div>
+        <div class="bg-slate-800/50 rounded-lg p-4 space-y-2 text-slate-300">
+          <p>✦ มารยาทสำคัญ: หากถูกถามจุดแข็ง/จุดอ่อน ให้ตอบอย่างมั่นใจแต่ถ่อมตน (put ego aside)</p>
+          <p>✦ หากถูกถามถึงเป้าหมาย <i>(Where do you see yourself in 10 years?)</i> ให้ตอบเป็นแผนการเชิงบวก เช่น <span class="text-cyan-300 font-mono text-xs">"I plan to work for a top institution."</span></p>
+        </div>
+      </div>
+      <button id="startSimBtn" class="btn-primary w-full animate-pulse">START SIMULATION 🚀</button>`
+  }
+];
+
+const QUESTION_BANK = [
+  { id:1, type:'fill',
+    sentence:"I _______ Mark since we were in primary school. He is my best friend.",
+    choices:["am knowing","have known","have been knowing"],
+    correct:"have known",
+    feedback:"⚠️ ระวัง! 'know' เป็น Stative Verb (กริยาบอกการรับรู้) ห้ามเติม -ing เด็ดขาด! ต้องใช้ have known ครับ" },
+  { id:2, type:'fill',
+    sentence:"You look absolutely exhausted! What _______ all morning?",
+    choices:["have you done","have you been doing","do you do"],
+    correct:"have you been doing",
+    feedback:"⚠️ มีคำว่า 'all morning' และร่องรอยความเหนื่อยล้า (exhausted) เน้นความต่อเนื่อง ต้องใช้ Present Perfect Continuous (have been doing) ครับ" },
+  { id:3, type:'match',
+    word1:"EXCELLENT", word2:"OUTSTANDING", correct:"MATCH",
+    feedback:"⚠️ ผิดครับ! Excellent (ยอดเยี่ยม) มีความหมายเหมือนกับ Outstanding (โดดเด่น/ยอดเยี่ยม) ดังนั้นเป็น Synonym กันครับ" },
+  { id:4, type:'match',
+    word1:"TENSION", word2:"RELIEF", correct:"UNMATCH",
+    feedback:"⚠️ ผิดครับ! Tension คือความตึงเครียด ส่วน Relief คือความโล่งใจ ดังนั้นเป็น Antonym (คำตรงข้าม) กันครับ" },
+  { id:5, type:'scramble',
+    scrambled:"C O U R C", hint:"Synonym of happen (เกิดขึ้น)", correct:"occur",
+    feedback:"⚠️ ยังไม่ถูกต้อง! คำนี้แปลว่าเกิดขึ้น ขึ้นต้นด้วย o และ c สองตัวครับ ลองใหม่นะ" },
+  { id:6, type:'scramble',
+    scrambled:"N O D A B A N", hint:"Synonym of leave (ละทิ้ง/ทอดทิ้ง)", correct:"abandon",
+    feedback:"⚠️ ยังไม่ถูกต้อง! คำนี้แปลว่าละทิ้ง มี 3 พยางค์ ขึ้นต้นด้วย a-ban-... ครับ ลองใหม่นะ" },
+  { id:7, type:'fill', dialogue:true,
+    sentence:"Interviewer: Where do you see yourself in 10 years?\nYou: ________________________",
+    choices:["I encounter you today to say thank you.","I plan to work for a top technology institution.","I have no intention of working."],
+    correct:"I plan to work for a top technology institution.",
+    feedback:"⚠️ การสอบสัมภาษณ์ควรตอบถึงเป้าหมายและแผนการทำงานในอนาคต (I plan to work for...) ครับ" },
+  { id:8, type:'match',
+    word1:"SUFFICIENT", word2:"ENOUGH", correct:"MATCH",
+    feedback:"⚠️ ผิดครับ! Sufficient และ Enough แปลว่า 'เพียงพอ' ทั้งคู่ ดังนั้นเป็น Synonym กันครับ" },
+  { id:9, type:'order',
+    blocks:[
+      {label:"A", text:"Finally, practice answering common questions with a friend."},
+      {label:"B", text:"Preparing for a college interview requires time and effort."},
+      {label:"C", text:"Second, you should prepare a list of your strengths and weaknesses."},
+      {label:"D", text:"First, you should research the institution thoroughly."}
+    ],
+    correctOrder:["B","D","C","A"],
+    feedback:"⚠️ ลองสังเกตคำเชื่อม (Transition words) นะครับ! เริ่มจาก Topic Sentence (ภาพรวม) -> First -> Second -> Finally" },
+  { id:10, type:'order',
+    blocks:[
+      {label:"A", text:"Unfortunately, he got extremely nervous and his mind went blank."},
+      {label:"B", text:"Last week, my friend Jason had his first college interview."},
+      {label:"C", text:"Because of this, he couldn't even remember his own strengths."},
+      {label:"D", text:"He had practiced for days and felt very confident."}
+    ],
+    correctOrder:["B","D","A","C"],
+    feedback:"⚠️ เรียงตามเหตุการณ์ครับ: เล่าเรื่อง Jason (B) -> ซ้อมมาดี (D) -> แต่ตื่นเต้น (A) -> ส่งผลให้ลืม (C)" },
+  { id:11, type:'fill',
+    sentence:"I _______ three practice tests already today, and my brain is completely fried.",
+    choices:["have finished","have been finishing","finish"],
+    correct:"have finished",
+    feedback:"⚠️ มีคำว่า 'already' และบอกจำนวนชัดเจน (three practice tests) เน้นผลลัพธ์ที่เสร็จสมบูรณ์ ต้องใช้ Present Perfect Simple (have/has + V.3) ครับ" },
+  { id:12, type:'fill',
+    sentence:"My parents _______ me to become a doctor since I was a kid.",
+    choices:["have been wanting","have wanted","want"],
+    correct:"have wanted",
+    feedback:"⚠️ ระวัง! 'want' เป็น Stative Verb (กริยาบอกความรู้สึก/ความต้องการ) ห้ามเติม -ing เด็ดขาด! ต้องใช้ have wanted ครับ" },
+  { id:13, type:'match',
+    word1:"INTENTIONAL", word2:"DELIBERATE", correct:"MATCH",
+    feedback:"⚠️ ผิดครับ! Intentional และ Deliberate แปลว่า 'ตั้งใจหรือจงใจ' ทั้งคู่ ดังนั้นเป็น Synonym กันครับ" },
+  { id:14, type:'match',
+    word1:"DOWNSIDE", word2:"STRENGTH", correct:"UNMATCH",
+    feedback:"⚠️ ผิดครับ! Downside คือข้อเสีย/จุดด้อย ส่วน Strength คือจุดแข็ง ดังนั้นเป็น Antonym กันครับ" },
+  { id:15, type:'scramble',
+    scrambled:"P U R E T A O I N T", hint:"Synonym of fame/character (ชื่อเสียง)", correct:"reputation",
+    feedback:"⚠️ ยังไม่ถูกต้อง! คำนี้แปลว่าชื่อเสียง ขึ้นต้นด้วย r และลงท้ายด้วย -tion ครับ ลองใหม่นะ" },
+  { id:16, type:'scramble',
+    scrambled:"M O P C E T I E V I T", hint:"Involving competition (มีการแข่งขันสูง)", correct:"competitive",
+    feedback:"⚠️ ยังไม่ถูกต้อง! คำนี้หมายถึงมีการแข่งขันสูง ลงท้ายด้วย -tive ครับ ลองใหม่นะ" },
+  { id:17, type:'fill', dialogue:true,
+    sentence:"Interviewer: What do you consider your biggest weakness?\nYou: ________________________",
+    choices:["I have no weaknesses at all.","I can be too determined, but I try to listen to others.","My weakness is that I hate working with people."],
+    correct:"I can be too determined, but I try to listen to others.",
+    feedback:"⚠️ การตอบเรื่องจุดอ่อน ควรตอบอย่างถ่อมตนและบอกวิธีแก้ไข/รับมือ (เช่น I try to listen to others) ครับ" },
+  { id:18, type:'fill',
+    sentence:"They _______ football all afternoon. They need a rest.",
+    choices:["have played","have been playing","play"],
+    correct:"have been playing",
+    feedback:"⚠️ มีคำระบุช่วงเวลา 'all afternoon' แสดงความต่อเนื่องของกิจกรรมที่ทำมาอย่างยาวนาน ต้องใช้ Present Perfect Continuous ครับ" },
+  { id:19, type:'fill', dialogue:true,
+    sentence:"You want to thank the interviewer for their time. What should you say?",
+    choices:["On behalf of myself, thank you for your time.","I assume you won't accept me anyway.","I am sufficient with your help."],
+    correct:"On behalf of myself, thank you for your time.",
+    feedback:"⚠️ สำนวน 'On behalf of...' (ในนามของ...) ใช้ในการกล่าวอย่างเป็นทางการได้เหมาะสมที่สุดครับ" },
+  { id:20, type:'order',
+    blocks:[
+      {label:"A", text:"First, I encountered a massive traffic jam."},
+      {label:"B", text:"My college interview was a complete disaster."},
+      {label:"C", text:"When I finally walked into the room, I was sweating and breathing heavily."},
+      {label:"D", text:"The interviewers looked at me with suspicious expressions."}
+    ],
+    correctOrder:["B","A","C","D"],
+    feedback:"⚠️ เรียงตามเหตุการณ์ครับ: เกริ่นเรื่องหายนะ (B) -> เจอรถติด (A) -> วิ่งเข้าห้องจนหอบ (C) -> กรรมการมองแบบสงสัย (D)" }
+];
+
+const TYPE_LABEL = {
+  fill: "SENTENCE RECONSTRUCTION PROTOCOL",
+  match: "LEXICON ANALYSIS PROTOCOL",
+  scramble: "CIPHER DECRYPTION PROTOCOL",
+  order: "SEQUENCE REALIGNMENT PROTOCOL"
+};
+
+/* ============================= STATE ============================= */
+
+let slideIdx = 0;
+let sessionQuestions = [];
+let qPos = 0;
+let streak = 0;
+let feedbackCloseCallback = null;
+let orderState = null; // { blocks: [...], selected: idx|null } for current order question
+
+/* ============================= HELPERS ============================= */
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+
+function $(id){ return document.getElementById(id); }
+
+/* ============================= PHASE 1: SLIDES ============================= */
+
+function renderSlide(){
+  const s = SLIDES[slideIdx];
+  const content = $('slide-content');
+  content.classList.remove('fade-in'); void content.offsetWidth; content.classList.add('fade-in');
+  content.innerHTML = s.html;
+  $('slide-num').textContent = String(slideIdx+1).padStart(2,'0');
+
+  $('prevBtn').disabled = slideIdx === 0;
+  $('nextBtn').style.visibility = slideIdx === SLIDES.length-1 ? 'hidden' : 'visible';
+
+  const dots = $('dots');
+  dots.innerHTML = '';
+  SLIDES.forEach((_,i)=>{
+    const d = document.createElement('button');
+    d.className = 'dot' + (i===slideIdx ? ' active' : '');
+    d.setAttribute('aria-label', 'Go to slide '+(i+1));
+    d.addEventListener('click', ()=>{ slideIdx = i; renderSlide(); });
+    dots.appendChild(d);
+  });
+
+  const startBtn = $('startSimBtn');
+  if(startBtn){ startBtn.addEventListener('click', startSimulation); }
+}
+
+$('prevBtn').addEventListener('click', ()=>{ if(slideIdx>0){ slideIdx--; renderSlide(); } });
+$('nextBtn').addEventListener('click', ()=>{ if(slideIdx<SLIDES.length-1){ slideIdx++; renderSlide(); } });
+
+/* ============================= PHASE 2: SIMULATION ============================= */
+
+function startSimulation(){
+  $('phase1').classList.add('hidden');
+  $('phase3').classList.add('hidden');
+  $('phase2').classList.remove('hidden');
+  sessionQuestions = shuffle(QUESTION_BANK).slice(0,10);
+  qPos = 0;
+  streak = 0;
+  updateHUD();
+  renderQuestion();
+}
+
+function updateHUD(){
+  $('streakCount').textContent = streak;
+  $('qIndex').textContent = Math.min(qPos+1, sessionQuestions.length);
+  $('qTotal').textContent = sessionQuestions.length;
+  const pct = (qPos/sessionQuestions.length)*100;
+  $('progressBar').style.width = pct + '%';
+}
+
+function renderQuestion(){
+  const q = sessionQuestions[qPos];
+  $('mechanicLabel').textContent = TYPE_LABEL[q.type] + ' — #' + String(qPos+1).padStart(2,'0');
+  const box = $('questionContent');
+  box.classList.remove('fade-in'); void box.offsetWidth; box.classList.add('fade-in');
+
+  if(q.type === 'fill') renderFill(q, box);
+  else if(q.type === 'match') renderMatch(q, box);
+  else if(q.type === 'scramble') renderScramble(q, box);
+  else if(q.type === 'order') renderOrder(q, box);
+}
+
+function renderFill(q, box){
+  const lines = q.sentence.split('\n');
+  const sentenceHtml = lines.map(line =>
+    line.replace('_______', '<span class="blank-tag">_______</span>')
+  ).join('<br>');
+
+  const choices = shuffle(q.choices);
+  box.innerHTML = `
+    <p class="text-base md:text-lg leading-relaxed mb-6 text-slate-100">${sentenceHtml}</p>
+    <div class="space-y-3" id="fillChoices"></div>
+  `;
+  const wrap = $('fillChoices');
+  choices.forEach(choice=>{
+    const btn = document.createElement('button');
+    btn.className = 'btn-choice';
+    btn.textContent = choice;
+    btn.addEventListener('click', ()=> handleAnswer(choice === q.correct, q));
+    wrap.appendChild(btn);
+  });
+}
+
+function renderMatch(q, box){
+  box.innerHTML = `
+    <div class="flex flex-col items-center gap-3 mb-8 text-center">
+      <div class="hud-panel px-6 py-4 w-full max-w-xs">
+        <p class="font-display text-xl md:text-2xl font-bold text-cyan-300 tracking-wide">${q.word1}</p>
+      </div>
+      <div class="text-purple-400 text-2xl">⇅</div>
+      <div class="hud-panel px-6 py-4 w-full max-w-xs">
+        <p class="font-display text-xl md:text-2xl font-bold text-purple-300 tracking-wide">${q.word2}</p>
+      </div>
+    </div>
+    <div class="grid grid-cols-2 gap-3">
+      <button id="matchBtn" class="btn-choice text-center font-semibold">MATCH<br><span class="text-xs text-slate-400 font-normal">(Synonym)</span></button>
+      <button id="unmatchBtn" class="btn-choice text-center font-semibold">UNMATCH<br><span class="text-xs text-slate-400 font-normal">(Antonym)</span></button>
+    </div>
+  `;
+  $('matchBtn').addEventListener('click', ()=> handleAnswer('MATCH' === q.correct, q));
+  $('unmatchBtn').addEventListener('click', ()=> handleAnswer('UNMATCH' === q.correct, q));
+}
+
+function renderScramble(q, box){
+  box.innerHTML = `
+    <div class="text-center mb-6">
+      <p class="scramble-letters mb-3">${q.scrambled}</p>
+      <p class="text-sm text-slate-400">Hint: ${q.hint}</p>
+    </div>
+    <div class="flex flex-col gap-3">
+      <input type="text" id="scrambleInput" class="scramble-input" placeholder="พิมพ์คำตอบที่นี่..." autocomplete="off" autocapitalize="off" spellcheck="false">
+      <button id="scrambleSubmit" class="btn-primary">DECRYPT ➜</button>
+    </div>
+  `;
+  const input = $('scrambleInput');
+  const submit = ()=>{
+    const val = input.value.trim().toLowerCase();
+    handleAnswer(val === q.correct.toLowerCase(), q, ()=>{ input.value=''; input.focus(); });
+  };
+  $('scrambleSubmit').addEventListener('click', submit);
+  input.addEventListener('keydown', e=>{ if(e.key === 'Enter') submit(); });
+}
+
+function renderOrder(q, box){
+  orderState = { blocks: q.blocks.map(b=>({...b})), selected: null };
+  drawOrderTiles(box, q);
+}
+
+function drawOrderTiles(box, q){
+  box.innerHTML = `
+    <p class="text-sm text-slate-400 mb-4">แตะบล็อกหนึ่งเพื่อเลือก แล้วแตะอีกบล็อกเพื่อสลับตำแหน่ง จากนั้นกด Submit Order</p>
+    <div class="space-y-2 mb-5" id="orderTiles"></div>
+    <button id="submitOrderBtn" class="btn-primary w-full">SUBMIT ORDER ➜</button>
+  `;
+  const wrap = $('orderTiles');
+  orderState.blocks.forEach((b, idx)=>{
+    const tile = document.createElement('button');
+    tile.className = 'block-tile' + (orderState.selected === idx ? ' selected' : '');
+    tile.innerHTML = `<span class="tile-label">[${b.label}]</span><span class="text-sm md:text-base">${b.text}</span>`;
+    tile.addEventListener('click', ()=>{
+      if(orderState.selected === null){
+        orderState.selected = idx;
+      } else if(orderState.selected === idx){
+        orderState.selected = null;
+      } else {
+        const tmp = orderState.blocks[orderState.selected];
+        orderState.blocks[orderState.selected] = orderState.blocks[idx];
+        orderState.blocks[idx] = tmp;
+        orderState.selected = null;
+      }
+      drawOrderTiles(box, q);
+    });
+    wrap.appendChild(tile);
+  });
+  $('submitOrderBtn').addEventListener('click', ()=>{
+    const userOrder = orderState.blocks.map(b=>b.label).join('');
+    const correct = q.correctOrder.join('');
+    handleAnswer(userOrder === correct, q, ()=>{ orderState.selected = null; });
+  });
+}
+
+function handleAnswer(isCorrect, q, onRetryCleanup){
+  if(isCorrect){
+    streak++;
+    qPos++;
+    updateHUD();
+    if(qPos >= sessionQuestions.length){
+      finishSimulation();
+    } else {
+      renderQuestion();
+    }
+  } else {
+    streak = 0;
+    updateHUD();
+    $('questionCard').classList.add('shake');
+    setTimeout(()=> $('questionCard').classList.remove('shake'), 400);
+    openFeedback(q.feedback, onRetryCleanup);
+  }
+}
+
+function openFeedback(text, onRetryCleanup){
+  $('feedbackText').textContent = text;
+  $('feedback-overlay').classList.remove('hidden');
+  feedbackCloseCallback = onRetryCleanup || null;
+}
+
+$('feedbackRetryBtn').addEventListener('click', ()=>{
+  $('feedback-overlay').classList.add('hidden');
+  if(feedbackCloseCallback){ feedbackCloseCallback(); feedbackCloseCallback = null; }
+  if(orderState){
+    const box = $('questionContent');
+    const q = sessionQuestions[qPos];
+    if(q && q.type === 'order') drawOrderTiles(box, q);
+  }
+});
+
+/* ============================= PHASE 3: COMPLETE ============================= */
+
+function finishSimulation(){
+  $('phase2').classList.add('hidden');
+  $('phase3').classList.remove('hidden');
+  $('finalScore').textContent = sessionQuestions.length;
+  fireConfetti();
+}
+
+function fireConfetti(){
+  const colors = ['#06b6d4', '#a855f7', '#ffffff'];
+  confetti({ particleCount: 120, spread: 75, origin: { y: 0.6 }, colors });
+  setTimeout(()=> confetti({ particleCount: 80, angle: 60, spread: 60, origin: { x: 0 }, colors }), 200);
+  setTimeout(()=> confetti({ particleCount: 80, angle: 120, spread: 60, origin: { x: 1 }, colors }), 350);
+}
+
+$('rebootBtn').addEventListener('click', startSimulation);
+
+/* ============================= INIT ============================= */
+
+renderSlide();
+</script>
+</body>
+</html>
