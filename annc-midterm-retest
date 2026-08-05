@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>CHRONOS: Timeline Recovery</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --void:#0f172a; --void-deep:#080e1c; --panel:#111d35; --panel-edge:#1c2f52;
+    --cyan:#06b6d4; --cyan-soft:#22d3ee; --cyan-dim:#0e7490;
+    --red:#ef4444; --amber:#f59e0b; --green:#22c55e; --text-dim:#7d90b3;
+  }
+  *{ -webkit-tap-highlight-color: transparent; }
+  html,body{ background:var(--void); color:#e2e8f0; font-family:'Poppins',sans-serif; min-height:100vh; overscroll-behavior:none; }
+  body{ user-select:none; }
+  input, textarea { user-select:text; }
+  h1,h2,h3,.display,.font-kanit{ font-family:'Kanit',sans-serif; }
+  .font-serif{ font-family:'Playfair Display', serif; }
+
+  .scanlines{ background-image: repeating-linear-gradient(0deg, rgba(6,182,212,0.035) 0px, rgba(6,182,212,0.035) 1px, transparent 1px, transparent 3px); pointer-events:none; }
+  .starfield{ position:fixed; inset:0; z-index:0; overflow:hidden; background: radial-gradient(circle at 15% 20%, rgba(6,182,212,0.10), transparent 40%), radial-gradient(circle at 85% 75%, rgba(6,182,212,0.08), transparent 45%), radial-gradient(ellipse at 50% 0%, #10213f 0%, var(--void-deep) 70%); }
+  .grid-floor{ position:absolute; inset:0; background-image: linear-gradient(rgba(6,182,212,0.09) 1px, transparent 1px), linear-gradient(90deg, rgba(6,182,212,0.09) 1px, transparent 1px); background-size: 42px 42px; -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 30%, transparent 75%); mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 30%, transparent 75%); }
+
+  .panel{ background: linear-gradient(180deg, rgba(17,29,53,0.92), rgba(10,17,32,0.92)); border: 1px solid var(--panel-edge); position:relative; box-shadow: 0 0 0 1px rgba(6,182,212,0.05), 0 20px 60px -20px rgba(0,0,0,0.7); }
+  .corner{ position:absolute; width:14px; height:14px; border-color:var(--cyan); opacity:0.8; }
+  .corner.tl{ top:-1px;left:-1px; border-top:2px solid; border-left:2px solid; }
+  .corner.tr{ top:-1px;right:-1px; border-top:2px solid; border-right:2px solid; }
+  .corner.bl{ bottom:-1px;left:-1px; border-bottom:2px solid; border-left:2px solid; }
+  .corner.br{ bottom:-1px;right:-1px; border-bottom:2px solid; border-right:2px solid; }
+
+  .btn-agent{ font-family:'Kanit',sans-serif; letter-spacing:0.05em; background: linear-gradient(180deg, #0e7490, #0b5b71); border: 1px solid var(--cyan-soft); color:#ecfeff; box-shadow: 0 0 18px -4px rgba(6,182,212,0.7), inset 0 1px 0 rgba(255,255,255,0.15); transition: all .15s ease; }
+  .btn-agent:hover:not(:disabled){ filter:brightness(1.15); box-shadow:0 0 28px -2px rgba(6,182,212,0.9); transform:translateY(-1px); }
+  .btn-agent:active:not(:disabled){ transform:translateY(0px) scale(0.98); }
+  .btn-agent:disabled{ opacity:0.35; filter:grayscale(0.6); cursor:not-allowed; box-shadow:none; }
+
+  .btn-danger{ font-family:'Kanit',sans-serif; background: linear-gradient(180deg, #b91c1c, #7f1d1d); border:1px solid #f87171; color:#fef2f2; box-shadow: 0 0 18px -4px rgba(239,68,68,0.6); }
+  .btn-gold{ font-family:'Kanit',sans-serif; background: linear-gradient(180deg, #d97706, #b45309); border:1px solid #fcd34d; color:#fffbeb; box-shadow: 0 0 18px -4px rgba(217,119,6,0.6); transition: all .15s ease; }
+  .btn-gold:hover{ filter:brightness(1.15); box-shadow:0 0 28px -2px rgba(217,119,6,0.9); transform:translateY(-1px); }
+  
+  .btn-ghost{ font-family:'Kanit',sans-serif; background: rgba(6,182,212,0.06); border:1px solid var(--panel-edge); color:#a5f3fc; }
+  .btn-ghost:hover{ background: rgba(6,182,212,0.14); border-color:var(--cyan-dim); }
+
+  .input-terminal{ background: rgba(2,8,20,0.8); border:1px solid var(--panel-edge); color:#67e8f9; font-family:'Kanit',sans-serif; letter-spacing:0.08em; }
+  .input-terminal:focus{ outline:none; border-color:var(--cyan); box-shadow:0 0 0 3px rgba(6,182,212,0.15); }
+
+  .core{ width:16px;height:16px;border-radius:2px; background: var(--cyan); box-shadow: 0 0 8px 2px rgba(6,182,212,0.8), inset 0 0 4px rgba(255,255,255,0.4); transform: rotate(45deg); animation: pulse-core 2.4s ease-in-out infinite; }
+  .core.dead{ background: #1e293b; box-shadow:none; animation:none; opacity:0.4; }
+  @keyframes pulse-core{ 0%,100%{ box-shadow: 0 0 8px 2px rgba(6,182,212,0.8), inset 0 0 4px rgba(255,255,255,0.4); } 50%{ box-shadow: 0 0 16px 5px rgba(6,182,212,1), inset 0 0 6px rgba(255,255,255,0.6); } }
+
+  .glow-text{ text-shadow: 0 0 12px rgba(6,182,212,0.6); }
+  .glitch-title{ text-shadow: 0 0 20px rgba(6,182,212,0.55), 0 0 46px rgba(6,182,212,0.25); }
+
+  .progress-track{ background: rgba(6,182,212,0.08); border:1px solid var(--panel-edge); }
+  .progress-fill{ background: linear-gradient(90deg, var(--cyan-dim), var(--cyan-soft)); box-shadow:0 0 10px rgba(6,182,212,0.7); transition: width .3s ease; }
+
+  .choice-btn{ background: rgba(6,182,212,0.03); border:1px solid var(--panel-edge); transition: all .15s ease; text-align:left; }
+  .choice-btn:hover{ border-color:var(--cyan-dim); background:rgba(6,182,212,0.08); }
+  .choice-btn.selected{ border-color:var(--cyan); background: rgba(6,182,212,0.16); box-shadow: 0 0 14px -2px rgba(6,182,212,0.5); }
+  .choice-letter{ font-family:'Kanit',sans-serif; background: rgba(6,182,212,0.1); border:1px solid var(--panel-edge); }
+  .choice-btn.selected .choice-letter{ background:var(--cyan); color:#04141c; border-color:var(--cyan); }
+
+  .modal-backdrop{ background: rgba(3,7,18,0.82); backdrop-filter: blur(3px); }
+  .fade-in{ animation: fadeIn .25s ease both; }
+  @keyframes fadeIn{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+  .pop-in{ animation: popIn .28s cubic-bezier(.2,1.4,.4,1) both; }
+  @keyframes popIn{ from{opacity:0; transform:scale(.92);} to{opacity:1; transform:scale(1);} }
+
+  .timer-critical{ color:var(--red) !important; animation: blinkRed 1s step-start infinite; }
+  @keyframes blinkRed{ 50%{ opacity:0.35; } }
+
+  ::-webkit-scrollbar{ width:8px; height:8px; }
+  ::-webkit-scrollbar-track{ background:var(--void-deep); }
+  ::-webkit-scrollbar-thumb{ background:var(--cyan-dim); border-radius:4px; }
+
+  .log-row-correct{ border-left:3px solid var(--green); }
+  .log-row-wrong{ border-left:3px solid var(--red); }
+  .badge-dot{ width:6px;height:6px;border-radius:50%; background:var(--cyan); box-shadow:0 0 6px var(--cyan); }
+
+  /* CERTIFICATE PRINT STYLES */
+  @media print {
+    body * { visibility: hidden; }
+    #certOverlay, #certOverlay * { visibility: visible; }
+    #certOverlay { position: absolute; left: 0; top: 0; width: 100%; height: 100%; background: white !important; display: flex; align-items: center; justify-content: center; padding: 0; }
+    .no-print { display: none !important; }
+    #certificateNode { box-shadow: none !important; border: 10px solid #b45309 !important; transform: scale(1) !important; width: 100% !important; height: auto !important; max-width: none !important; }
+  }
+</style>
+</head>
+<body class="min-h-screen relative" oncontextmenu="return false;" oncopy="return false;" oncut="return false;" onpaste="return false;">
+
+<div class="starfield"><div class="grid-floor"></div></div>
+<div class="fixed inset-0 scanlines z-0"></div>
+
+<div id="app" class="relative z-10 min-h-screen flex flex-col items-center justify-start px-4 py-6 md:py-10"></div>
+
+<!-- MODAL ROOT -->
+<div id="modalRoot"></div>
+
+<!-- CERTIFICATE OVERLAY -->
+<div id="certOverlay" class="fixed inset-0 z-[200] hidden items-center justify-center bg-black/90 p-4 backdrop-blur-md fade-in">
+  <div id="certificateNode" class="bg-[#fdfbf7] text-slate-900 w-full max-w-4xl aspect-[1.414/1] relative p-10 md:p-16 border-[12px] border-double border-amber-700 flex flex-col items-center justify-center text-center shadow-2xl bg-[url('https://www.transparenttextures.com/patterns/cream-paper.png')]">
+    <div class="absolute inset-2 border border-amber-900/20"></div>
+    <div class="text-amber-700 mb-2 font-serif italic text-lg md:text-xl">Khao Chakan Witthayakom School</div>
+    <h1 class="font-serif text-3xl md:text-5xl font-bold text-slate-800 mb-6 tracking-wide uppercase">Certificate of Achievement</h1>
+    <p class="text-slate-600 font-kanit text-sm md:text-base mb-4">This proudly certifies that</p>
+    <div id="certStudentName" class="font-serif text-4xl md:text-5xl text-amber-800 border-b-2 border-amber-700/50 pb-2 px-10 mb-6 font-bold italic">STUDENT NAME</div>
+    <p class="text-slate-600 font-kanit text-sm md:text-base mb-2">has successfully completed and passed the</p>
+    <div id="certExamType" class="font-serif text-xl md:text-2xl text-slate-800 font-bold uppercase tracking-widest mb-1">MIDTERM EXAMINATION</div>
+    <div id="certRank" class="mb-8 font-kanit"></div>
+    <p class="text-slate-600 font-kanit text-xs md:text-sm mb-12">Subject: Basic English 6 (อ 33101) &nbsp;|&nbsp; Grade: Matthayom 6</p>
+    <div class="w-full flex justify-between px-10 md:px-20 mt-auto">
+      <div class="flex flex-col items-center">
+        <div class="border-b border-slate-400 w-40 h-8 mb-2 flex items-end justify-center"><span class="font-serif italic text-amber-800/80 text-xl">S. Jantaket</span></div>
+        <p class="text-xs text-slate-500 font-kanit">Teacher Saruta Jantaket<br>Course Instructor</p>
+      </div>
+      <div class="flex flex-col items-center">
+        <div class="border-b border-slate-400 w-40 h-8 mb-2 flex items-end justify-center"><span id="certDate" class="font-serif italic text-slate-700 text-lg"></span></div>
+        <p class="text-xs text-slate-500 font-kanit">Date of Achievement</p>
+      </div>
+    </div>
+  </div>
+  <div class="absolute bottom-6 flex gap-4 no-print">
+    <button onclick="window.print()" class="btn-gold px-6 py-3 rounded-sm text-sm tracking-widest font-semibold flex items-center gap-2">🖨️ PRINT / PDF</button>
+    <button onclick="closeCert()" class="btn-ghost px-6 py-3 rounded-sm text-sm tracking-widest bg-black/50">✖ CLOSE</button>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   CHRONOS: TIMELINE RECOVERY
+   Makeup Exam / Retest System + Certificate Generator
+   ========================================================= */
+
+// ---------- CONFIG ----------
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzTCFKC-hDbn71rMrh7RxCno3O4VyjvajRun-GTYw5ipMt8i543y5TLaVIdRtAIHe3W/exec'; 
+const EXAM_TIME_LIMIT_SEC = 40 * 60;      // 40:00
+const COOLDOWN_SEC = 15 * 60;             // 15:00
+const PASS_RAW_SCORE = 28;                // 28/40 = 70%
+const TOTAL_QUESTIONS = 40;
+const MAX_LIVES = 3;
+const CAPPED_PASS_SCORE = "10 / 20";
+const ADMIN_ID = "7238";
+const ADMIN_FIRSTNAME = "พะโล้";
+
+// ---------- STUDENT DATABASE ----------
+const studentDB = {
+  "11702": { name: "นาย นที ภัสสรรัชนีกร", score: 18, passedMidterm: true },
+  "11703": { name: "นาย เบญจมิณทร์ เชิดฉิน", score: 9, passedMidterm: false },
+  "11710": { name: "นาย ศักดิธัช ทิพย์โอสถ", score: 9, passedMidterm: false },
+  "11736": { name: "นาย พงศกร อานุการ", score: 8, passedMidterm: false },
+  "11763": { name: "นาย ทวีรัตน์ สิงห์โต", score: 13, passedMidterm: true },
+  "11796": { name: "นาย ภูมิพัฒน์ คณาญาติ", score: 11, passedMidterm: true },
+  "11824": { name: "นาย จีรวัตร คีรีวงษ์", score: 5, passedMidterm: false },
+  "11958": { name: "นาย พชรพล หนสมสุข", score: 13, passedMidterm: true },
+  "12733": { name: "นาย ภัทรชนน นาทีชัยชนะ", score: 6, passedMidterm: false },
+  "11713": { name: "นางสาว กนกพร อินอุ่นโชติ", score: 5, passedMidterm: false },
+  "11714": { name: "นางสาว กัญญารัตน์ จึงตระกูล", score: 9, passedMidterm: false },
+  "11715": { name: "นางสาว กัลยารัตน์ ไชยจำ", score: 7, passedMidterm: false },
+  "11717": { name: "นางสาว ญารินดา เลื่อนลอย", score: 17, passedMidterm: true },
+  "11719": { name: "นางสาว นทีกานต์ สอาดศรี", score: 15, passedMidterm: true },
+  "11723": { name: "นางสาว วารี มานะประสพสุข", score: 11, passedMidterm: true },
+  "11726": { name: "นางสาว อุรชา อสิพงษ์", score: 7, passedMidterm: false },
+  "11740": { name: "นางสาว กนกวรรณ สืบสุนทร", score: 10, passedMidterm: true },
+  "11743": { name: "นางสาว ฐิตินันท์ เชียงไข่แก้ว", score: 7, passedMidterm: false },
+  "11748": { name: "นางสาว พรนภัส พลเสนา", score: 12, passedMidterm: true },
+  "11750": { name: "นางสาว มุจิรานันท์ ปักกาเวสูง", score: 12, passedMidterm: true },
+  "11758": { name: "นางสาว ไอริณ ศรีชุมพล", score: 9, passedMidterm: false },
+  "11773": { name: "นางสาว กวินธิดา นวลตา", score: 16, passedMidterm: true },
+  "11775": { name: "นางสาว ฐิติมา คณาญาติ", score: 8, passedMidterm: false },
+  "11784": { name: "นางสาว ศวิตรี แก้วกลม", score: 8, passedMidterm: false },
+  "11785": { name: "นางสาว ศุภิสรา หลักทรัพย์", score: 10, passedMidterm: true },
+  "11788": { name: "นางสาว อัจฉรียา ดอกพิกุล", score: 13, passedMidterm: true },
+  "11802": { name: "นางสาว กนกวรรณ เกื้อกูล", score: 8, passedMidterm: false },
+  "11812": { name: "นางสาว ปิยะธิดา บุญชาเรียง", score: 10, passedMidterm: true },
+  "11816": { name: "นางสาว วิชยาพร โพธิ์นิมิตร", score: 8, passedMidterm: false },
+  "11818": { name: "นางสาว ศิรภัสทรา ไชยชาติ", score: 11, passedMidterm: true },
+  "11847": { name: "นางสาว พิชญ์สินี สุภโส", score: 8, passedMidterm: false },
+  "11927": { name: "นางสาว ณัฐกานต์ ผายอุบล", score: 9, passedMidterm: false },
+  "11934": { name: "นางสาว วันนาวี นะ", score: 8, passedMidterm: false },
+  "12734": { name: "นางสาว จิราภรณ์ สมบุญ", score: 5, passedMidterm: false },
+  "12737": { name: "นางสาว วิไลวรรณ จันดี", score: 4, passedMidterm: false },
+  "11698": { name: "นาย ก้องภพ หนาแน่น", score: 7, passedMidterm: false },
+  "11707": { name: "นาย ภูริณัฐ สุวรรณสน", score: 5, passedMidterm: false },
+  "11730": { name: "นาย เจษฎา พรมวงษา", score: 3, passedMidterm: false },
+  "11737": { name: "นาย ศิวกร สุขประสงค์", score: 6, passedMidterm: false },
+  "11792": { name: "นาย ธราวัฒน์ สืบจาก", score: 6, passedMidterm: false },
+  "11794": { name: "นาย พีรัชชัย สอนจันดา", score: 4, passedMidterm: false },
+  "11822": { name: "นาย ขวัญชัย ทับทิม", score: 8, passedMidterm: false },
+  "11825": { name: "นาย ชัยสิทธิ์ ภู่แสร์", score: 5, passedMidterm: false },
+  "11828": { name: "นาย ธีรเดช รูปสะอาด", score: 8, passedMidterm: false },
+  "11867": { name: "นาย อัษฎางค์ จันทร์ศรี", score: 4, passedMidterm: false },
+  "11942": { name: "นาย ศิรวิชญ์ พูลสวัสดิ์", score: 4, passedMidterm: false },
+  "12738": { name: "นาย ชินวุฒิ รกไพร", score: 7, passedMidterm: false },
+  "11720": { name: "นางสาว น้ำฝน อุ่มกิ่ง", score: 7, passedMidterm: false },
+  "11742": { name: "นางสาว ฐานิดา วาดถนน", score: 9, passedMidterm: false },
+  "11751": { name: "นางสาว วริศรา บุบผามาลา", score: 6, passedMidterm: false },
+  "11752": { name: "นางสาว วันฉัตร ศิริบุญคุณ", score: 10, passedMidterm: true },
+  "11753": { name: "นางสาว วิลัยพร หวังกุลกลาง", score: 9, passedMidterm: false },
+  "11754": { name: "นางสาว สาธิตา สีหามาตร", score: 8, passedMidterm: false },
+  "11772": { name: "นางสาว กมลลักษณ์ บุญมา", score: 8, passedMidterm: false },
+  "11781": { name: "นางสาว พิชญาภา เถื่อนทุ่ง", score: 8, passedMidterm: false },
+  "11782": { name: "นางสาว เพชรน้ำหนึ่ง ตู้ทอง", score: 9, passedMidterm: false },
+  "11787": { name: "นางสาว อนันตญา อินทะนัย", score: 10, passedMidterm: true },
+  "11804": { name: "นางสาว ฐิติมา ภูเดช", score: 10, passedMidterm: true },
+  "11808": { name: "นางสาว ประภาพรรณ ภูเงิน", score: 9, passedMidterm: false },
+  "11811": { name: "นางสาว ปิยมาส บุตรเอื้อ", score: 9, passedMidterm: false },
+  "11813": { name: "นางสาว เปรมยุดา พรมมา", score: 11, passedMidterm: true },
+  "11840": { name: "นางสาว ขวัญข้าว แสนดี", score: 6, passedMidterm: false },
+  "11841": { name: "นางสาว ขวัญพร พรมสมบุญ", score: 3, passedMidterm: false },
+  "11871": { name: "นางสาว จรรยนาถ จันทร์ศรี", score: 7, passedMidterm: false },
+  "11928": { name: "นางสาว สุพรรษา จันทร์สอน", score: 8, passedMidterm: false },
+  "12739": { name: "นางสาว กัญญารัตน์ มูลกระจก", score: 8, passedMidterm: false },
+  "12740": { name: "นางสาว ปนัดดา ศรีจำปา", score: 9, passedMidterm: false },
+  "12741": { name: "นางสาว ยศยา ผดุงวาฬ", score: 8, passedMidterm: false },
+  "12742": { name: "นางสาว วนิสา พูลเพิ่ม", score: 6, passedMidterm: false },
+  "12743": { name: "นางสาว ศศินิภา สีม่วง", score: 8, passedMidterm: false },
+  "12744": { name: "นางสาว ศิรินทิพย์ ชาติวงค์", score: 9, passedMidterm: false },
+  "11699": { name: "นาย กิตติชัย หัสดง", score: 7, passedMidterm: false },
+  "11712": { name: "นาย สิรภัทร นุ่มนวล", score: 5, passedMidterm: false },
+  "11798": { name: "นาย ศรัณต์ อำไพวรรณ", score: 7, passedMidterm: false },
+  "11800": { name: "นาย เศรษฐพิชญ์ ศรีหงษา", score: 5, passedMidterm: false },
+  "11830": { name: "นาย ปิติภัทร แผนคง", score: 5, passedMidterm: false },
+  "11855": { name: "นาย เจษฎา สมจิตร", score: 3, passedMidterm: false },
+  "11857": { name: "นาย ชุติพนธ์ เพิ่มศรี", score: 7, passedMidterm: false },
+  "11859": { name: "นาย ทัศนัย เรียงนอก", score: 5, passedMidterm: false },
+  "12747": { name: "นาย ราชันย์ บัวสิม", score: 6, passedMidterm: false },
+  "11716": { name: "นางสาว ชลลดา วาปีกัง", score: 4, passedMidterm: false },
+  "11721": { name: "นางสาว ปิยะธิดา ธิกูล", score: 6, passedMidterm: false },
+  "11755": { name: "นางสาว สุชานันท์ อินธิมาศ", score: 8, passedMidterm: false },
+  "11786": { name: "นางสาว สุดาทิพย์ สีแก้ว", score: 8, passedMidterm: false },
+  "11806": { name: "นางสาว นลิน เผือกสีสุก", score: 3, passedMidterm: false },
+  "11810": { name: "นางสาว ปาริตา ดารักษ์", score: 8, passedMidterm: false },
+  "11815": { name: "นางสาว รพีพรรณ พันนาม", score: 16, passedMidterm: true },
+  "11836": { name: "นางสาว กมลฉัตร เขามะหิงษ์", score: 3, passedMidterm: false },
+  "11842": { name: "นางสาว ญาณภัทร สุขประสงค์", score: 7, passedMidterm: false },
+  "11845": { name: "นางสาว นันทวรรณ สีหราช", score: 5, passedMidterm: false },
+  "11870": { name: "นางสาว กุลนิภา ศรีแพน", score: 9, passedMidterm: false },
+  "11875": { name: "นางสาว ปัทติมา สีทอง", score: 6, passedMidterm: false },
+  "11876": { name: "นางสาว ปาริชาติ เที่ยงธรรม", score: 7, passedMidterm: false },
+  "11882": { name: "นางสาว อภิชญา สำรวจวงค์", score: 2, passedMidterm: false },
+  "11883": { name: "นางสาว อุ่นชยา พงษ์ไทย", score: 12, passedMidterm: true },
+  "11926": { name: "นางสาว พิชชาพร เดชพลกรัง", score: 8, passedMidterm: false },
+  "11929": { name: "นางสาว ธันยพร อริสุ", score: 5, passedMidterm: false },
+  "12749": { name: "นางสาว กุสุมา กันหานุ", score: 6, passedMidterm: false },
+  "12750": { name: "นางสาว ธีญดา ครองหมู่", score: 8, passedMidterm: false },
+  "12751": { name: "นางสาว สุพัชชา ปุราถาเน", score: 9, passedMidterm: false },
+  "12752": { name: "นางสาว สุภารัตน์ ปาระมัส", score: 5, passedMidterm: false },
+  "12754": { name: "นางสาว อริศรา รูปพรม", score: 7, passedMidterm: false },
+  "12781": { name: "นางสาว พิจิตรา แน่นอน", score: 10, passedMidterm: true },
+  "12786": { name: "นางสาว สลิล สุวภากุลเศรษฐ์", score: 9, passedMidterm: false },
+  "11700": { name: "นาย ณัฐวุฒิ น่ารัก", score: 6, passedMidterm: false },
+  "11701": { name: "นาย ดนุสรณ์ นันทะสาโร", score: 8, passedMidterm: false },
+  "11704": { name: "นาย ไพรรัตน์ เวชมะโน", score: 12, passedMidterm: true },
+  "11734": { name: "นาย ปกรณ์ แก้วอุดร", score: 8, passedMidterm: false },
+  "11770": { name: "นาย ศิวกรณ์ สระแก้ว", score: 6, passedMidterm: false },
+  "11853": { name: "นาย กฤติพงศ์ พลไพ", score: 10, passedMidterm: true },
+  "11854": { name: "นาย กิตติกรณ์ โพธิ์แก้ว", score: 17, passedMidterm: true },
+  "11860": { name: "นาย ธีรภัทร แซ่งั่น", score: 12, passedMidterm: true },
+  "11925": { name: "นาย อภิเดช บุตรแสน", score: 10, passedMidterm: true },
+  "11953": { name: "นาย ธีรนัยน์ แก้วหิน", score: 6, passedMidterm: false },
+  "12755": { name: "นาย กฤษฎา กงแก้ว", score: 9, passedMidterm: false },
+  "12756": { name: "นาย ชัยวัฒน์ เอิบผักแว่น", score: 8, passedMidterm: false },
+  "12757": { name: "นาย ชาญณรงค์ เชื้อจำพร", score: 10, passedMidterm: true },
+  "12758": { name: "นาย ทีฆายุ พูนกลางวิโรจน์", score: 10, passedMidterm: true },
+  "12760": { name: "นาย ณัฐวุฒิ วิทวิบูรณ์", score: 14, passedMidterm: true },
+  "12762": { name: "นาย สายน้ำ พนารินทร์", score: 8, passedMidterm: false },
+  "11817": { name: "นางสาว ศรีพัฒน์ การบรรจง", score: 12, passedMidterm: true },
+  "11837": { name: "นางสาว กรณ์ชนก พระพรม", score: 7, passedMidterm: false },
+  "11838": { name: "นางสาว กัญญารัตน์ นาโฮม", score: 5, passedMidterm: false },
+  "11846": { name: "นางสาว ปนัดดา ทุมมี", score: 6, passedMidterm: false },
+  "11851": { name: "นางสาว สาวิกา เทียบแก้ว", score: 7, passedMidterm: false },
+  "11877": { name: "นางสาว มุธิตา ชูญาติ", score: 6, passedMidterm: false },
+  "11879": { name: "นางสาว วิภาภร ถาวจตุรัส", score: 7, passedMidterm: false },
+  "12763": { name: "นางสาว ขวัญฤดี นรชาญ", score: 5, passedMidterm: false },
+  "12764": { name: "นางสาว จิตรา นงค์กระโทก", score: 5, passedMidterm: false },
+  "12765": { name: "นางสาว ช่อฟ้า หายะกุล", score: 10, passedMidterm: true },
+  "12766": { name: "นางสาว รติมา จิราพงษ์", score: 5, passedMidterm: false },
+  "12767": { name: "นางสาว วรางคณา ดอกกลอย", score: 9, passedMidterm: false },
+  "12768": { name: "นางสาว วิภาวดี บุตรไธสง", score: 5, passedMidterm: false },
+  "12769": { name: "นางสาว แสงอรุณ พิงไธสง", score: 8, passedMidterm: false }
+};
+
+// ---------- EXAM DATA (40 Questions) ----------
+const examData = [
+  { q: "Situation: At a college fair\nAlex: Hi, I'm interested in the robotics engineering program. [1] _______?\nRep: We are looking for students who are not only smart but also have a strong passion for technology.", choices: ["A. When is the deadline for the application", "B. What makes a student a good fit for your institution", "C. How many awards has your university won", "D. Why did you choose to work here"], ans: 1, exp: "The representative replies by describing the qualities of an ideal student (smart, passion for tech), which answers 'What makes a student a good fit...'." },
+  { q: "Rep: That's impressive. Our program is highly [2] _______, so having hands-on experience is a great advantage.", choices: ["competitive", "suspicious", "deliberate", "sufficient"], ans: 0, exp: "'Competitive' (มีการแข่งขันสูง) fits best because hands-on experience gives an advantage over other applicants." },
+  { q: "Alex: Thank you. I will [3] _______ submit my application by next week.", choices: ["assume", "betray", "commit to", "definitely"], ans: 3, exp: "'Definitely' (อย่างแน่นอน) emphasizes Alex's strong intention to submit the application." },
+  { q: "Situation: A mock interview practice\nTeacher: First question: What do you consider your biggest [4] _______?\nSarah: I think I am very determined. Once I set a goal, I always achieve it.", choices: ["relief", "weakness", "strength", "reputation"], ans: 2, exp: "Being 'determined' to achieve goals is a positive trait, referring to a 'strength' (จุดแข็ง)." },
+  { q: "Teacher: Good. But be careful, sometimes being too determined can make you seem narrow-minded. How do you [5] _______ that?\nSarah: I try to listen to others and put my ego aside.", choices: ["cope with", "occur to", "collapse from", "abandon"], ans: 0, exp: "'Cope with' (รับมือ/จัดการกับปัญหา) fits the context of dealing with a negative trait." },
+  { q: "Teacher: Excellent. Now, tell me about a time you had to deal with a [6] _______ circumstance.\nSarah: Last year, our science project failed one day before the deadline.", choices: ["capable", "tough", "ideal", "outstanding"], ans: 1, exp: "A project failing one day before the deadline is a difficult or 'tough' (ยากลำบาก) circumstance." },
+  { q: "Sarah: I felt a lot of [7] _______, but I calmed my team down and we fixed it overnight.", choices: ["award", "tension", "intention", "association"], ans: 1, exp: "'Tension' refers to mental or emotional strain (ความตึงเครียด), fitting the stressful situation." },
+  { q: "Your friend is very nervous before a college interview. What is the most supportive thing to say?", choices: ["Don't worry, the interviewers are usually very suspicious.", "Just abandon the interview if you feel sick.", "You are highly capable. Just take a deep breath and do your best!", "I assume you won't get accepted anyway."], ans: 2, exp: "Reminding them they are 'capable' and telling them to 'do their best' is encouraging and positive." },
+  { q: "You want to thank your teacher for helping your group with a project. What should you say?", choices: ["On behalf of our team, thank you for your guidance.", "You have a good reputation for helping students.", "I encounter you today to say thank you.", "We are sufficient with your help."], ans: 0, exp: "'On behalf of our team, thank you for your guidance.' is polite, formal, and appropriate for a teacher." },
+  { q: "The interviewer asks, 'Where do you see yourself in 10 years?' How should you respond properly?", choices: ["I have no intention of working.", "I plan to work for a leading research institution.", "It is none of your business.", "I have been waiting for this question all day."], ans: 1, exp: "Stating a clear career goal (working for a leading research institution) shows ambition and planning." },
+  { q: "The university has a long-standing _______ for producing top-tier engineers.", choices: ["circumstance", "reputation", "association", "penalty"], ans: 1, exp: "'Reputation' (ชื่อเสียง) fits the context of being known for producing top engineers over a long time." },
+  { q: "Due to the heavy storm, the old bridge suddenly _______, causing massive traffic delays.", choices: ["occurred", "abandoned", "responded", "collapsed"], ans: 3, exp: "Bridges 'collapse' (พังทลาย) due to heavy storms." },
+  { q: "If you want to join the varsity football team, you must show a strong _______ to attend every practice session.", choices: ["relief", "intention", "commitment", "downside"], ans: 2, exp: "'Commitment' (ความมุ่งมั่น/ความทุ่มเท) is required to attend every practice." },
+  { q: "The police officer noticed something _______ about the man nervously pacing in front of the bank.", choices: ["deliberate", "suspicious", "sufficient", "ideal"], ans: 1, exp: "Nervous pacing in front of a bank raises suspicion, so it is 'suspicious' (น่าสงสัย)." },
+  { q: "When working in a group, it is important to not _______ your teammates by taking all the credit for yourself.", choices: ["betray", "assume", "encounter", "cope"], ans: 0, exp: "Taking all the credit is a form of disloyalty, meaning to 'betray' (ทรยศ/หักหลัง) your team." },
+  { q: "Choose the SYNONYM for the underlined word:\nThe applicant's portfolio was absolutely >excellent<. She will definitely get the scholarship.", choices: ["awful", "outstanding", "tough", "overall"], ans: 1, exp: "'Outstanding' (โดดเด่น/ยอดเยี่ยม) is a synonym for excellent." },
+  { q: "Choose the CLOSEST MEANING for the underlined word:\nI didn't mean to break the glass; it wasn't a >deliberate< action.", choices: ["accidental", "intentional", "sufficient", "positive"], ans: 1, exp: "'Deliberate' means done consciously and on purpose, so the closest meaning is 'intentional' (ตั้งใจ)." },
+  { q: "Choose the ANTONYM for the underlined word:\nAfter the final exam was over, a wave of >relief< washed over the students.", choices: ["tension", "strength", "intention", "circumstance"], ans: 0, exp: "'Relief' means feeling relaxed/relieved. Its opposite (antonym) is 'tension' (ความเครียด)." },
+  { q: "Choose the SYNONYM for the underlined word:\nWe have packed >enough< food and water for the three-day camping trip.", choices: ["truly", "initially", "sufficient", "competitive"], ans: 2, exp: "'Sufficient' (เพียงพอ) is a synonym for enough." },
+  { q: "Choose the ANTONYM for the underlined word:\nThe company's biggest >downside< is its lack of parking spaces for employees.", choices: ["weakness", "penalty", "outcome", "strength"], ans: 3, exp: "A 'downside' is a disadvantage or weakness, so its antonym is 'strength' (จุดแข็ง)." },
+  { q: "Text: '...interviews originally scheduled for Monday will now occur on Wednesday...'\nWhat is the main purpose of this email?", choices: ["To apologize for rejecting the applicants", "To inform applicants about a change in the interview date", "To announce the results of the college interviews", "To ask applicants about their health conditions"], ans: 1, exp: "The email clearly states the change of date from Monday to Wednesday." },
+  { q: "What does the word 'occur' in the text mean?", choices: ["happen", "cancel", "finish", "abandon"], ans: 0, exp: "'Occur' means to take place or 'happen' (เกิดขึ้น)." },
+  { q: "What should an applicant do if they cannot go to the interview on Wednesday?", choices: ["Call the university immediately.", "Wait for another email.", "Reply to the email before tomorrow evening.", "Ignore the email and show up on Monday."], ans: 2, exp: "The text explicitly says: 'please respond to this email by tomorrow evening'." },
+  { q: "Passage: Clara's Medical Program interview was a disaster due to traffic, sweating, lying, and failing to answer questions.\nWhat is the best title for this passage?", choices: ["How to Pass a Medical Interview", "A Terrible Interview Experience", "The Benefits of Volunteering", "Dr. Evans and the Clinic"], ans: 1, exp: "The passage recounts Clara's disastrous (terrible) interview experience." },
+  { q: "According to the passage, why was Clara late for her interview?", choices: ["She woke up late.", "She got lost on campus.", "She was stuck in traffic.", "She had a stomachache."], ans: 2, exp: "Sentence 4 states: 'I encountered a massive traffic jam'." },
+  { q: "In sentence 6, why did the interviewers look 'suspicious'?", choices: ["Because Clara was wearing inappropriate clothes.", "Because Clara arrived late, sweating, and panting.", "Because they knew Clara was lying.", "Because Clara brought a friend to the interview."], ans: 1, exp: "She walked in sweating and breathing heavily, causing their suspicious reaction." },
+  { q: "What was Clara's biggest mistake during the interview?", choices: ["She answered her phone.", "She argued with Dr. Evans.", "She lied about her volunteer experience.", "She refused to answer any questions."], ans: 2, exp: "Lying about working in the ER led to her downfall when asked specific medical questions." },
+  { q: "The word 'abandoned' in sentence 11 ('my confidence completely abandoned me') is closest in meaning to...", choices: ["left", "met", "helped", "supported"], ans: 0, exp: "If confidence abandons you, it 'leaves' you (หายไป/จากไป)." },
+  { q: "What can be inferred about Dr. Evans?", choices: ["He is easily fooled by students.", "He knew enough about medicine to catch Clara's lie.", "He felt sympathetic towards Clara.", "He is the dean of State University."], ans: 1, exp: "He asked specific medical questions that exposed her fake experience, showing his medical knowledge." },
+  { q: "What did Clara learn from this experience?", choices: ["Never apply to State University again.", "Always arrive one hour early.", "Always be honest during an interview.", "Never volunteer at a clinic."], ans: 2, exp: "The last sentence concludes: 'never betray the truth, especially in an interview'." },
+  { q: "Bam: Hey Mark, You look absolutely exhausted! What [31] _______ lately?", choices: ["have you done", "have you been doing", "did you do", "are you doing"], ans: 1, exp: "Present Perfect Continuous ('have you been doing') is used for an ongoing action recently ('lately') causing a present result (exhausted)." },
+  { q: "Mark: Well, I [32] _______ for the university entrance exams all week. I haven't slept much.", choices: ["have prepared", "prepared", "have been preparing", "am preparing"], ans: 2, exp: "'all week' emphasizes the continuous duration of an ongoing past-to-present action." },
+  { q: "Mark: I [33] _______ three practice tests already today, and my brain is completely fried.", choices: ["have finished", "have been finishing", "finish", "finished"], ans: 0, exp: "Present Perfect Simple ('have finished') is used for completed actions emphasizing the quantity/result ('three tests')." },
+  { q: "Mark: I [34] _______ that getting into medical school is tough, but I didn't expect it to be this stressful.", choices: ["have been knowing", "am knowing", "knew", "have always known"], ans: 3, exp: "'Know' is a stative verb and cannot be used in continuous (-ing) forms." },
+  { q: "Mark: My parents [35] _______ me since I was a kid to become a doctor, so I really want to make them proud.", choices: ["have been encouraging", "encourages", "are encouraging", "encourage"], ans: 0, exp: "The action started in the past ('since I was a kid') and continues continuously up to now." },
+  { q: "(1) Preparing for a college interview requires time and effort. (2) First, you should research the institution thoroughly. [36] _______ (4) Finally, practice answering common questions...", choices: ["Second, you should prepare a list of your strengths and weaknesses.", "Therefore, you should just sleep well the night before.", "However, the university has a very bad reputation.", "On the other hand, engineering is a tough major."], ans: 0, exp: "The logical sequence is First -> Second -> Finally." },
+  { q: "(1) Many students feel anxious before an interview. [37] _______ (3) For example, taking deep breaths can help calm your nerves.", choices: ["The interviewers are looking for capable students.", "However, there are several ways to cope with this tension.", "In addition, you should bring all your documents.", "As a result, they often fail the test."], ans: 1, exp: "Sentence 3 gives an example of coping with tension, making B the best transition statement." },
+  { q: "Choose the correct order of sentences:\n[a] After that, I joined the school's science club to gain practical experience.\n[b] I have been interested in robotics since I was in middle school.\n[c] Now, I feel ready to apply to a top engineering institution.\n[d] Initially, I just watched documentaries about AI.", choices: ["b-d-a-c", "d-b-c-a", "c-b-d-a", "a-c-b-d"], ans: 0, exp: "Chronological order: Broad interest (b) -> Initially (d) -> After that (a) -> Now (c)." },
+  { q: "Choose the correct order of sentences:\n[a] Unfortunately, he got extremely nervous and his mind went blank.\n[b] Last week, my friend Jason had his first college interview.\n[c] He had practiced for days and felt very confident.\n[d] Because of this, he couldn't even remember his own strengths.", choices: ["b-a-c-d", "b-c-a-d", "c-b-d-a", "a-d-b-c"], ans: 1, exp: "Intro (b) -> Background prep (c) -> The problem (a) -> The result of the problem (d)." },
+  { q: "'I have been staring at this math problem for two hours, and I still don't understand it!' Which sentence best follows this statement?", choices: ["I have finished all my homework easily.", "I think I need to ask the teacher for help tomorrow.", "Math is my favorite subject.", "I have already bought a new calculator."], ans: 1, exp: "If a student doesn't understand a problem after 2 hours, asking a teacher for help is the logical next step." }
+];
+
+// ---------- STATE ----------
+let session = { studentId: null, studentName: null, isAdmin: false, phase: 'login' };
+let examRuntime = { answers: [], currentQ: 0, timeLeft: EXAM_TIME_LIMIT_SEC, timerHandle: null, offenseCount: 0, lastResult: null };
+let dashboardTimerHandle = null;
+
+// ---------- STORAGE HELPERS ----------
+function storageKey(id){ return `chronos_state_${id}`; }
+function loadState(id){ try{ const raw = localStorage.getItem(storageKey(id)); if(!raw) return null; return JSON.parse(raw); }catch(e){ return null; } }
+function saveState(id, state){ try{ localStorage.setItem(storageKey(id), JSON.stringify(state)); }catch(e){} }
+function defaultState(){ return { lives: MAX_LIVES, cooldownEnd: null, status: 'active', lastScoreDisplay: null }; }
+
+// ---------- IN-APP BROWSER DETECTION ----------
+function isInAppBrowser(){ const ua = navigator.userAgent || navigator.vendor || window.opera || ''; return /Line\//i.test(ua) || /FBAN|FBAV|FB_IAB/i.test(ua) || /Instagram/i.test(ua) || /MicroMessenger/i.test(ua); }
+
+// ---------- CUSTOM MODAL ----------
+function showCustomModal(icon, title, message, callback, opts = {}){
+  const root = document.getElementById('modalRoot');
+  const confirmMode = !!opts.confirm;
+  const confirmText = opts.confirmText || 'ACKNOWLEDGE';
+  const cancelText = opts.cancelText || 'ABORT';
+  const dangerConfirm = !!opts.danger;
+
+  root.innerHTML = `
+    <div class="fixed inset-0 z-[100] modal-backdrop flex items-center justify-center p-4 fade-in">
+      <div class="panel pop-in max-w-md w-full rounded-sm p-6 relative">
+        <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+        <div class="flex flex-col items-center text-center gap-3 w-full">
+          <div class="text-4xl">${icon}</div>
+          <h3 class="font-kanit text-xl md:text-2xl text-cyan-300 glow-text tracking-wide">${title}</h3>
+          <p class="text-sm text-slate-300 leading-relaxed whitespace-pre-line">${message}</p>
+          <div class="flex gap-3 mt-4 w-full">
+            ${confirmMode ? `<button id="modalCancelBtn" class="btn-ghost flex-1 py-2.5 rounded-sm text-sm tracking-wide">${cancelText}</button>` : ''}
+            <button id="modalOkBtn" class="${dangerConfirm ? 'btn-danger' : 'btn-agent'} flex-1 py-2.5 rounded-sm text-sm tracking-wide">${confirmText}</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  document.getElementById('modalOkBtn').onclick = () => { root.innerHTML = ''; if(callback) callback(true); };
+  if(confirmMode){ document.getElementById('modalCancelBtn').onclick = () => { root.innerHTML = ''; if(callback) callback(false); }; }
+}
+function closeModal(){ document.getElementById('modalRoot').innerHTML = ''; }
+
+// ---------- EXAM OVERVIEW MODAL ----------
+function showOverviewModal(){
+  const root = document.getElementById('modalRoot');
+  let gridHtml = '<div class="grid grid-cols-5 md:grid-cols-8 gap-2 mt-4 max-h-[350px] overflow-y-auto p-2 w-full">';
+  for(let i=0; i<examData.length; i++){
+    const answered = examRuntime.answers[i] !== null;
+    gridHtml += `<button onclick="jumpToQuestion(${i})" class="w-full aspect-square flex items-center justify-center rounded-sm text-sm font-kanit transition-all ${answered ? 'bg-cyan-600/80 text-white border border-cyan-400 shadow-[0_0_8px_rgba(6,182,212,0.5)]' : 'bg-black/40 text-slate-400 border border-slate-700 hover:border-cyan-500'}">${i+1}</button>`;
+  }
+  gridHtml += '</div>';
+
+  root.innerHTML = `
+    <div class="fixed inset-0 z-[100] modal-backdrop flex items-center justify-center p-4 fade-in">
+      <div class="panel pop-in max-w-md w-full rounded-sm p-6 relative">
+        <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+        <div class="flex flex-col items-center text-center w-full">
+          <div class="text-3xl mb-2">🔍</div>
+          <h3 class="font-kanit text-xl text-cyan-300 glow-text tracking-wide">EXAM OVERVIEW</h3>
+          <p class="text-xs text-slate-400 mb-2">Select a question to jump directly to it.</p>
+          <div class="flex gap-4 text-[10px] text-slate-500 mb-2"><span class="flex items-center gap-1"><div class="w-3 h-3 bg-cyan-600/80 border border-cyan-400"></div> Answered</span><span class="flex items-center gap-1"><div class="w-3 h-3 bg-black/40 border border-slate-700"></div> Unanswered</span></div>
+          ${gridHtml}
+          <button onclick="closeModal()" class="btn-ghost w-full mt-5 py-2.5 rounded-sm text-sm tracking-wide">CLOSE</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+function jumpToQuestion(idx) {
+  examRuntime.currentQ = idx;
+  updateExamViewOnly();
+  closeModal();
+}
+
+// ---------- UTIL ----------
+function fmtTime(sec){
+  sec = Math.max(0, Math.floor(sec));
+  const m = Math.floor(sec/60).toString().padStart(2,'0');
+  const s = Math.floor(sec%60).toString().padStart(2,'0');
+  return `${m}:${s}`;
+}
+
+function fireConfetti(){
+  const duration = 2500;
+  const end = Date.now() + duration;
+  (function frame(){
+    confetti({ particleCount: 4, angle: 60, spread: 65, origin: {x:0}, colors:['#06b6d4','#22d3ee','#67e8f9','#ffffff'] });
+    confetti({ particleCount: 4, angle: 120, spread: 65, origin: {x:1}, colors:['#06b6d4','#22d3ee','#67e8f9','#ffffff'] });
+    if(Date.now() < end) requestAnimationFrame(frame);
+  })();
+  confetti({ particleCount: 140, spread: 100, origin: {y:0.5}, colors:['#06b6d4','#22d3ee','#67e8f9'] });
+}
+
+// ---------- CERTIFICATE LOGIC ----------
+function openCert(type){
+  const overlay = document.getElementById('certOverlay');
+  const nameEl = document.getElementById('certStudentName');
+  const typeEl = document.getElementById('certExamType');
+  const dateEl = document.getElementById('certDate');
+  const rankEl = document.getElementById('certRank');
+  
+  let dispName = session.studentName === 'DIRECTOR' ? 'SARUTA JANTAKET' : session.studentName;
+  // ออโต้แปลงคำนำหน้าเป็นภาษาอังกฤษ
+  dispName = dispName.replace('นางสาว ', 'Miss ').replace('นาย ', 'Mr. ');
+  nameEl.textContent = dispName;
+
+  typeEl.textContent = type === 'retest' ? 'MIDTERM RETEST' : 'MIDTERM EXAMINATION';
+  
+  // Calculate Rank
+  const record = studentDB[session.studentId] || {};
+  let rankText = '';
+  if (type === 'midterm') {
+     const score = record.score || 20; 
+     if (score >= 16) {
+        rankText = '<span style="color:#b45309">MISSION RANK: S</span> <span class="text-sm text-slate-500 font-normal">(Elite Agent)</span>';
+     } else {
+        rankText = '<span style="color:#475569">MISSION RANK: A</span> <span class="text-sm text-slate-500 font-normal">(Advanced Agent)</span>';
+     }
+  } else {
+     rankText = '<span style="color:#64748b">MISSION RANK: B</span> <span class="text-sm text-slate-500 font-normal">(Qualified Agent)</span>';
+  }
+  rankEl.innerHTML = rankText;
+  
+  const today = new Date();
+  dateEl.textContent = today.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+  
+  overlay.classList.remove('hidden');
+  overlay.classList.add('flex');
+}
+function closeCert(){
+  const overlay = document.getElementById('certOverlay');
+  overlay.classList.add('hidden');
+  overlay.classList.remove('flex');
+}
+
+// ---------- RENDER ROOT ----------
+function render(){
+  const app = document.getElementById('app');
+  if(isInAppBrowser()){ app.innerHTML = renderBlocked(); return; }
+  switch(session.phase){
+    case 'login': app.innerHTML = renderLogin(); attachLoginEvents(); break;
+    case 'dashboard': app.innerHTML = renderDashboard(); attachDashboardEvents(); startDashboardTicker(); break;
+    case 'exam': app.innerHTML = renderExam(); attachExamEvents(); break;
+    case 'result': app.innerHTML = renderResult(); attachResultEvents(); break;
+    default: app.innerHTML = renderLogin(); attachLoginEvents();
+  }
+}
+
+// ================= PHASE: BLOCKED =================
+function renderBlocked(){
+  return `
+  <div class="w-full max-w-md mt-10 md:mt-24 fade-in">
+    <div class="panel rounded-sm p-8 text-center relative">
+      <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+      <div class="text-6xl mb-4">🚫</div>
+      <h1 class="font-kanit text-2xl text-red-400 tracking-widest mb-3" style="text-shadow:0 0 16px rgba(239,68,68,0.6)">ACCESS DENIED</h1>
+      <p class="text-sm text-slate-300 leading-relaxed mb-4">In-app browser detected (LINE / Facebook / Instagram). CHRONOS requires a secure external browser channel to operate.</p>
+      <div class="bg-black/30 border border-slate-700 rounded-sm p-3 text-xs text-cyan-300 font-kanit tracking-wide">
+        Tap the <span class="text-white">"⋮"</span> or <span class="text-white">"Open in Browser"</span> menu option,<br>
+        then relaunch using <span class="text-cyan-300">Safari</span> or <span class="text-cyan-300">Chrome</span>.
+      </div>
+    </div>
+  </div>`;
+}
+
+// ================= PHASE: LOGIN =================
+function renderLogin(){
+  return `
+  <div class="w-full max-w-md mt-6 md:mt-16 fade-in">
+    <div class="text-center mb-6">
+      <div class="inline-flex items-center gap-2 mb-2"><span class="badge-dot"></span><span class="text-xs tracking-[0.3em] text-cyan-400 font-kanit">TEMPORAL RECOVERY DIVISION</span></div>
+      <h1 class="font-kanit text-4xl md:text-5xl font-bold text-cyan-300 glitch-title tracking-wider">CHRONOS</h1>
+      <p class="text-xs md:text-sm text-slate-400 mt-1 tracking-wide">TIMELINE RECOVERY SYSTEM</p>
+      <div class="mt-3 text-[11px] md:text-xs text-slate-500 font-kanit tracking-wide leading-relaxed">
+        BASIC ENGLISH 6 | Khao Chakan Witthayakom School<br>Teacher Saruta
+      </div>
+    </div>
+    <div class="panel rounded-sm p-6 relative">
+      <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+      <h2 class="font-kanit text-lg text-cyan-300 mb-1 tracking-wide">AGENT LOGIN</h2>
+      <p class="text-xs text-slate-500 mb-5">Enter your credentials to access the timeline console.</p>
+      <label class="block text-xs text-slate-400 mb-1 font-kanit tracking-wide">AGENT ID (5 digits)</label>
+      <input id="loginId" maxlength="5" inputmode="numeric" placeholder="•••••" class="input-terminal w-full rounded-sm px-4 py-3 mb-4 text-lg tracking-[0.3em]" />
+      <label class="block text-xs text-slate-400 mb-1 font-kanit tracking-wide">FIRST NAME</label>
+      <input id="loginName" placeholder="ชื่อจริง" class="input-terminal w-full rounded-sm px-4 py-3 mb-2 text-base" />
+      <p id="loginError" class="text-xs text-red-400 min-h-[1.2rem] mb-2"></p>
+      <button id="loginBtn" class="btn-agent w-full py-3 rounded-sm mt-2 font-semibold tracking-widest">► INITIATE ACCESS</button>
+    </div>
+  </div>`;
+}
+
+function attachLoginEvents(){
+  const btn = document.getElementById('loginBtn');
+  const idInput = document.getElementById('loginId');
+  const nameInput = document.getElementById('loginName');
+  const err = document.getElementById('loginError');
+
+  idInput.addEventListener('input', () => { idInput.value = idInput.value.replace(/[^0-9]/g,'').slice(0,5); });
+
+  const attempt = () => {
+    const id = idInput.value.trim();
+    const name = nameInput.value.trim();
+    err.textContent = '';
+    if(!id || !name){ err.textContent = 'ERROR: Agent ID and First Name are required.'; return; }
+    if(id === ADMIN_ID && name === ADMIN_FIRSTNAME){
+      session.studentId = id; session.studentName = 'DIRECTOR'; session.isAdmin = true;
+      let st = loadState(id) || defaultState(); st.lives = MAX_LIVES; st.cooldownEnd = null; st.status = 'active'; saveState(id, st);
+      session.phase = 'dashboard'; render(); return;
+    }
+    if(id.length !== 5 || !studentDB.hasOwnProperty(id)){ err.textContent = 'ACCESS DENIED: Agent ID not found in database.'; return; }
+    const record = studentDB[id];
+    if(!record.name.includes(name)){ err.textContent = 'ACCESS DENIED: Name does not match records.'; return; }
+    
+    session.studentId = id; session.studentName = record.name; session.isAdmin = false;
+    let st = loadState(id);
+    
+    if(!st) st = defaultState();
+    
+    if(record.passedMidterm && st.status !== 'passed'){
+      st.status = 'passed';
+      st.lastScoreDisplay = record.score + ' / 20 (MIDTERM EXAM)';
+      st.lives = MAX_LIVES; 
+      st.cooldownEnd = null;
+    }
+    saveState(id, st);
+    
+    session.phase = 'dashboard'; render();
+  };
+  btn.addEventListener('click', attempt);
+  nameInput.addEventListener('keydown', (e) => { if(e.key === 'Enter') attempt(); });
+  idInput.addEventListener('keydown', (e) => { if(e.key === 'Enter') attempt(); });
+}
+
+// ================= PHASE: DASHBOARD =================
+function currentStudentState(){ return loadState(session.studentId) || defaultState(); }
+function renderCores(lives){ let html = ''; for(let i=0;i<MAX_LIVES;i++){ html += `<div class="core ${i < lives ? '' : 'dead'}"></div>`; } return html; }
+
+function renderDashboard(){
+  const st = currentStudentState();
+  const now = Date.now();
+  const inCooldown = st.cooldownEnd && now < st.cooldownEnd && !session.isAdmin;
+  const locked = st.status === 'locked' && !session.isAdmin;
+  const passed = st.status === 'passed';
+
+  let bodyHtml = '';
+  if(locked){
+    bodyHtml = `<div class="text-center py-6"><div class="text-6xl mb-4">☠️</div><h2 class="font-kanit text-2xl text-red-400 tracking-widest mb-3" style="text-shadow:0 0 18px rgba(239,68,68,0.7)">CRITICAL FAILURE</h2><p class="text-sm text-slate-300 mb-1">All Temporal Cores depleted. The timeline cannot be restored.</p><p class="text-sm text-red-300 font-kanit tracking-wide mt-3">CONTACT COMMANDER (Teacher Saruta) IMMEDIATELY.</p></div>`;
+  } else if(passed){
+    const isMidtermPass = st.lastScoreDisplay && st.lastScoreDisplay.includes('MIDTERM');
+    const certBtnHtml = isMidtermPass
+      ? `<button onclick="openCert('midterm')" class="btn-ghost py-3 rounded-sm text-xs tracking-widest border-amber-500/50 text-amber-200 w-full md:w-3/4 mx-auto">🎓 CERTIFICATE (MIDTERM EXAM)</button>`
+      : `<button onclick="openCert('retest')" class="btn-ghost py-3 rounded-sm text-xs tracking-widest border-cyan-500/50 text-cyan-200 w-full md:w-3/4 mx-auto">🎓 CERTIFICATE (RETEST)</button>`;
+
+    bodyHtml = `
+      <div class="text-center py-6">
+        <div class="text-6xl mb-4">✅</div>
+        <h2 class="font-kanit text-2xl text-cyan-300 glow-text tracking-widest mb-3">TIMELINE ALREADY RESTORED</h2>
+        <p class="text-sm text-slate-300">Recorded Score: <span class="text-cyan-300 font-kanit text-lg">${st.lastScoreDisplay || CAPPED_PASS_SCORE}</span></p>
+        <p class="text-xs text-slate-500 mt-2 mb-6">No further action required, Agent.</p>
+        <h3 class="font-kanit text-sm text-amber-300 tracking-wide mb-3 border-t border-slate-700 pt-4">🏆 CLAIM YOUR CERTIFICATE</h3>
+        <div class="flex flex-col gap-2">
+          ${certBtnHtml}
+        </div>
+      </div>`;
+  } else if(inCooldown){
+    bodyHtml = `<div class="text-center mb-5"><div class="text-5xl mb-3">🛠️</div><h2 class="font-kanit text-xl text-amber-400 tracking-widest mb-1" style="text-shadow:0 0 14px rgba(245,158,11,0.6)">SYSTEM OVERHEATED</h2><p class="text-xs text-slate-400 mb-4">Recalibrating temporal core. Retry unlocks in:</p><div id="cooldownTimer" class="font-kanit text-4xl text-amber-300 tracking-widest">--:--</div></div><div class="border-t border-slate-700/60 pt-4 mt-2"><h3 class="font-kanit text-sm text-cyan-300 tracking-wide mb-2">📡 DATA LOGS — STUDY MATERIALS</h3><div class="bg-black/30 border border-slate-700 rounded-sm p-4 text-xs text-slate-300 leading-relaxed h-32 flex items-center justify-center italic text-center">Please review your Grammar and Vocabulary notes before attempting another jump.</div></div>`;
+  } else {
+    // โชว์คะแนนดิบเดิม สำหรับเด็กที่ต้องมาสอบซ่อม
+    const record = studentDB[session.studentId] || {};
+    const prevScore = record.score !== undefined ? record.score : '--';
+
+    bodyHtml = `
+      <div class="text-center py-4">
+        <div class="text-5xl mb-3">🌀</div>
+        <h2 class="font-kanit text-xl text-cyan-300 glow-text tracking-wide mb-2">TIMELINE UNSTABLE</h2>
+        <p class="text-sm text-slate-300 mb-2">Midterm Score: <span class="text-red-400 font-kanit text-lg">${prevScore} / 20</span></p>
+        <p class="text-sm text-slate-400 mb-1">Score at least <span class="text-cyan-300">70%</span> (28/40) to restore the timeline.</p>
+        <p class="text-xs text-slate-500">Time Limit: 40:00 minutes · ${TOTAL_QUESTIONS} Questions</p>
+      </div>`;
+  }
+
+  const canInitiate = !locked && !passed && !inCooldown;
+
+  return `
+  <div class="w-full max-w-lg mt-4 md:mt-10 fade-in pb-10">
+    <div class="text-center mb-5">
+      <h1 class="font-kanit text-3xl md:text-4xl font-bold text-cyan-300 glitch-title tracking-wider">CHRONOS</h1>
+      <p class="text-[11px] text-slate-500 tracking-wide mt-1">BASIC ENGLISH 6 | Khao Chakan Witthayakom School | Teacher Saruta</p>
+    </div>
+    <div class="panel rounded-sm p-5 mb-4 relative">
+      <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+      <div class="flex items-center justify-between">
+        <div><p class="text-[10px] text-slate-500 tracking-widest font-kanit">AGENT</p><p class="text-cyan-200 font-kanit text-base">${session.studentName}${session.isAdmin ? ' <span class="text-amber-400 text-xs">[ADMIN]</span>' : ''}</p><p class="text-[10px] text-slate-500 mt-0.5">ID: ${session.studentId}</p></div>
+        <div class="text-right"><p class="text-[10px] text-slate-500 tracking-widest font-kanit mb-1">TEMPORAL CORES</p><div class="flex gap-1.5 justify-end">${renderCores(session.isAdmin ? MAX_LIVES : st.lives)}</div></div>
+      </div>
+    </div>
+    <div class="panel rounded-sm p-6 mb-4 relative">
+      <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+      ${bodyHtml}
+    </div>
+    <button id="initiateBtn" ${canInitiate ? '' : 'disabled'} class="btn-agent w-full py-4 rounded-sm font-kanit font-semibold tracking-[0.2em] text-base ${passed ? 'hidden' : ''}">
+      ${locked ? '✖ LOCKED' : passed ? '' : inCooldown ? '⏳ RECALIBRATING...' : '▶ INITIATE RETEST'}
+    </button>
+    <button id="logoutBtn" class="btn-ghost w-full py-2.5 rounded-sm mt-3 text-xs tracking-widest">DISCONNECT</button>
+  </div>`;
+}
+
+function attachDashboardEvents(){
+  const initBtn = document.getElementById('initiateBtn');
+  if(initBtn){
+    initBtn.addEventListener('click', () => {
+      showCustomModal('🚀', 'CONFIRM TIMELINE JUMP', `You are about to begin the retest.\n\n${TOTAL_QUESTIONS} Questions · 40:00 Minutes\nPassing Score: 70% (28/40)\n\nOnce started, the timer cannot be paused.`, (confirmed) => {
+        if(confirmed) startExam();
+      }, { confirm:true, confirmText:'BEGIN', cancelText:'CANCEL' });
+    });
+  }
+  const logoutBtn = document.getElementById('logoutBtn');
+  if(logoutBtn){
+    logoutBtn.addEventListener('click', () => {
+      if(dashboardTimerHandle) clearInterval(dashboardTimerHandle);
+      session.studentId = null; session.studentName = null; session.isAdmin = false; session.phase = 'login'; render();
+    });
+  }
+}
+
+function startDashboardTicker(){
+  if(dashboardTimerHandle) clearInterval(dashboardTimerHandle);
+  const timerEl = document.getElementById('cooldownTimer');
+  if(!timerEl) return;
+  const tick = () => {
+    const st = currentStudentState(); const now = Date.now();
+    const remaining = Math.max(0, Math.floor((st.cooldownEnd - now)/1000));
+    const el = document.getElementById('cooldownTimer');
+    if(!el){ clearInterval(dashboardTimerHandle); return; }
+    el.textContent = fmtTime(remaining);
+    if(remaining <= 0){ clearInterval(dashboardTimerHandle); render(); }
+  };
+  tick(); dashboardTimerHandle = setInterval(tick, 1000);
+}
+
+// ================= PHASE: EXAM =================
+function startExam(){
+  examRuntime = { answers: new Array(examData.length).fill(null), currentQ: 0, timeLeft: EXAM_TIME_LIMIT_SEC, timerHandle: null, offenseCount: 0, lastResult: null };
+  session.phase = 'exam'; render();
+}
+
+function renderExam(){
+  const q = examData[examRuntime.currentQ]; const total = examData.length;
+  const progressPct = Math.round(((examRuntime.currentQ) / total) * 100);
+  const selected = examRuntime.answers[examRuntime.currentQ];
+  const choicesHtml = q.choices.map((c, i) => `<button data-idx="${i}" class="choice-btn w-full flex items-center gap-3 px-4 py-3 rounded-sm mb-3 ${selected === i ? 'selected' : ''}"><span class="choice-letter w-8 h-8 flex items-center justify-center rounded-sm text-sm flex-shrink-0">${String.fromCharCode(65+i)}</span><span class="text-sm text-slate-200">${c}</span></button>`).join('');
+
+  return `
+  <div class="w-full max-w-2xl mt-4 fade-in pb-10">
+    <div class="flex items-center justify-between mb-3">
+      <div class="font-kanit text-xs text-cyan-400 tracking-widest">Q ${examRuntime.currentQ+1} / ${total}</div>
+      <div id="examTimer" class="font-kanit text-xl text-cyan-300 tracking-widest">${fmtTime(examRuntime.timeLeft)}</div>
+    </div>
+    <div class="progress-track rounded-full h-2 mb-6 overflow-hidden"><div class="progress-fill h-full rounded-full" style="width:${progressPct}%"></div></div>
+    <div class="panel rounded-sm p-6 mb-5 relative min-h-[100px]">
+      <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+      <p class="text-base md:text-lg text-slate-100 leading-relaxed whitespace-pre-line">${q.q}</p>
+    </div>
+    <div id="choicesWrap">${choicesHtml}</div>
+    
+    <div class="flex gap-2 mt-6">
+      <button id="prevBtn" ${examRuntime.currentQ === 0 ? 'disabled' : ''} class="btn-ghost flex-1 py-3 rounded-sm text-xs md:text-sm tracking-widest">◄ PREV</button>
+      <button id="overviewBtn" class="btn-ghost flex-1 py-3 rounded-sm text-xs md:text-sm tracking-widest">🔍 OVERVIEW</button>
+      ${examRuntime.currentQ === total - 1 ? `<button id="submitBtn" class="btn-agent flex-1 py-3 rounded-sm text-xs md:text-sm tracking-widest font-semibold">SUBMIT ✔</button>` : `<button id="nextBtn" class="btn-agent flex-1 py-3 rounded-sm text-xs md:text-sm tracking-widest font-semibold">NEXT ►</button>`}
+    </div>
+  </div>`;
+}
+
+function attachExamEvents(){
+  const wrap = document.getElementById('choicesWrap');
+  wrap.querySelectorAll('.choice-btn').forEach(btn => { btn.addEventListener('click', () => { const idx = parseInt(btn.getAttribute('data-idx'), 10); examRuntime.answers[examRuntime.currentQ] = idx; wrap.querySelectorAll('.choice-btn').forEach(b => b.classList.remove('selected')); btn.classList.add('selected'); }); });
+  
+  const prevBtn = document.getElementById('prevBtn'); if(prevBtn) prevBtn.addEventListener('click', () => { if(examRuntime.currentQ > 0){ examRuntime.currentQ--; updateExamViewOnly(); } });
+  const nextBtn = document.getElementById('nextBtn'); if(nextBtn) nextBtn.addEventListener('click', () => { if(examRuntime.currentQ < examData.length - 1){ examRuntime.currentQ++; updateExamViewOnly(); } });
+  const submitBtn = document.getElementById('submitBtn'); if(submitBtn) submitBtn.addEventListener('click', () => { const unanswered = examRuntime.answers.filter(a => a === null).length; showCustomModal('📤', 'CONFIRM SUBMISSION', unanswered > 0 ? `You have ${unanswered} unanswered question(s). Submit anyway?` : `All questions answered. Submit the exam now?`, (confirmed) => { if(confirmed) finishExam('submitted'); }, { confirm:true, confirmText:'SUBMIT', cancelText:'REVIEW' }); });
+  const overviewBtn = document.getElementById('overviewBtn'); if(overviewBtn) overviewBtn.addEventListener('click', showOverviewModal);
+  
+  startExamTimer();
+}
+
+function updateExamViewOnly(){ const app = document.getElementById('app'); app.innerHTML = renderExam(); attachExamEventsNoTimer(); }
+
+function attachExamEventsNoTimer(){
+  const wrap = document.getElementById('choicesWrap');
+  wrap.querySelectorAll('.choice-btn').forEach(btn => { btn.addEventListener('click', () => { const idx = parseInt(btn.getAttribute('data-idx'), 10); examRuntime.answers[examRuntime.currentQ] = idx; wrap.querySelectorAll('.choice-btn').forEach(b => b.classList.remove('selected')); btn.classList.add('selected'); }); });
+  
+  const prevBtn = document.getElementById('prevBtn'); if(prevBtn) prevBtn.addEventListener('click', () => { if(examRuntime.currentQ > 0){ examRuntime.currentQ--; updateExamViewOnly(); } });
+  const nextBtn = document.getElementById('nextBtn'); if(nextBtn) nextBtn.addEventListener('click', () => { if(examRuntime.currentQ < examData.length - 1){ examRuntime.currentQ++; updateExamViewOnly(); } });
+  const submitBtn = document.getElementById('submitBtn'); if(submitBtn) submitBtn.addEventListener('click', () => { const unanswered = examRuntime.answers.filter(a => a === null).length; showCustomModal('📤', 'CONFIRM SUBMISSION', unanswered > 0 ? `You have ${unanswered} unanswered question(s). Submit anyway?` : `All questions answered. Submit the exam now?`, (confirmed) => { if(confirmed) finishExam('submitted'); }, { confirm:true, confirmText:'SUBMIT', cancelText:'REVIEW' }); });
+  const overviewBtn = document.getElementById('overviewBtn'); if(overviewBtn) overviewBtn.addEventListener('click', showOverviewModal);
+  
+  syncExamTimerDisplay();
+}
+
+function startExamTimer(){
+  if(examRuntime.timerHandle) clearInterval(examRuntime.timerHandle);
+  examRuntime.timerHandle = setInterval(() => {
+    examRuntime.timeLeft--; syncExamTimerDisplay();
+    if(examRuntime.timeLeft <= 0){ clearInterval(examRuntime.timerHandle); finishExam('timeout'); }
+  }, 1000);
+}
+function syncExamTimerDisplay(){
+  const el = document.getElementById('examTimer'); if(!el) return;
+  el.textContent = fmtTime(examRuntime.timeLeft);
+  if(examRuntime.timeLeft <= 60) el.classList.add('timer-critical');
+}
+
+// ---------- ANTI-CHEAT: VISIBILITY ----------
+document.addEventListener('visibilitychange', () => {
+  if(session.phase !== 'exam') return;
+  if(document.hidden){
+    examRuntime.offenseCount++;
+    if(examRuntime.offenseCount === 1){ showCustomModal('⚠️', 'TIME ANOMALY DETECTED', 'Switching tabs or minimizing the browser during an active timeline jump has been logged.\n\nOne more violation will trigger an emergency auto-submit.', null); }
+    else if(examRuntime.offenseCount >= 2){ if(examRuntime.timerHandle) clearInterval(examRuntime.timerHandle); finishExam('anomaly'); }
+  }
+});
+
+// ---------- SCORING & SUBMISSION ----------
+function finishExam(reason){
+  if(examRuntime.timerHandle) clearInterval(examRuntime.timerHandle);
+  closeModal();
+
+  let raw = 0;
+  const logs = examData.map((q, i) => {
+    const userAns = examRuntime.answers[i];
+    const correct = userAns === q.ans;
+    if(correct) raw++;
+    return { q: q.q, choices: q.choices, userAns, correctAns: q.ans, correct, exp: q.exp };
+  });
+
+  const passed = raw >= PASS_RAW_SCORE;
+  let st = currentStudentState();
+  let coresLeft = session.isAdmin ? MAX_LIVES : st.lives;
+  let statusOut = 'active';
+  let finalScoreDisplay;
+
+  if(passed){
+    finalScoreDisplay = CAPPED_PASS_SCORE; statusOut = 'passed';
+    if(!session.isAdmin){ st.status = 'passed'; st.lastScoreDisplay = finalScoreDisplay; st.cooldownEnd = null; saveState(session.studentId, st); }
+  } else {
+    finalScoreDisplay = `${raw} / ${TOTAL_QUESTIONS} (FAIL)`;
+    if(!session.isAdmin){
+      st.lives = Math.max(0, st.lives - 1); coresLeft = st.lives;
+      if(st.lives <= 0){ st.status = 'locked'; st.cooldownEnd = null; statusOut = 'locked'; }
+      else { st.status = 'active'; st.cooldownEnd = Date.now() + COOLDOWN_SEC * 1000; statusOut = 'cooldown'; }
+      saveState(session.studentId, st);
+    } else { statusOut = 'admin_fail_ignored'; }
+  }
+
+  examRuntime.lastResult = { raw, passed, reason, logs, finalScoreDisplay, coresLeft, statusOut, submittedAt: new Date().toISOString() };
+
+  if(SCRIPT_URL && SCRIPT_URL !== 'YOUR_GOOGLE_SCRIPT_URL_HERE'){
+    fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ studentId: session.studentId, studentName: session.studentName, rawScore: raw, finalCappedScore: passed ? CAPPED_PASS_SCORE : `${raw} / ${TOTAL_QUESTIONS}`, coresLeft: coresLeft, status: statusOut })
+    }).catch(err => console.error('[CHRONOS] Failed to submit result:', err));
+  }
+
+  session.phase = 'result';
+  render();
+  
+  if(passed) fireConfetti(); 
+}
+
+// ================= PHASE: RESULT =================
+function renderResult(){
+  const r = examRuntime.lastResult;
+  if(!r){ session.phase = 'dashboard'; return renderDashboard(); }
+
+  const reasonNote = { submitted: '', timeout: '<p class="text-xs text-amber-400 mt-1">⏱ Auto-submitted: time limit reached.</p>', anomaly: '<p class="text-xs text-red-400 mt-1">⚠ Auto-submitted: repeated tab-switching detected.</p>' }[r.reason] || '';
+
+  let mainBlock;
+  if(r.passed){
+    mainBlock = `
+      <div class="text-center py-4">
+        <div class="text-6xl mb-3">🌌</div>
+        <h2 class="font-kanit text-2xl md:text-3xl text-cyan-300 glow-text tracking-widest mb-2">TIMELINE RESTORED</h2>
+        <p class="text-sm text-slate-400 mb-4">Recorded Score</p>
+        <div class="font-kanit text-5xl text-cyan-300 tracking-wider mb-2">${CAPPED_PASS_SCORE}</div>
+        <p class="text-xs text-slate-500 mb-6">(Raw performance: ${r.raw} / ${TOTAL_QUESTIONS})</p>
+        <div class="flex flex-col md:flex-row justify-center gap-3 mt-4 border-t border-slate-700/60 pt-6">
+          <button onclick="openCert('retest')" class="btn-ghost flex-1 py-3 rounded-sm text-xs tracking-widest border-cyan-500 text-cyan-300">🎓 CERTIFICATE (RETEST)</button>
+        </div>
+        ${reasonNote}
+      </div>`;
+  } else {
+    const lockedNow = r.statusOut === 'locked';
+    mainBlock = `
+      <div class="text-center py-4">
+        <div class="text-6xl mb-3">${lockedNow ? '☠️' : '💥'}</div>
+        <h2 class="font-kanit text-2xl md:text-3xl text-red-400 tracking-widest mb-2" style="text-shadow:0 0 16px rgba(239,68,68,0.6)">${lockedNow ? 'CRITICAL FAILURE' : 'TIMELINE FRACTURE'}</h2>
+        <p class="text-sm text-slate-400 mb-1">Score: <span class="text-red-300 font-kanit">${r.raw} / ${TOTAL_QUESTIONS}</span> (70% required)</p>
+        <p class="text-xs text-slate-500 mb-3">1 Temporal Core lost.</p>
+        <div class="flex gap-1.5 justify-center mb-2">${renderCores(r.coresLeft)}</div>
+        ${lockedNow ? '<p class="text-xs text-red-300 font-kanit tracking-wide mt-2">CONTACT COMMANDER (Teacher Saruta) IMMEDIATELY.</p>' : '<p class="text-xs text-amber-400 mt-2">System will enter 15:00 cooldown before retry.</p>'}
+        ${reasonNote}
+      </div>`;
+  }
+
+  return `
+  <div class="w-full max-w-2xl mt-4 fade-in pb-10">
+    <div class="panel rounded-sm p-6 mb-5 relative">
+      <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+      ${mainBlock}
+    </div>
+    <div class="flex gap-3">
+      <button id="viewLogsBtn" class="btn-ghost flex-1 py-3 rounded-sm text-sm tracking-widest">📋 VIEW LOGS</button>
+      <button id="backToDashBtn" class="btn-agent flex-1 py-3 rounded-sm text-sm tracking-widest font-semibold">RETURN TO BASE</button>
+    </div>
+    <div id="logsPanel" class="mt-5 hidden"></div>
+  </div>`;
+}
+
+function attachResultEvents(){
+  const backBtn = document.getElementById('backToDashBtn'); backBtn.addEventListener('click', () => { session.phase = 'dashboard'; render(); });
+  const logsBtn = document.getElementById('viewLogsBtn');
+  logsBtn.addEventListener('click', () => {
+    const panel = document.getElementById('logsPanel');
+    if(panel.classList.contains('hidden')){ panel.innerHTML = renderLogs(); panel.classList.remove('hidden'); logsBtn.textContent = '📋 HIDE LOGS'; }
+    else { panel.classList.add('hidden'); panel.innerHTML = ''; logsBtn.textContent = '📋 VIEW LOGS'; }
+  });
+}
+
+function renderLogs(){
+  const r = examRuntime.lastResult;
+  const rows = r.logs.map((entry, i) => {
+    const userLabel = entry.userAns === null ? '<span class="text-slate-500">No answer</span>' : `${String.fromCharCode(65+entry.userAns)}. ${entry.choices[entry.userAns]}`;
+    let extra = '';
+    if(!entry.correct){
+      if(session.isAdmin){ extra = `<p class="text-xs text-cyan-300 mt-1">Correct: ${String.fromCharCode(65+entry.correctAns)}. ${entry.choices[entry.correctAns]}</p>`; }
+      else { extra = `<p class="text-xs text-amber-300 mt-1">💡 Hint: ${entry.exp}</p>`; }
+    }
+    return `<div class="${entry.correct ? 'log-row-correct' : 'log-row-wrong'} bg-black/25 rounded-sm p-3 mb-2"><p class="text-xs text-slate-500 font-kanit mb-1">Q${i+1}</p><p class="text-sm text-slate-200 mb-1 whitespace-pre-line">${entry.q}</p><p class="text-xs text-slate-400">Your answer: ${userLabel} ${entry.correct ? '<span class="text-green-400">✔</span>' : '<span class="text-red-400">✘</span>'}</p>${extra}</div>`;
+  }).join('');
+  return `<div class="panel rounded-sm p-4 relative max-h-[420px] overflow-y-auto"><div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div><h3 class="font-kanit text-sm text-cyan-300 tracking-wide mb-3">MISSION LOG ${session.isAdmin ? '(ADMIN — FULL DISCLOSURE)' : ''}</h3>${rows}</div>`;
+}
+
+// ---------- INIT ----------
+render();
+</script>
+</body>
+</html>
