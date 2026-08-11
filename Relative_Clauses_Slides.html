@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grammar: Relative Clauses</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;700&display=swap');
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Kanit', sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            overflow: hidden;
+        }
+
+        .progress-bar-container {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%;
+            height: 6px;
+            background: #e0e0e0;
+            z-index: 200;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3498db, #27ae60);
+            width: 8.33%;
+            transition: width 0.35s ease;
+        }
+
+        .slider-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2.2rem 2rem 6rem;
+            box-sizing: border-box;
+            background: white;
+            z-index: 1;
+            pointer-events: none;
+            overflow-y: auto;
+        }
+
+        .slide.active {
+            opacity: 1;
+            z-index: 10;
+            pointer-events: auto;
+        }
+
+        .content-box {
+            max-width: 950px;
+            width: 100%;
+            background: #fff;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+            border: 1px solid #e6e6e6;
+            margin: auto;
+        }
+
+        h1 {
+            color: #e67e22;
+            font-size: 3rem;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            color: #2c3e50;
+            font-size: 2.2rem;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            color: #34495e;
+            font-size: 1.5rem;
+            margin: 20px 0 10px;
+        }
+
+        p, li {
+            font-size: 1.35rem;
+            line-height: 1.6;
+        }
+
+        .highlight-def { color: #1e8449; font-weight: bold; }
+        .highlight-non { color: #b03a2e; font-weight: bold; }
+
+        .badge-def, .badge-non {
+            display: inline-block;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: white;
+        }
+        .badge-def { background: #27ae60; }
+        .badge-non { background: #c0392b; }
+
+        .comma {
+            color: #c0392b;
+            font-weight: 900;
+            font-size: 1.4em;
+            padding: 0 1px;
+        }
+
+        .example-box {
+            background: #fdf2e9;
+            border-left: 7px solid #e67e22;
+            border: 2px solid #f5cba7;
+            border-left-width: 7px;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .exercise-box {
+            background: #ebf5fb;
+            border: 2px solid #aed6f1;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .note-box {
+            background: #f4ecf7;
+            border-left: 7px solid #8e44ad;
+            border: 2px solid #d7bde2;
+            border-left-width: 7px;
+            padding: 15px 20px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+            font-size: 1.15rem;
+        }
+
+        .warning-box {
+            background: #fef9e7;
+            border-left: 7px solid #f39c12;
+            border: 2px solid #fad776;
+            border-left-width: 7px;
+            padding: 15px 20px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+            font-size: 1.15rem;
+        }
+
+        .btn-reveal {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.4rem;
+            font-family: 'Kanit', sans-serif;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.15s;
+            margin: 15px 0;
+        }
+        .btn-reveal:hover { background-color: #2980b9; transform: translateY(-2px); }
+
+        .answer {
+            display: none;
+            font-size: 1.5rem;
+            color: #27ae60;
+            font-weight: bold;
+            margin-top: 15px;
+            padding: 15px;
+            border: 3px dashed #27ae60;
+            border-radius: 10px;
+            background: #eafaf1;
+            text-align: left;
+        }
+        .answer .explain {
+            display: block;
+            font-size: 1.05rem;
+            font-weight: 400;
+            color: #444;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed #a3e4c1;
+        }
+        .answer.show { display: block; animation: fadeIn 0.5s; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-8px); }
+            40% { transform: translateX(8px); }
+            60% { transform: translateX(-6px); }
+            80% { transform: translateX(6px); }
+        }
+        .shake { animation: shake 0.4s; }
+
+        /* Quiz buttons (A/B gamification) */
+        .quiz { text-align: center; }
+        .quiz-buttons { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin: 15px 0; }
+        .quiz-btn {
+            font-family: 'Kanit', sans-serif;
+            font-size: 1.25rem;
+            padding: 14px 26px;
+            border-radius: 12px;
+            border: 3px solid #ccc;
+            background: #fff;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .quiz-btn:hover:not(:disabled) { border-color: #3498db; transform: translateY(-2px); }
+        .quiz-btn:disabled { cursor: not-allowed; opacity: 0.8; }
+        .quiz-btn.correct { background: #d5f5e3; border-color: #27ae60; color: #1e8449; }
+        .quiz-btn.incorrect { background: #fadbd8; border-color: #c0392b; color: #922b21; }
+        .quiz-feedback { font-size: 1.3rem; font-weight: bold; min-height: 34px; margin-top: 5px; }
+        .quiz-feedback.correct-text { color: #1e8449; }
+        .quiz-feedback.incorrect-text { color: #922b21; }
+
+        /* Flip cards */
+        .flip-card { perspective: 1200px; margin: 20px auto; cursor: pointer; max-width: 720px; }
+        .flip-hint { text-align: center; font-size: 0.95rem; color: #7f8c8d; margin-top: -8px; margin-bottom: 15px; }
+        .flip-inner {
+            position: relative;
+            width: 100%;
+            min-height: 170px;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        .flip-card.flipped .flip-inner { transform: rotateY(180deg); }
+        .flip-front, .flip-back {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 12px;
+            padding: 20px 25px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .flip-front { background: #fdf2e9; border: 3px solid #e67e22; }
+        .flip-back {
+            background: #eafaf1; border: 3px solid #27ae60;
+            transform: rotateY(180deg);
+            text-align: center;
+        }
+        .flip-back.non-defining { background: #fdedec; border-color: #c0392b; }
+
+        .controls {
+            position: fixed;
+            bottom: 20px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            z-index: 100;
+        }
+        .btn-nav {
+            background: #2c3e50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1.2rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Kanit', sans-serif;
+        }
+        .btn-nav:hover { background: #1a252f; }
+        .btn-nav:disabled { background: #bdc3c7; cursor: not-allowed; }
+
+        .progress {
+            position: absolute;
+            top: 16px;
+            right: 30px;
+            font-size: 1.1rem;
+            color: #7f8c8d;
+            z-index: 100;
+        }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ccc; padding: 12px; text-align: left; font-size: 1.15rem; vertical-align: top; }
+        th { background-color: #eef1f2; color: #2c3e50; }
+        .table-def { width: 50%; vertical-align: top; border-left: 4px solid #27ae60 !important;}
+        .table-non { width: 50%; vertical-align: top; border-left: 4px solid #c0392b !important;}
+
+        .diagram-svg { width: 100%; max-width: 850px; height: auto; margin: 15px auto; display: block; }
+
+        .icon-row { display: flex; justify-content: center; gap: 40px; margin: 15px 0; flex-wrap: wrap; }
+        .icon-card { text-align: center; }
+        .icon-card .emoji { font-size: 3rem; }
+        .icon-card p { font-size: 1.05rem; margin: 5px 0; }
+
+        .rule-list { text-align: left; }
+        .rule-list li { margin-bottom: 12px; }
+
+        .two-col { display: flex; gap: 20px; flex-wrap: wrap; }
+        .two-col > div { flex: 1; min-width: 260px; }
+    </style>
+</head>
+<body>
+
+    <div class="progress-bar-container"><div class="progress-bar-fill" id="progressBarFill"></div></div>
+    <div class="progress" id="progressIndicator">Slide 1 / 13</div>
+
+    <div class="slider-container">
+
+        <!-- Slide 1: Title -->
+        <div class="slide active">
+            <div class="content-box" style="text-align: center;">
+                <h1>Grammar Time! 🎯</h1>
+                <h2 style="border: none; font-size: 2.5rem; color: #34495e;">Defining & Non-Defining Relative Clauses</h2>
+                <p>มาทำความเข้าใจประโยคขยายความให้ชัดเจนยิ่งขึ้น!</p>
+                <p style="color: #7f8c8d; font-size: 1.15rem;">เราจะเรียนรู้ว่า relative clause คืออะไร ใช้ relative pronoun ตัวไหนตอนไหน ความแตกต่างระหว่าง defining กับ non-defining และกฎเสริมที่ข้อสอบชอบออก</p>
+                <div class="icon-row">
+                    <span class="badge-def">🟢 Defining = ไม่มีคอมมา</span>
+                    <span class="badge-non">🔴 Non-defining = มีคอมมา</span>
+                </div>
+                <p style="color: #7f8c8d; font-size: 1.2rem; margin-top: 20px;">(กดลูกศร ซ้าย-ขวา หรือปุ่มด้านล่างเพื่อเปลี่ยนสไลด์)</p>
+            </div>
+        </div>
+
+        <!-- Slide 2: What is a relative clause -->
+        <div class="slide">
+            <div class="content-box">
+                <h2>Relative Clause คืออะไร? 🤔</h2>
+                <p><b>Relative Clause</b> คือส่วนขยาย (เหมือนประโยคย่อย) ที่แทรกเข้าไปเพื่อบอกข้อมูลเพิ่มเติมเกี่ยวกับคำนาม (คน สัตว์ สิ่งของ) ที่อยู่ข้างหน้ามัน โดยเริ่มต้นด้วย <b>relative pronoun</b> เช่น <i>who, which, that, whose, whom</i></p>
+
+                <svg class="diagram-svg" viewBox="0 0 850 220" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="10" y="40" width="180" height="60" rx="10" fill="#eafaf1" stroke="#27ae60" stroke-width="2.5"/>
+                    <text x="100" y="65" font-size="16" text-anchor="middle" fill="#1e8449" font-weight="bold">Main Clause</text>
+                    <text x="100" y="88" font-size="15" text-anchor="middle" fill="#333">The woman</text>
+
+                    <rect x="220" y="40" width="330" height="60" rx="10" fill="#fdf2e9" stroke="#e67e22" stroke-width="2.5"/>
+                    <text x="385" y="65" font-size="16" text-anchor="middle" fill="#e67e22" font-weight="bold">Relative Clause</text>
+                    <text x="385" y="88" font-size="15" text-anchor="middle" fill="#333">who lives next door</text>
+
+                    <rect x="580" y="40" width="260" height="60" rx="10" fill="#eafaf1" stroke="#27ae60" stroke-width="2.5"/>
+                    <text x="710" y="65" font-size="16" text-anchor="middle" fill="#1e8449" font-weight="bold">Main Clause (ต่อ)</text>
+                    <text x="710" y="88" font-size="15" text-anchor="middle" fill="#333">is my teacher.</text>
+
+                    <text x="425" y="140" font-size="15" text-anchor="middle" fill="#7f8c8d">"who lives next door" บอกว่า "the woman" คนไหน — นี่คือหน้าที่ของ relative clause</text>
+                    <path d="M385 100 L385 120" stroke="#e67e22" stroke-width="2" marker-end="url(#arrow)"/>
+                    <defs>
+                        <marker id="arrow" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
+                            <path d="M0,0 L10,5 L0,10 Z" fill="#e67e22"/>
+                        </marker>
+                    </defs>
+                </svg>
+
+                <div class="note-box">
+                    💡 พูดง่ายๆ relative clause ทำหน้าที่เหมือน "คำคุณศัพท์ยาวๆ" (an adjective clause) ที่ขยายคำนามข้างหน้ามัน แทนที่จะพูดเป็น 2 ประโยคแยกกัน เราสามารถรวมมันเข้าด้วยกันโดยใช้ relative pronoun แทนการพูดซ้ำคำนามนั้น
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: Relative pronoun toolbox -->
+        <div class="slide">
+            <div class="content-box">
+                <h2>กล่องเครื่องมือ: Relative Pronouns 🧰</h2>
+                <table>
+                    <tr>
+                        <th>Pronoun</th>
+                        <th>ใช้กับ</th>
+                        <th>ตัวอย่าง</th>
+                    </tr>
+                    <tr>
+                        <td><b>who</b></td>
+                        <td>คน (ประธาน - subject)</td>
+                        <td>The man <b>who</b> called is my uncle.</td>
+                    </tr>
+                    <tr>
+                        <td><b>whom</b></td>
+                        <td>คน (กรรม - object, ทางการ)</td>
+                        <td>The man <b>whom</b> I met is my uncle.</td>
+                    </tr>
+                    <tr>
+                        <td><b>which</b></td>
+                        <td>สัตว์ / สิ่งของ</td>
+                        <td>The book <b>which</b> I bought is great.</td>
+                    </tr>
+                    <tr>
+                        <td><b>that</b></td>
+                        <td>คน / สัตว์ / สิ่งของ (defining เท่านั้น)</td>
+                        <td>The book <b>that</b> I bought is great.</td>
+                    </tr>
+                    <tr>
+                        <td><b>whose</b></td>
+                        <td>แสดงความเป็นเจ้าของ (possessive)</td>
+                        <td>The boy <b>whose</b> bike was stolen is sad.</td>
+                    </tr>
+                </table>
+                <div class="note-box">
+                    💡 จำง่ายๆ: <b>who</b> = ประธานที่เป็นคน, <b>whom</b> = กรรมที่เป็นคน (ทางการ, พูดในชีวิตประจำวันมักใช้ who แทนได้), <b>which</b> = สิ่งของ/สัตว์, <b>that</b> = ใช้แทนทั้งคนและสิ่งของได้แต่ใช้ได้เฉพาะประโยค defining เท่านั้น, <b>whose</b> = "ของใคร"
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Table Comparison -->
+        <div class="slide">
+            <div class="content-box">
+                <h2>ความแตกต่างหลัก (The Differences)</h2>
+                <div class="icon-row" style="margin-top:-10px;">
+                    <span class="badge-def">🟢 Defining</span>
+                    <span class="badge-non">🔴 Non-Defining</span>
+                </div>
+                <table>
+                    <tr>
+                        <th class="table-def"><span class="highlight-def">Defining Relative Clauses</span> (ระบุชี้ชัด)</th>
+                        <th class="table-non"><span class="highlight-non">Non-Defining Relative Clauses</span> (แค่ให้ข้อมูลเพิ่ม)</th>
+                    </tr>
+                    <tr>
+                        <td class="table-def">
+                            - ให้ข้อมูลที่ <b>"จำเป็น (Essential)"</b> เพื่อบอกว่ากำลังพูดถึงใคร/อะไร<br>
+                            - ถ้าตัดออก ประโยคจะไม่ชัดเจนหรือความหมายเปลี่ยนไป<br>
+                            - ใช้ <i>who, that, which, whose, whom</i><br>
+                            - <b>❌ ไม่ใช้คอมมา</b>
+                        </td>
+                        <td class="table-non">
+                            - ให้ข้อมูล <b>"เพิ่มเติม (Extra)"</b> ที่ไม่จำเป็นต่อการเข้าใจประโยค<br>
+                            - ตัดทิ้งก็ยังรู้เรื่องว่าพูดถึงใคร (เพราะชี้เฉพาะอยู่แล้ว)<br>
+                            - ใช้ <i>who, which, whose, whom</i> (<b>❌ ห้ามใช้ that</b>)<br>
+                            - <b>✅ ต้องใช้คอมมา <span class="comma">,</span> คั่นเสมอ</b>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="table-def">
+                            <b>Ex.</b> They're the people <u>whom I met last night.</u><br>
+                            Those are the houses <u>that were flooded during the storm.</u><br>
+                            The money was given to the boy <u>whose bike was stolen.</u>
+                        </td>
+                        <td class="table-non">
+                            <b>Ex.</b> My best friend<span class="comma">,</span> <u>who lives next door</u><span class="comma">,</span> is called Jimmy.<br>
+                            The red car over there<span class="comma">,</span> <u>which belongs to Dirk</u><span class="comma">,</span> is 10 years old.<br>
+                            That woman<span class="comma">,</span> <u>whom I met last year</u><span class="comma">,</span> is talking to her friend.
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- Slide 5: Visual diagram - commas -->
+        <div class="slide">
+            <div class="content-box">
+                <h2>มองเห็นความต่างด้วยภาพ 👀</h2>
+                <p>ลองนึกภาพ defining clause เป็นชิ้นส่วนที่ <b>"เชื่อมแน่น"</b> เข้ากับประโยค ตัดออกไม่ได้ ส่วน non-defining clause เป็นเหมือน <b>"ข้อมูลแถม"</b> ที่ยกออกได้ทุกเมื่อ สังเกตคอมมาสีแดงตัวใหญ่ที่ "ล้อม" ข้อมูลแถมไว้</p>
+
+                <svg class="diagram-svg" viewBox="0 0 850 260" xmlns="http://www.w3.org/2000/svg">
+                    <text x="20" y="30" font-size="18" fill="#1e8449" font-weight="bold">🟢 Defining — no commas, ตัดไม่ได้</text>
+                    <rect x="20" y="45" width="810" height="50" rx="8" fill="#eafaf1" stroke="#27ae60" stroke-width="2.5"/>
+                    <text x="35" y="76" font-size="16" fill="#333">The students</text>
+                    <rect x="180" y="50" width="260" height="40" rx="6" fill="#d5f5e3" stroke="#27ae60" stroke-width="1.5"/>
+                    <text x="310" y="76" font-size="15" text-anchor="middle" fill="#1e8449" font-weight="bold">who prepare in advance</text>
+                    <text x="460" y="76" font-size="16" fill="#333">tend to do well.</text>
+
+                    <text x="20" y="140" font-size="18" fill="#922b21" font-weight="bold">🔴 Non-Defining — commas set it apart, ยกออกได้</text>
+                    <rect x="20" y="155" width="810" height="50" rx="8" fill="#fdedec" stroke="#c0392b" stroke-width="2.5"/>
+                    <text x="35" y="186" font-size="16" fill="#333">John</text>
+                    <text x="72" y="188" font-size="26" fill="#c0392b" font-weight="900">,</text>
+                    <rect x="90" y="160" width="250" height="40" rx="6" fill="#fadbd8" stroke="#c0392b" stroke-width="1.5" stroke-dasharray="5,3"/>
+                    <text x="215" y="186" font-size="15" text-anchor="middle" fill="#922b21" font-weight="bold">who plays soccer</text>
+                    <text x="345" y="188" font-size="26" fill="#c0392b" font-weight="900">,</text>
+                    <text x="360" y="186" font-size="16" fill="#333">has two sisters.</text>
+
+                    <text x="20" y="235" font-size="14" fill="#7f8c8d">เส้นประ (dashed) รอบข้อความ non-defining = สามารถ "หยิบออก" ได้ ประโยคยังสมบูรณ์และความหมายหลักไม่เปลี่ยน</text>
+                </svg>
+
+                <div class="note-box">
+                    💡 เคล็ดลับ: ลองอ่านประโยคโดย "ข้าม" ส่วนที่อยู่ในคอมมาไป ถ้าประโยคยังได้ใจความและกำกวมน้อยลง แสดงว่ามันคือ non-defining clause จริงๆ
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: The Tricky Meaning (flip cards) -->
+        <div class="slide">
+            <div class="content-box">
+                <h2>ระวัง! หน้าตาคล้ายกัน แต่ความหมายต่างกัน 🤯</h2>
+                <p>ลองดู 2 ประโยคนี้ คุณครูถามนักเรียนหน่อยว่า "คนพูดมีพี่สาว/น้องสาวกี่คน?" — <b>คลิกที่การ์ดเพื่อพลิกดูคำตอบ</b></p>
+
+                <p><span class="badge-def">🟢 1. Defining</span></p>
+                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                    <div class="flip-inner">
+                        <div class="flip-front">
+                            <p style="margin:0;">My sister <span class="highlight-def">who works at the music shop</span> has two cats.</p>
+                        </div>
+                        <div class="flip-back">
+                            <div class="icon-row" style="margin:0 0 8px;">
+                                <div class="icon-card"><span class="emoji">👩</span><p>คนที่ 1</p></div>
+                                <div class="icon-card"><span class="emoji">👩‍🎤</span><p>คนที่ 2 (ร้านเพลง)</p></div>
+                                <div class="icon-card"><span class="emoji">👩‍🍳</span><p>คนที่ 3</p></div>
+                            </div>
+                            <p style="margin:0; font-size:1.15rem;">👉 มีพี่สาว <b>มากกว่า 1 คน</b> — ต้องระบุว่าคนไหน (ตัดออกไม่ได้)</p>
+                        </div>
+                    </div>
+                </div>
+                <p class="flip-hint">👆 คลิกเพื่อพลิกการ์ด</p>
+
+                <p><span class="badge-non">🔴 2. Non-Defining</span></p>
+                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                    <div class="flip-inner">
+                        <div class="flip-front">
+                            <p style="margin:0;">My sister<span class="comma">,</span> <span class="highlight-non">who works at the music shop</span><span class="comma">,</span> has two cats.</p>
+                        </div>
+                        <div class="flip-back non-defining">
+                            <div class="icon-row" style="margin:0 0 8px;">
+                                <div class="icon-card"><span class="emoji">👩‍🎤</span><p>พี่สาวคนเดียว (ร้านเพลง)</p></div>
+                            </div>
+                            <p style="margin:0; font-size:1.15rem;">👉 มีพี่สาว <b>แค่คนเดียว</b> — ข้อมูล "ทำงานร้านเพลง" เป็นแค่ของแถม (ตัดออกได้)</p>
+                        </div>
+                    </div>
+                </div>
+                <p class="flip-hint">👆 คลิกเพื่อพลิกการ์ด</p>
+            </div>
+        </div>
+
+        <!-- Slide 7: Common mistakes / recap -->
+        <div class="slide">
+            <div class="content-box">
+                <h2>สรุปกฎสำคัญ & ข้อผิดพลาดที่พบบ่อย ⚠️</h2>
+                <ul class="rule-list">
+                    <li>✅ <b>Non-defining clause ต้องมีคอมมา<span class="comma">,</span> เสมอ</b> — ถ้าอยู่กลางประโยค ต้องมี 2 คอมมา คั่นหน้า-หลัง (เช่น "My friend<span class="comma">,</span> who lives here<span class="comma">,</span> is kind.")</li>
+                    <li>❌ <b>ห้ามใช้ "that" ใน non-defining clause</b> — ใช้ได้เฉพาะ who / which / whose / whom เท่านั้น</li>
+                    <li>✅ <b>Defining clause ไม่มีคอมมา</b> — เพราะข้อมูลนั้น "จำเป็น" ต่อการเข้าใจประโยค</li>
+                    <li>💭 <b>ลองถามตัวเองว่า:</b> "ถ้าตัดส่วนนี้ออก ประโยคยังชัดเจนไหมว่าใครคือใคร?" ถ้าชัดเจนอยู่แล้ว = 🔴 non-defining (ตัดได้) ถ้าไม่ชัดเจน = 🟢 defining (ตัดไม่ได้)</li>
+                    <li>🗣️ ในภาษาพูด non-defining clause มักออกเสียงเหมือนหยุดพัก (pause) ก่อนและหลัง ส่วน defining clause จะพูดต่อเนื่องไปเลยไม่มีหยุด</li>
+                </ul>
+                <div class="two-col">
+                    <div class="example-box">
+                        <p><b>✅ ถูก (Defining):</b><br>The car that I bought is fast.</p>
+                    </div>
+                    <div class="example-box" style="border-left-color:#c0392b; background:#fdedec;">
+                        <p><b>❌ ผิด (Non-defining ใช้ that ไม่ได้):</b><br><s>My car, that is red, is fast.</s><br>ต้องใช้ <b>which</b> แทน</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: Extra grammar points -->
+        <div class="slide">
+            <div class="content-box">
+                <h2>กฎเสริมที่ข้อสอบชอบออก 📝</h2>
+
+                <h3>1) การละคำสรรพนาม (Omission of Relative Pronouns)</h3>
+                <p>ใน <b>Defining Clause</b> เท่านั้น — ถ้า relative pronoun ทำหน้าที่เป็น <b>กรรม (Object)</b> ของประโยค เราสามารถ <b>ละทิ้งได้เลย</b></p>
+                <div class="example-box">
+                    <p>They're the people <b>(whom/that)</b> I met last night.<br>
+                    ➔ They're the people I met last night.</p>
+                </div>
+                <div class="warning-box">
+                    ⚠️ ละได้เฉพาะตอนที่ pronoun เป็นกรรม เช่น "...people (that) I met..." (I met them ➜ them คือกรรม) แต่ถ้า pronoun เป็น<b>ประธาน</b>ของ clause จะละไม่ได้ เช่น "The people <b>who</b> called me" (who = ประธานของ called) ละไม่ได้ และ<b>ห้ามละใน non-defining clause</b>เด็ดขาด
+                </div>
+
+                <h3>2) whose vs who's — ระวังสับสน!</h3>
+                <div class="two-col">
+                    <div class="example-box">
+                        <p><b>whose</b> + คำนาม = แสดงความเป็นเจ้าของ<br>
+                        <i>The boy <b>whose</b> bike was stolen...</i></p>
+                    </div>
+                    <div class="example-box" style="border-left-color:#8e44ad; background:#f4ecf7;">
+                        <p><b>who's</b> = who is / who has<br>
+                        <i>Do you know <b>who's</b> coming tonight?</i></p>
+                    </div>
+                </div>
+                <div class="note-box">💡 เทคนิคจำ: ถ้าแทนคำว่า "who is" หรือ "who has" ลงไปแล้วอ่านรู้เรื่อง ให้ใช้ <b>who's</b> — ถ้าตามด้วยคำนามเพื่อบอกว่า "ของใคร" ให้ใช้ <b>whose</b></div>
+            </div>
+        </div>
+
+        <!-- Slide 9: Exercise Example -->
+        <div class="slide">
+            <div class="content-box" style="text-align: center;">
+                <h2>Let's Practice! ✍️</h2>
+                <p>จงรวมประโยคให้เป็น <b>Defining</b> หรือ <b>Non-defining</b> ตามที่กำหนด</p>
+
+                <div class="exercise-box" style="background: #fff3e0; border: 2px solid #ffb74d;">
+                    <p><b>ตัวอย่าง:</b><br> Eric's brother is coming home. Eric's brother is a college student.</p>
+                    <p style="color: #d35400;"><b>(ทำเป็น Non-defining)</b></p>
+                </div>
+                <button class="btn-reveal" onclick="toggleAnswer(this)">ดูเฉลยตัวอย่าง</button>
+                <div class="answer">
+                    Eric's brother<span class="comma">,</span> who is a college student<span class="comma">,</span> is coming home.
+                    <span class="explain">Eric มีพี่ชาย/น้องชายคนเดียว (ชื่อของเขาก็ระบุตัวตนชัดแล้ว) ข้อมูล "is a college student" จึงเป็นแค่ข้อมูลเสริม ต้องใช้คอมมาและ non-defining clause</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Exercise 1 (quiz) -->
+        <div class="slide">
+            <div class="content-box" style="text-align: center;">
+                <h2>Question 1</h2>
+                <div class="exercise-box quiz" data-correct="non-defining">
+                    <p>John has two sisters. He plays on the soccer team.</p>
+                    <p style="color:#7f8c8d; font-size:1.05rem;">ควรรวมเป็นแบบไหน? (โหวตในห้องแล้วให้ครูกด!)</p>
+                    <div class="quiz-buttons">
+                        <button class="quiz-btn" data-choice="defining" onclick="chooseAnswer(this,'defining')">🟢 Defining (ไม่มีคอมมา)</button>
+                        <button class="quiz-btn" data-choice="non-defining" onclick="chooseAnswer(this,'non-defining')">🔴 Non-defining (มีคอมมา)</button>
+                    </div>
+                    <div class="quiz-feedback"></div>
+                    <button class="btn-reveal" onclick="toggleAnswer(this)">ดูเฉลย (Reveal Answer)</button>
+                    <div class="answer">
+                        John<span class="comma">,</span> who plays on the soccer team<span class="comma">,</span> has two sisters.
+                        <span class="explain">"John" เป็นชื่อเฉพาะ ระบุตัวตนชัดเจนอยู่แล้ว ข้อมูล "plays on the soccer team" จึงเป็นแค่ส่วนเสริม ไม่ใช่ข้อมูลที่จำเป็นต้องมีเพื่อบอกว่าคือใคร</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 11: Exercise 2 (quiz) -->
+        <div class="slide">
+            <div class="content-box" style="text-align: center;">
+                <h2>Question 2</h2>
+                <div class="exercise-box quiz" data-correct="defining">
+                    <p>Students prepare in advance. They tend to do well in interviews.</p>
+                    <p style="color:#7f8c8d; font-size:1.05rem;">ควรรวมเป็นแบบไหน? (โหวตในห้องแล้วให้ครูกด!)</p>
+                    <div class="quiz-buttons">
+                        <button class="quiz-btn" data-choice="defining" onclick="chooseAnswer(this,'defining')">🟢 Defining (ไม่มีคอมมา)</button>
+                        <button class="quiz-btn" data-choice="non-defining" onclick="chooseAnswer(this,'non-defining')">🔴 Non-defining (มีคอมมา)</button>
+                    </div>
+                    <div class="quiz-feedback"></div>
+                    <button class="btn-reveal" onclick="toggleAnswer(this)">ดูเฉลย (Reveal Answer)</button>
+                    <div class="answer">
+                        Students who (หรือ that) prepare in advance tend to do well in interviews.
+                        <span class="explain">"Students" เป็นคำนามทั่วไป ไม่ได้ระบุเฉพาะเจาะจง จึงต้องใช้ "who prepare in advance" เพื่อจำกัดความว่าหมายถึงนักเรียนกลุ่มไหน — ไม่มีคอมมา และใช้ that ได้เพราะเป็น defining</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 12: Exercise 3 & 4 (quiz) -->
+        <div class="slide">
+            <div class="content-box" style="text-align: center;">
+                <h2>Question 3 & 4</h2>
+
+                <div class="exercise-box quiz" data-correct="non-defining" style="margin-bottom: 15px;">
+                    <p><b>Q3:</b> That company makes sneakers. It has a factory downtown.</p>
+                    <div class="quiz-buttons">
+                        <button class="quiz-btn" data-choice="defining" onclick="chooseAnswer(this,'defining')">🟢 Defining</button>
+                        <button class="quiz-btn" data-choice="non-defining" onclick="chooseAnswer(this,'non-defining')">🔴 Non-defining</button>
+                    </div>
+                    <div class="quiz-feedback"></div>
+                    <button class="btn-reveal" style="padding: 10px 20px; font-size: 1.15rem;" onclick="toggleAnswer(this)">ดูเฉลย Q3</button>
+                    <div class="answer" style="font-size: 1.25rem;">
+                        That company<span class="comma">,</span> which makes sneakers<span class="comma">,</span> has a factory downtown.<br>
+                        <i>(หรือ: That company, which has a factory downtown, makes sneakers.)</i>
+                        <span class="explain">"That company" ระบุชัดแล้วว่าบริษัทไหน จึงใส่ข้อมูลอีกอย่างเป็นส่วนเสริมด้วยคอมมา และใช้ "which" เพราะเป็นสิ่งของ (ห้ามใช้ that)</span>
+                    </div>
+                </div>
+
+                <div class="exercise-box quiz" data-correct="non-defining">
+                    <p><b>Q4:</b> Mehmet is standing over there. He has long hair.</p>
+                    <div class="quiz-buttons">
+                        <button class="quiz-btn" data-choice="defining" onclick="chooseAnswer(this,'defining')">🟢 Defining</button>
+                        <button class="quiz-btn" data-choice="non-defining" onclick="chooseAnswer(this,'non-defining')">🔴 Non-defining</button>
+                    </div>
+                    <div class="quiz-feedback"></div>
+                    <button class="btn-reveal" style="padding: 10px 20px; font-size: 1.15rem;" onclick="toggleAnswer(this)">ดูเฉลย Q4</button>
+                    <div class="answer" style="font-size: 1.25rem;">
+                        Mehmet<span class="comma">,</span> who is standing over there<span class="comma">,</span> has long hair.<br>
+                        <i>(หรือ: Mehmet, who has long hair, is standing over there.)</i>
+                        <span class="explain">"Mehmet" เป็นชื่อเฉพาะ ระบุตัวตนชัดเจนแล้ว จึงใช้ non-defining clause คั่นด้วยคอมมาสำหรับข้อมูลเสริม</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 13: Exercise 5 & End -->
+        <div class="slide">
+            <div class="content-box" style="text-align: center;">
+                <h2>Question 5</h2>
+                <div class="exercise-box quiz" data-correct="defining">
+                    <p>Schools have good facilities. They receive lots of applications.</p>
+                    <div class="quiz-buttons">
+                        <button class="quiz-btn" data-choice="defining" onclick="chooseAnswer(this,'defining')">🟢 Defining (ไม่มีคอมมา)</button>
+                        <button class="quiz-btn" data-choice="non-defining" onclick="chooseAnswer(this,'non-defining')">🔴 Non-defining (มีคอมมา)</button>
+                    </div>
+                    <div class="quiz-feedback"></div>
+                    <button class="btn-reveal" onclick="toggleAnswer(this)">ดูเฉลย (Reveal Answer)</button>
+                    <div class="answer" style="margin-bottom: 20px;">
+                        Schools that (หรือ which) have good facilities receive lots of applications.
+                        <span class="explain">"Schools" เป็นคำนามทั่วไป ไม่เจาะจง จึงต้องใช้ clause นี้เพื่อจำกัดความว่าโรงเรียนแบบไหน — ไม่มีคอมมา เพราะเป็น defining clause</span>
+                    </div>
+                </div>
+
+                <hr style="border: 1px solid #eee; margin: 20px 0;">
+                <h2 style="border:none; color: #27ae60;">Great Job! 🎉</h2>
+                <p>เก่งมากทุกคน! อย่าลืมกลับไปทบทวน 3 เรื่องนี้กันด้วยนะ:</p>
+                <ul class="rule-list" style="display:inline-block; text-align:left;">
+                    <li>1️⃣ คอมมา <span class="comma">,</span> — ใช้ใน 🔴 non-defining เท่านั้น</li>
+                    <li>2️⃣ "that" — ใช้ได้แค่ใน 🟢 defining clause</li>
+                    <li>3️⃣ ลองตัด clause ออก แล้วดูว่าความหมายเปลี่ยนไปไหม</li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Navigation Controls -->
+    <div class="controls">
+        <button class="btn-nav" id="btnPrev" onclick="changeSlide(-1)">◀ กลับ (Prev)</button>
+        <button class="btn-nav" id="btnNext" onclick="changeSlide(1)">ถัดไป (Next) ▶</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const btnPrev = document.getElementById('btnPrev');
+        const btnNext = document.getElementById('btnNext');
+        const progress = document.getElementById('progressIndicator');
+        const progressBarFill = document.getElementById('progressBarFill');
+
+        function updateSlider() {
+            slides.forEach((slide, index) => {
+                if(index === currentSlide) {
+                    slide.classList.add('active');
+                } else {
+                    slide.classList.remove('active');
+                }
+            });
+
+            btnPrev.disabled = currentSlide === 0;
+            btnNext.disabled = currentSlide === slides.length - 1;
+
+            progress.innerText = `Slide ${currentSlide + 1} / ${slides.length}`;
+            progressBarFill.style.width = `${((currentSlide + 1) / slides.length) * 100}%`;
+
+            // Hide all answers when changing slides
+            document.querySelectorAll('.answer').forEach(ans => ans.classList.remove('show'));
+
+            // Reset all quizzes when changing slides
+            document.querySelectorAll('.quiz').forEach(q => {
+                q.querySelectorAll('.quiz-btn').forEach(b => {
+                    b.disabled = false;
+                    b.classList.remove('correct', 'incorrect');
+                });
+                const fb = q.querySelector('.quiz-feedback');
+                if (fb) { fb.textContent = ''; fb.className = 'quiz-feedback'; }
+            });
+
+            // Reset flip cards when changing slides
+            document.querySelectorAll('.flip-card').forEach(c => c.classList.remove('flipped'));
+        }
+
+        function changeSlide(direction) {
+            currentSlide += direction;
+            if (currentSlide < 0) currentSlide = 0;
+            if (currentSlide >= slides.length) currentSlide = slides.length - 1;
+            updateSlider();
+        }
+
+        function toggleAnswer(btn) {
+            const answerDiv = btn.nextElementSibling;
+            answerDiv.classList.toggle('show');
+        }
+
+        function chooseAnswer(btn, choice) {
+            const quiz = btn.closest('.quiz');
+            const correct = quiz.dataset.correct;
+            const feedback = quiz.querySelector('.quiz-feedback');
+            const buttons = quiz.querySelectorAll('.quiz-btn');
+            buttons.forEach(b => b.disabled = true);
+
+            if (choice === correct) {
+                btn.classList.add('correct');
+                feedback.textContent = '🎉 ถูกต้อง! เก่งมาก';
+                feedback.className = 'quiz-feedback correct-text';
+            } else {
+                btn.classList.add('incorrect');
+                btn.classList.add('shake');
+                setTimeout(() => btn.classList.remove('shake'), 400);
+                buttons.forEach(b => { if (b.dataset.choice === correct) b.classList.add('correct'); });
+                feedback.textContent = '❌ ยังไม่ถูก ลองดูคำตอบที่ถูกด้านซ้าย/ขวาแล้วกดดูเฉลยด้านล่าง';
+                feedback.className = 'quiz-feedback incorrect-text';
+            }
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if(e.key === 'ArrowRight' || e.key === 'Space') {
+                changeSlide(1);
+            } else if (e.key === 'ArrowLeft') {
+                changeSlide(-1);
+            }
+        });
+
+        // Initialize
+        updateSlider();
+    </script>
+</body>
+</html>
