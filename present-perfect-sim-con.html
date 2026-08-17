@@ -71,7 +71,7 @@
         .btn-dark { background: #334155; color: white; }
         .btn-dark:active:not(:disabled) { background: #475569; }
 
-        .btn-nav-container { display: flex; justify-content: space-between; gap: 10px; margin-top: 20px; }
+        .btn-nav-container { display: flex; justify-content: space-between; gap: 8px; margin-top: 20px; }
 
         .review-content { background: var(--bg-card); padding: 25px 20px; border-radius: 12px; min-height: 320px; border: 1px solid #334155; }
         .log-title { font-size: 1.3rem; font-weight: 700; color: white; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #334155; padding-bottom: 10px; }
@@ -83,8 +83,6 @@
         .comp-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; color: #cbd5e1; }
         .comp-table th { padding: 10px; text-align: left; border-bottom: 2px solid #334155; width: 50%; }
         .comp-table td { padding: 12px 10px; border-bottom: 1px solid #1e293b; vertical-align: top; }
-
-        .penalty-alert { background: rgba(239,68,68,0.1); border: 1px solid var(--danger); padding: 12px; border-radius: 8px; text-align: center; color: #fca5a5; margin-bottom: 20px; font-size: 0.95rem; }
 
         .status-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #334155; padding-bottom: 10px; }
         .timer-box { font-family: 'Poppins', sans-serif; font-weight: 700; color: var(--neon-cyan); font-size: 1.2rem; background: #020617; padding: 4px 12px; border-radius: 8px; border: 1px solid #334155; }
@@ -118,7 +116,7 @@
         .count-number { font-size: 8rem; font-weight: 800; color: var(--neon-cyan); font-family: 'Poppins', sans-serif; text-shadow: 0 0 30px rgba(6,182,212,0.5); }
 
         .hidden { display: none !important; }
-        /* 🌌 Custom Modal Pop-up (ป๊อปอัพจำลองภายในหน้าเว็บ) */
+        /* 🌌 Custom Modal Pop-up */
         #custom-modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(2, 6, 23, 0.9); backdrop-filter: blur(5px);
@@ -156,7 +154,6 @@
                 <input type="number" id="student-id" class="input-field" placeholder="_ _ _ _ _" required>
                 
                 <p style="color: var(--text-muted); margin-bottom: 5px; font-size: 0.95rem;">First Name (ชื่อจริง ไม่ต้องใส่คำนำหน้า)</p>
-                <!-- 🌟 ช่องกรอกชื่อจริงเพื่อยืนยันตัวตน -->
                 <input type="text" id="student-firstname" class="input-field" placeholder="เช่น ... อัครเดช" style="letter-spacing: normal;" required>
             </div>
             
@@ -166,11 +163,6 @@
 
     <!-- SCREEN 2: REVIEW SLIDER -->
     <div id="screen-review" class="app-screen">
-        <div id="retake-warning" class="penalty-alert hidden">
-            ⚠️ <b>TIME ANOMALY DETECTED (การซ่อมครั้งที่ <span id="warn-attempt"></span>)</b><br>
-            ระบบจะหักพลังงาน <span id="warn-penalty"></span> แต้มจากคะแนนดิบของคุณ
-        </div>
-
         <div class="review-content" id="review-content"></div>
         
         <div class="btn-nav-container" id="nav-review-controls">
@@ -201,10 +193,11 @@
             <p style="text-align: center; color: var(--danger); font-size: 0.85rem; margin-top: -15px; margin-bottom: 15px;">* พิมพ์เฉพาะกลุ่มคำกริยา ไม่ต้องพิมพ์ประธาน</p>
         </div>
         
+        <!-- ✨ แผงควบคุมใหม่ มีปุ่ม "แผงข้อสอบ" ตรงกลางตลอดเวลา -->
         <div class="btn-nav-container" id="quiz-nav-controls">
-            <button class="btn-action btn-dark" style="flex: 1;" id="btn-prev-q" onclick="navigateQuiz(-1)">&lt; ย้อนกลับ</button>
-            <button class="btn-action btn-purple hidden" style="flex: 1.5;" id="btn-return-sum" onclick="showSummaryScreen()">บันทึก & กลับหน้าสรุป 📋</button>
-            <button class="btn-action btn-cyan" style="flex: 2;" id="btn-next-q" onclick="navigateQuiz(1)">ถัดไป ➡️</button>
+            <button class="btn-action btn-dark" style="flex: 1; padding: 16px 5px; font-size: 1rem;" id="btn-prev-q" onclick="navigateQuiz(-1)">&lt; ย้อนกลับ</button>
+            <button class="btn-action btn-purple" style="flex: 1.2; padding: 16px 5px; font-size: 1rem;" id="btn-view-all" onclick="jumpToSummary()">📋 แผงข้อสอบ</button>
+            <button class="btn-action btn-cyan" style="flex: 1.4; padding: 16px 5px; font-size: 1rem;" id="btn-next-q" onclick="navigateQuiz(1)">ถัดไป ➡️</button>
         </div>
     </div>
 
@@ -214,7 +207,7 @@
         <p class="subtitle" style="margin-bottom: 10px;">ตรวจสอบความเรียบร้อยก่อนกู้เส้นเวลา</p>
         
         <div style="background: var(--bg-card); padding: 20px; border-radius: 12px; border: 1px solid #334155;">
-            <p style="text-align: center; color: var(--text-muted); font-size: 0.9rem;">คลิกที่ตัวเลขเพื่อกลับไปทบทวนแก้ไขข้อนั้น</p>
+            <p style="text-align: center; color: var(--text-muted); font-size: 0.9rem;">คลิกที่ตัวเลขเพื่อกระโดดไปทำข้อนั้น</p>
             <div class="summary-grid" id="summary-grid"></div>
             <div style="display: flex; justify-content: center; gap: 15px; font-size: 0.85rem; margin-top: 10px;">
                 <span style="color: var(--neon-cyan);">🟦 ทำแล้ว</span>
@@ -223,8 +216,9 @@
         </div>
 
         <div class="btn-nav-container">
-            <button class="btn-action btn-dark" style="flex: 1;" onclick="goToQuestion(currentQuestions.length - 1)">&lt; ย้อนกลับ</button>
-            <button class="btn-action btn-purple" style="flex: 2;" onclick="showResult()">SUBMIT (ส่งข้อสอบ) 🚀</button>
+            <!-- ✨ ปุ่มย้อนกลับจากหน้าสรุป จะพากลับไปหน้าข้อสอบข้อล่าสุดที่ทำอยู่ -->
+            <button class="btn-action btn-dark" style="flex: 1;" onclick="goToQuestion(currentIdx)">&lt; กลับไปทำต่อ</button>
+            <button class="btn-action btn-cyan" style="flex: 2;" onclick="showResult()">SUBMIT (ส่งข้อสอบ) 🚀</button>
         </div>
     </div>
 
@@ -238,25 +232,33 @@
                 <div style="font-size: 0.95rem; color: var(--neon-cyan); margin-bottom: 15px;">Agent ID: <span id="cert-id" style="font-weight:bold;">00000</span></div>
                 <div class="score-display"><span id="final-score-pass">10</span></div>
             </div>
+            <!-- ปุ่มกรณีผ่านเกณฑ์ -->
+            <button class="btn-action btn-dark" style="margin-top:20px;" onclick="window.location.href='index.html'">RETURN TO HQ (กลับหน้าหลัก)</button>
         </div>
 
         <div id="result-fail" class="hidden text-center">
             <div style="font-size: 4rem; text-align: center; margin-bottom: 10px;">💥</div>
             <h2 class="title" style="color: var(--danger);">TEMPORAL PARADOX</h2>
             <div class="score-display fail" style="text-align: center;"><span id="final-score-fail">5</span></div>
-            <button class="btn-action btn-dark" onclick="window.location.href='index.html'">RETURN TO HQ (กลับหน้าหลัก)</button>
+            <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 15px;">คุณทำคะแนนไม่ถึงเกณฑ์ที่กำหนด กรุณาตรวจสอบเฉลยด้านล่างก่อนเริ่มภารกิจใหม่</p>
+            
+            <!-- ✨ ปุ่มทำใหม่พร้อม Cooldown -->
+            <div style="display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap;">
+                <button class="btn-action btn-dark" style="flex: 1; min-width: 140px;" onclick="window.location.href='index.html'">กลับหน้าหลัก</button>
+                <button class="btn-action btn-cyan" style="flex: 2; min-width: 180px;" id="btn-retry" disabled>RETRY IN 60s</button>
+            </div>
         </div>
         
-        <div class="stat-box" style="display: flex; justify-content: space-around; background: #020617; padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #334155;">
-            <div style="text-align: center; font-size: 0.9rem; color: var(--text-muted);">Raw Score<b id="display-raw" style="display: block; font-size: 1.2rem; color: white;">0</b></div>
-            <div style="text-align: center; font-size: 0.9rem; color: var(--text-muted);">Penalty<b id="display-penalty" style="display: block; font-size: 1.2rem; color: var(--danger);">0</b></div>
-            <div style="text-align: center; font-size: 0.9rem; color: var(--text-muted);">Target<b style="display: block; font-size: 1.2rem; color: white;">10</b></div>
+        <!-- 🌟 กระดานสถิติแบบใหม่ -->
+        <div class="stat-box" style="display: flex; justify-content: space-around; background: #020617; padding: 15px; border-radius: 12px; margin-top: 20px; margin-bottom: 20px; border: 1px solid #334155;">
+            <div style="text-align: center; font-size: 0.9rem; color: var(--text-muted);">Raw Score<b id="display-raw" style="display: block; font-size: 1.2rem; color: white;">0/15</b></div>
+            <div style="text-align: center; font-size: 0.9rem; color: var(--text-muted);">Accuracy<b id="display-accuracy" style="display: block; font-size: 1.2rem; color: var(--neon-purple);">0%</b></div>
+            <div style="text-align: center; font-size: 0.9rem; color: var(--text-muted);">Time Used<b id="display-time-used" style="display: block; font-size: 1.2rem; color: var(--neon-cyan);">00:00</b></div>
         </div>
 
         <div id="score-message" style="text-align: center; margin-bottom: 20px; font-size: 0.95rem; color: var(--neon-cyan);"></div>
         
         <button class="btn-action btn-purple hidden" id="btn-review-answers" style="margin-bottom: 15px;" onclick="toggleReview()">🔍 VIEW LOGS (ดูเฉลย)</button>
-        <button class="btn-action btn-dark" onclick="location.reload()">DISCONNECT</button>
         <div id="review-answers-box" class="review-list hidden"></div>
     </div>
 </div>
@@ -267,6 +269,13 @@
 </div>
 
 <script>
+    // ⚠️ นำ URL ของ Apps Script มาใส่ตรงนี้ค่ะ
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbwFOfPP5apmwkZA6qmDT_mGuNz17gMiWDYNBbF6I_R7HFccI_Cghn1freGqJpt9guPD/exec'; 
+    // ✨ แท็บหน้าชีทใหม่ (คะแนนรอบนี้จะไม่ไปปนกับของเก่าในแท็บ Scores)
+    const sheetTargetName = 'PP_Sim_Con'; 
+    const PASS_CRITERIA = 10; 
+    const RETRY_COOLDOWN_SECONDS = 60; // ⏱️ ตั้งเวลาหน่วงปุ่มทำใหม่ (วินาที)
+
     function detectInAppBrowser() {
         const ua = navigator.userAgent || navigator.vendor || window.opera;
         if ((ua.indexOf("FBAN") > -1) || (ua.indexOf("FBAV") > -1) || (ua.indexOf("Line") > -1) || (ua.indexOf("Instagram") > -1)) {
@@ -298,9 +307,6 @@
     window.addEventListener('DOMContentLoaded', (event) => {
         detectInAppBrowser();
     });
-    // ⚠️ นำ URL ของ Apps Script มาใส่ตรงนี้ค่ะ
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbw3tA1nGO5FLWYgxdL-dAC-I0DyYmAurmd_zQG4CJMlUem8TpZB-Ubdrvauj2oqJIya/exec'; 
-    const PASS_CRITERIA = 10; 
 
     const studentDB = {
         // ม.6/1
@@ -354,7 +360,6 @@
         "12767": { name: "นางสาว วรางคณา ดอกกลอย" }, "12768": { name: "นางสาว วิภาวดี บุตรไธสง" }, "12769": { name: "นางสาว แสงอรุณ พิงไธสง" }
     };
 
-// 🌟 คลังข้อสอบฉบับปรับปรุงคำใบ้เชิงวิเคราะห์ (แทนที่ของเดิมได้เลย)
     const mcqPool = [
         { q: "I ______ three letters already today.", options: ["have written", "have been writing", "wrote", "am writing"], ans: 0, cat: "time", exp: "สังเกตคำบอกเวลา 'already' และการระบุจำนวน ซึ่งเป็นการเน้นผลลัพธ์ของการกระทำที่เสร็จสิ้นสมบูรณ์แล้ว" },
         { q: "<b>A:</b> You look exhausted!<br><b>B:</b> I am. I ______ for the chemistry exam all night.", options: ["have studied", "have been studying", "studied", "am studying"], ans: 1, cat: "context", exp: "บริบทระบุว่า 'เหนื่อยล้ามาก' ซึ่งเป็นผลกระทบหรือร่องรอยที่เกิดจากการทำกิจกรรมอย่างต่อเนื่องยาวนานมาตลอดทั้งคืน (all night)" },
@@ -422,7 +427,7 @@
             <ul style="margin-left: 20px; margin-top: 10px; font-size: 0.95rem; color: var(--text-muted); line-height: 1.8;">
                 <li>แบบทดสอบ 15 ข้อ / เวลา 15 นาที</li>
                 <li>เกณฑ์การผ่าน (Restore Timeline) คือ <b>10/15</b></li>
-                <li>หากล้มเหลว สามารถทำซ้ำได้ (จะถูกหัก 1 คะแนน/ครั้ง)</li>
+                <li><b>ไม่มีหักคะแนนสอบซ่อม</b> ทำใหม่กี่รอบก็ได้จนกว่าจะผ่าน!</li>
             </ul>
         </div>`
     ];
@@ -436,7 +441,6 @@
     let timeLeft = 900; 
     let studentName = ""; 
     let userAnswers = []; 
-    let attemptCount = 1; let penaltyScore = 0; 
     let reviewCooldownTimer;
     let isProcessingCooldown = false; 
 
@@ -448,7 +452,6 @@
 
     function shuffleArray(array) { return array.sort(() => Math.random() - 0.5); }
 
-    // 🌟 ระบบล็อกอิน + ยืนยันตัวตนด้วยชื่อจริง
     async function handleLogin() {
         const studentId = document.getElementById('student-id').value.trim();
         const studentFirstName = document.getElementById('student-firstname').value.trim();
@@ -465,7 +468,7 @@
                 alert("❌ Clearance Denied: ชื่อ Director ไม่ถูกต้อง"); 
                 return; 
             }
-            studentName = "คุณครูศรุตา จันทเกตุ"; attemptCount = 1; penaltyScore = 0;
+            studentName = "คุณครูศรุตา จันทเกตุ";
             document.getElementById('user-badge').innerText = "DIRECTOR";
             startReviewPhase(); return;
         }
@@ -484,26 +487,20 @@
         btnLogin.innerText = "CONNECTING... ⏳"; btnLogin.disabled = true;
 
         try {
-            const response = await fetch(scriptURL + "?studentId=" + studentId);
+            const response = await fetch(scriptURL + "?studentId=" + studentId + "&sheetName=" + sheetTargetName);
             const data = await response.json();
             
-            if(data.exists) {
-                if(data.maxScore >= PASS_CRITERIA) {
-                    alert(`✅ คุณสอบผ่านเกณฑ์แล้วด้วยคะแนน ${data.maxScore}/15\nTimeline ของคุณเสถียรแล้ว ไม่สามารถกู้ซ้ำได้ค่ะ`);
-                    document.getElementById('student-id').value = ''; 
-                    document.getElementById('student-firstname').value = ''; 
-                } else {
-                    attemptCount = data.attempts + 1; penaltyScore = attemptCount - 1; 
-                    studentName = studentDB[studentId].name; 
-                    document.getElementById('user-badge').innerText = studentName;
-                    startReviewPhase();
-                }
+            if(data.exists && data.maxScore >= PASS_CRITERIA) {
+                alert(`✅ คุณสอบผ่านเกณฑ์แล้วด้วยคะแนน ${data.maxScore}/15\nTimeline ของคุณเสถียรแล้ว ไม่สามารถกู้ซ้ำได้ค่ะ`);
+                document.getElementById('student-id').value = ''; 
+                document.getElementById('student-firstname').value = ''; 
             } else {
-                attemptCount = 1; penaltyScore = 0; studentName = studentDB[studentId].name;
-                document.getElementById('user-badge').innerText = studentName; startReviewPhase();
+                studentName = studentDB[studentId].name; 
+                document.getElementById('user-badge').innerText = studentName;
+                startReviewPhase();
             }
         } catch (error) {
-            studentName = studentDB[studentId].name; attemptCount = 1; penaltyScore = 0;
+            studentName = studentDB[studentId].name;
             document.getElementById('user-badge').innerText = studentName; startReviewPhase();
         }
 
@@ -512,7 +509,6 @@
 
     function startReviewPhase() {
         currentReviewPage = 0;
-        if(penaltyScore > 0) document.getElementById('retake-warning').classList.remove('hidden');
         updateReviewUI(); showScreen('screen-review');
     }
 
@@ -598,15 +594,15 @@
             if (timeLeft <= 180) document.getElementById('timer-box').classList.add('warning');
             
             if (timeLeft <= 0) { 
-    clearInterval(timerInterval); 
-    showCustomModal("⏳", "MISSION TIME OVER", "หมดเวลาภารกิจ!<br>ระบบกำลังส่งกระดาษคำตอบโดยอัตโนมัติ", function() {
-        const q = currentQuestions[currentIdx];
-        if (q && q.type === "fib") {
-            userAnswers[currentIdx] = document.getElementById('fib-input').value;
-        }
-        showResult(); 
-    });
-}
+                clearInterval(timerInterval); 
+                showCustomModal("⏳", "MISSION TIME OVER", "หมดเวลาภารกิจ!<br>ระบบกำลังส่งกระดาษคำตอบโดยอัตโนมัติ", function() {
+                    const q = currentQuestions[currentIdx];
+                    if (q && q.type === "fib") {
+                        userAnswers[currentIdx] = document.getElementById('fib-input').value;
+                    }
+                    showResult(); 
+                });
+            }
         }, 1000);
     }
 
@@ -691,6 +687,16 @@
         }, 300); 
     }
 
+    // ✨ ฟังก์ชันเปิดแผงข้อสอบตลอดเวลา
+    function jumpToSummary() {
+        if (isProcessingCooldown) return;
+        const q = currentQuestions[currentIdx];
+        if (q && q.type === "fib") {
+            userAnswers[currentIdx] = document.getElementById('fib-input').value;
+        }
+        showSummaryScreen();
+    }
+
     function showSummaryScreen() {
         showScreen('screen-summary');
         const grid = document.getElementById('summary-grid');
@@ -716,7 +722,6 @@
     function goToQuestion(index) {
         currentIdx = index;
         showScreen('screen-quiz');
-        document.getElementById('btn-return-sum').classList.remove('hidden'); 
         renderQuestion();
     }
 
@@ -752,6 +757,17 @@
         });
     }
 
+    // ✨ ฟังก์ชันสำหรับกดปุ่มรีเซ็ตทำข้อสอบใหม่เมื่อหมด Cooldown
+    function retryMission() {
+        hasSubmitted = false;
+        userAnswers = [];
+        currentIdx = 0;
+        document.getElementById('result-fail').classList.add('hidden');
+        document.getElementById('review-answers-box').classList.add('hidden');
+        document.getElementById('btn-review-answers').classList.add('hidden');
+        startReviewPhase(); 
+    }
+
     function showResult() {
         if (hasSubmitted) return;
         
@@ -767,18 +783,20 @@
         calculateFinalScore();
 
         let rawScore = scores.total;
-        finalCalculatedScore = rawScore - penaltyScore;
-        if(finalCalculatedScore < 0) finalCalculatedScore = 0;
+        let accuracy = Math.round((rawScore / currentQuestions.length) * 100);
+        let timeSpent = 900 - timeLeft;
+        let m = Math.floor(timeSpent / 60);
+        let s = timeSpent % 60;
 
         showScreen('screen-result');
         const reviewBtn = document.getElementById('btn-review-answers');
         reviewBtn.classList.add('hidden'); 
         
-        if (finalCalculatedScore >= PASS_CRITERIA) {
+        if (rawScore >= PASS_CRITERIA) {
             document.getElementById('result-pass').classList.remove('hidden');
             document.getElementById('cert-id').innerText = document.getElementById('student-id').value;
             document.getElementById('cert-name').innerText = studentName;
-            document.getElementById('final-score-pass').innerText = finalCalculatedScore;
+            document.getElementById('final-score-pass').innerText = rawScore;
             
             var duration = 3 * 1000; var end = Date.now() + duration;
             (function frame() {
@@ -788,11 +806,30 @@
             }());
         } else {
             document.getElementById('result-fail').classList.remove('hidden');
-            document.getElementById('final-score-fail').innerText = finalCalculatedScore;
+            document.getElementById('final-score-fail').innerText = rawScore;
+            
+            // ✨ เริ่มระบบ Cooldown จับเวลาปุ่ม Retry
+            const retryBtn = document.getElementById('btn-retry');
+            retryBtn.disabled = true;
+            let cooldown = RETRY_COOLDOWN_SECONDS;
+            retryBtn.innerText = `RETRY IN ${cooldown}s`;
+            
+            const cdInterval = setInterval(() => {
+                cooldown--;
+                if(cooldown > 0) {
+                    retryBtn.innerText = `RETRY IN ${cooldown}s`;
+                } else {
+                    clearInterval(cdInterval);
+                    retryBtn.innerText = "RETRY MISSION 🔄";
+                    retryBtn.disabled = false;
+                    retryBtn.onclick = retryMission;
+                }
+            }, 1000);
         }
         
-        document.getElementById('display-raw').innerText = rawScore;
-        document.getElementById('display-penalty').innerText = `-${penaltyScore}`;
+        document.getElementById('display-raw').innerText = `${rawScore}/15`;
+        document.getElementById('display-accuracy').innerText = `${accuracy}%`;
+        document.getElementById('display-time-used').innerText = `${m}:${s < 10 ? '0'+s : s}`;
         
         generateReviewList(); submitScoreToSheet(reviewBtn);
     }
@@ -801,7 +838,7 @@
         const reviewBox = document.getElementById('review-answers-box');
         reviewBox.innerHTML = '';
         const isAdmin = (document.getElementById('student-id').value === "7238");
-        const showFullAnswers = (finalCalculatedScore >= PASS_CRITERIA || isAdmin); 
+        const showFullAnswers = (scores.total >= PASS_CRITERIA || isAdmin); 
 
         userAnswersRecord.forEach((record, index) => {
             const itemDiv = document.createElement('div');
@@ -814,7 +851,7 @@
                     html += `<div style="color: var(--neon-cyan); margin-top: 5px;"><b>คำตอบที่ถูกต้อง:</b> ${record.correctAnswer}</div>
                         <div style="color: var(--text-muted); font-size: 0.95rem; margin-top: 5px;"><b>คำอธิบาย:</b> ${record.explanation}</div>`;
                 } else {
-                    html += `<div class="hint-box"><b>💡 คำใบ้จากระบบ:</b> ${record.explanation}</div>`;
+                    html += `<div class="hint-box" style="margin-top:10px;"><b>💡 คำใบ้จากระบบ:</b> ${record.explanation}</div>`;
                 }
             } else {
                 html += `<div style="color: var(--text-muted); font-size: 0.95rem; margin-top: 5px;"><b>คำอธิบายเสริม:</b> ${record.explanation}</div>`;
@@ -836,12 +873,16 @@
 
         messageEl.innerHTML = "กำลังส่งข้อมูลเข้าระบบศูนย์กลาง... ⏳";
         const formData = new FormData();
-        formData.append('studentId', studentId); formData.append('scoreTotal', finalCalculatedScore); 
-        formData.append('scoreTime', scores.time); formData.append('scoreStative', scores.stative); formData.append('scoreContext', scores.context);
+        formData.append('sheetName', sheetTargetName);
+        formData.append('studentId', studentId); 
+        formData.append('scoreTotal', scores.total); 
+        formData.append('scoreTime', scores.time); 
+        formData.append('scoreStative', scores.stative); 
+        formData.append('scoreContext', scores.context);
 
         fetch(scriptURL, { method: 'POST', body: formData })
             .then(response => {
-                messageEl.innerHTML = "✅ บันทึกข้อมูลเส้นเวลาสำเร็จ!"; messageEl.style.color = "var(--success)";
+                messageEl.innerHTML = "✅ บันทึกข้อมูลสำเร็จ!"; messageEl.style.color = "var(--success)";
                 if(reviewBtn) reviewBtn.classList.remove('hidden'); 
             }).catch(error => {
                 messageEl.innerHTML = `❌ การส่งข้อมูลล้มเหลว <br><button onclick="submitScoreToSheet(document.getElementById('btn-review-answers'))" style="background:none; border:none; color:var(--neon-cyan); text-decoration:underline; font-weight:bold; cursor:pointer; margin-top:10px;">🔄 ลองส่งอีกครั้ง</button>`;
@@ -850,20 +891,18 @@
     }
 
     window.addEventListener('beforeunload', function (e) { if (currentIdx > 0 && !hasSubmitted) { e.preventDefault(); e.returnValue = ''; } });
-    // 🛡️ ระบบ Anti-Cheat: ตรวจจับการสลับแท็บ หรือ พับหน้าจอ (Page Visibility API)
+    
+    // 🛡️ ระบบ Anti-Cheat
     let tabSwitchCount = 0;
-    let finalCalculatedScore = 0;
-    let pendingModalData = null; // ตัวแปรเก็บคิวป๊อปอัพที่จะเด้งตอนกลับมาหน้าจอ
+    let pendingModalData = null; 
 
     document.addEventListener("visibilitychange", function() {
         const isTakingQuiz = document.getElementById('screen-quiz').classList.contains('active');
         
-        // ตอนพับจอหนี (ซ่อนหน้าจอ)
         if (document.hidden && isTakingQuiz && !hasSubmitted) {
             tabSwitchCount++;
             
             if (tabSwitchCount === 1) {
-                // เก็บข้อมูลเตือนครั้งที่ 1 ไว้รอเด้งตอนกลับมา
                 pendingModalData = {
                     icon: "⚠️",
                     title: "TIME ANOMALY",
@@ -871,7 +910,6 @@
                 };
             } 
             else if (tabSwitchCount >= 2) {
-                // เก็บข้อเขียนและสั่งส่งข้อสอบออโต้ทันทีแบบเงียบๆ เบื้องหลัง
                 const q = currentQuestions[currentIdx];
                 if (q && q.type === "fib") {
                     userAnswers[currentIdx] = document.getElementById('fib-input').value;
@@ -882,29 +920,48 @@
                 calculateFinalScore();
                 
                 let rawScore = scores.total;
-                finalCalculatedScore = rawScore - penaltyScore;
-                if(finalCalculatedScore < 0) finalCalculatedScore = 0;
+                let accuracy = Math.round((rawScore / currentQuestions.length) * 100);
+                let timeSpent = 900 - timeLeft;
+                let m = Math.floor(timeSpent / 60);
+                let s = timeSpent % 60;
                 
                 showScreen('screen-result');
                 const reviewBtn = document.getElementById('btn-review-answers');
                 
-                if (finalCalculatedScore >= PASS_CRITERIA) {
+                if (rawScore >= PASS_CRITERIA) {
                     document.getElementById('result-pass').classList.remove('hidden');
                     document.getElementById('cert-id').innerText = document.getElementById('student-id').value;
                     document.getElementById('cert-name').innerText = studentName;
-                    document.getElementById('final-score-pass').innerText = finalCalculatedScore;
+                    document.getElementById('final-score-pass').innerText = rawScore;
                 } else {
                     document.getElementById('result-fail').classList.remove('hidden');
-                    document.getElementById('final-score-fail').innerText = finalCalculatedScore;
+                    document.getElementById('final-score-fail').innerText = rawScore;
+                    
+                    const retryBtn = document.getElementById('btn-retry');
+                    retryBtn.disabled = true;
+                    let cooldown = RETRY_COOLDOWN_SECONDS;
+                    retryBtn.innerText = `RETRY IN ${cooldown}s`;
+                    
+                    const cdInterval = setInterval(() => {
+                        cooldown--;
+                        if(cooldown > 0) {
+                            retryBtn.innerText = `RETRY IN ${cooldown}s`;
+                        } else {
+                            clearInterval(cdInterval);
+                            retryBtn.innerText = "RETRY MISSION 🔄";
+                            retryBtn.disabled = false;
+                            retryBtn.onclick = retryMission;
+                        }
+                    }, 1000);
                 }
                 
-                document.getElementById('display-raw').innerText = rawScore;
-                document.getElementById('display-penalty').innerText = `-${penaltyScore}`;
+                document.getElementById('display-raw').innerText = `${rawScore}/15`;
+                document.getElementById('display-accuracy').innerText = `${accuracy}%`;
+                document.getElementById('display-time-used').innerText = `${m}:${s < 10 ? '0'+s : s}`;
                 
                 generateReviewList(); 
                 setTimeout(() => { submitScoreToSheet(reviewBtn); }, 100);
 
-                // เก็บข้อมูลเตือนครั้งที่ 2 ไว้รอเด้งตอนกลับมาหน้าจอ
                 pendingModalData = {
                     icon: "🚨",
                     title: "SECURITY BREACH",
@@ -912,25 +969,15 @@
                 };
             }
         } 
-        // 🌟 เมื่อเด็กสลับหน้าจอกลับมาที่เว็บ (Visible) แล้วมีคิวแจ้งเตือนค้างอยู่ ให้เด้งทันที
         else if (!document.hidden && pendingModalData) {
             const data = pendingModalData;
-            pendingModalData = null; // ล้างคิว
+            pendingModalData = null; 
             setTimeout(() => {
                 showCustomModal(data.icon, data.title, data.message);
             }, 300);
         }
     });
 
-    // 🛡️ เสริมเกราะป้องกันอีกชั้น: ตรวจจับการคลิกออกนอกหน้าจอเว็บ (Blur Event)
-    window.addEventListener('blur', function() {
-        const isTakingQuiz = document.getElementById('screen-quiz').classList.contains('active');
-        if (isTakingQuiz && !hasSubmitted && tabSwitchCount === 0) {
-            console.log("Loss of focus detected.");
-        }
-    });
-
-    // 🌟 ฟังก์ชันป๊อปอัพแจ้งเตือนแบบอิสระ กดรับทราบได้ทันที
     function showCustomModal(icon, title, message, callback) {
         const existing = document.getElementById('custom-modal-overlay');
         if (existing) existing.remove();
