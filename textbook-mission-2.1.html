@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mission 2.1: The Explorer's Words | CHRONOS HQ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* ================= CSS VARIABLES & GLOBALS ================= */
+        :root {
+            --bg-space: #020617; --bg-panel: #0f172a; --bg-card: #1e293b;
+            --unit-red: #e11d48; --unit-red-light: #f43f5e;
+            --neon-cyan: #06b6d4; --neon-blue: #3b82f6; --neon-green: #10b981; 
+            --neon-orange: #f59e0b; --neon-red: #ef4444; --gold: #facc15;
+            --text-main: #f8fafc; --text-muted: #94a3b8; --radius: 12px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        
+        body { 
+            font-family: 'Kanit', sans-serif; background-color: var(--bg-space); color: var(--text-main); 
+            display: flex; flex-direction: column; min-height: 100vh; padding: 15px;
+            background-image: radial-gradient(circle at 50% 10%, rgba(6, 182, 212, 0.1) 0%, transparent 60%);
+            line-height: 1.6;
+        }
+
+        .container {
+            background: var(--bg-panel); border-top: 4px solid var(--unit-red); border-radius: var(--radius);
+            padding: 20px; max-width: 750px; width: 100%; margin: 0 auto; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            animation: fadeIn 0.4s ease; position: relative;
+        }
+
+        h1, h2, h3 { font-family: 'Poppins', 'Kanit', sans-serif; }
+        .text-center { text-align: center; }
+        .text-cyan { color: var(--neon-cyan); }
+        .section-title { background: var(--unit-red); color: white; display: inline-block; padding: 5px 15px; border-radius: 20px; font-weight: bold; margin-bottom: 15px; font-family: 'Poppins', sans-serif; font-size: 0.9rem;}
+        
+        .card { background: var(--bg-card); border: 1px solid #334155; border-radius: 10px; padding: 15px; margin-bottom: 20px; animation: fadeIn 0.4s ease-out; }
+
+        /* ================= FORM & BUTTONS ================= */
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; font-size: 0.85rem; color: #cbd5e1; margin-bottom: 5px; }
+        
+        select, input[type="text"], input[type="number"] {
+            font-size: 16px !important; width: 100%; padding: 12px 10px; border-radius: 6px; 
+            border: 1px solid #475569; background: #020617; color: #fff; font-family: 'Kanit';
+        }
+        select:focus, input:focus { border-color: var(--neon-cyan); outline: none; }
+        select:disabled, input:disabled { opacity: 0.8; cursor: not-allowed; border-color: var(--neon-green); color: var(--neon-green);}
+
+        button {
+            width: 100%; padding: 12px; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: bold; 
+            cursor: pointer; font-family: 'Kanit'; margin-top: 10px; transition: all 0.2s;
+        }
+        button:hover { transform: translateY(-2px); }
+        .btn-primary { background: linear-gradient(135deg, var(--neon-cyan), var(--neon-blue)); color: white; }
+        .btn-check { background: var(--unit-red); color: white; }
+        .btn-check:hover { background: var(--unit-red-light); }
+        .btn-next { background: var(--neon-green); color: #000; animation: pulse 1.5s infinite;}
+        .btn-back { background: transparent; border: 1px solid #475569; color: #cbd5e1; margin-top: 15px; }
+        .btn-outline { background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); }
+
+        /* ================= MISSION A UI ================= */
+        .header-mission { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed #334155; padding-bottom: 15px; margin-bottom: 20px; }
+        .header-mission h2 { font-family: 'Poppins', sans-serif; color: var(--unit-red-light); margin: 0; font-size: 1.5rem;}
+        
+        .grammar-slide { background: linear-gradient(145deg, #1e293b, #0f172a); border: 2px solid var(--neon-cyan); border-radius: 12px; padding: 20px; box-shadow: 0 0 15px rgba(6, 182, 212, 0.2); margin-bottom: 20px;}
+        .highlight { color: var(--gold); font-weight: bold; }
+
+        .vocab-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 15px; }
+        @media (min-width: 600px) { .vocab-grid { grid-template-columns: repeat(4, 1fr); } }
+        .vocab-item { background: rgba(2, 6, 23, 0.5); padding: 10px; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 1px solid #475569;}
+        .vocab-item label { margin-bottom: 8px; text-align: center; line-height: 1.2;}
+        .vocab-item input { width: 50px; text-align: center; padding: 8px; font-weight: bold; border-radius: 6px; border: 1px solid #475569; background: #020617; color: #fff;}
+
+        .question { margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #334155; }
+        .question:last-child { border-bottom: none; }
+        .q-text { font-size: 1rem; margin-bottom: 10px; }
+
+        .blank-input {
+            border: none !important; border-bottom: 2px solid var(--neon-cyan) !important;
+            background: transparent !important; color: var(--gold) !important;
+            text-align: center; padding: 2px 5px !important; border-radius: 0 !important;
+            width: 140px !important; display: inline-block; font-weight: bold;
+        }
+        .blank-input:focus { border-bottom-color: var(--neon-green) !important; outline: none; }
+
+        .word-bank { background: rgba(2, 6, 23, 0.5); border: 1px dashed var(--neon-cyan); padding: 15px; border-radius: 8px; margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+        .word-chip { background: #1e293b; color: var(--neon-cyan); padding: 5px 12px; border-radius: 15px; font-size: 0.85rem; border: 1px solid #334155; }
+        
+        .btn-hint { background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); padding: 3px 8px; border-radius: 4px; font-size: 0.75rem; cursor: pointer; display: inline-flex; align-items: center; margin-top: 5px; font-family: 'Kanit'; width: auto;}
+        .btn-hint:hover { background: rgba(6, 182, 212, 0.2); transform: none;}
+        .hint-text { display: none; color: var(--neon-orange); font-size: 0.85rem; margin-top: 10px; padding: 10px; background: rgba(245, 158, 11, 0.1); border-radius: 6px; border-left: 3px solid var(--neon-orange);}
+
+        .audio-container { background: #020617; border: 1px solid #475569; padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: center; }
+        audio { width: 100%; height: 40px; outline: none; }
+
+        /* ================= TAB NAV & FEEDBACK ================= */
+        .tab-container { display: flex; gap: 5px; margin-bottom: 20px; flex-wrap: wrap; justify-content: center;}
+        .tab-btn { background: #1e293b; color: var(--text-muted); border: 1px solid #475569; font-size: 0.8rem; margin: 0; padding: 8px 5px; flex: 1; min-width: 55px; border-radius: 6px; cursor: pointer; font-family: 'Kanit'; transition: 0.3s;}
+        .tab-btn.active { background: var(--neon-cyan); color: #000; border-color: var(--neon-cyan); font-weight: bold;}
+        .tab-btn:hover { transform: none; background: #334155;}
+
+        .master-feedback { display: none; padding: 12px; border-radius: 8px; margin-top: 15px; font-size: 0.95rem; text-align: center; font-weight: bold;}
+        .correct { background: rgba(16, 185, 129, 0.1); border: 1px solid var(--neon-green); color: var(--neon-green); }
+        .wrong { background: rgba(239, 68, 68, 0.1); border: 1px solid var(--neon-red); color: var(--neon-red); }
+
+        footer { text-align: center; font-size: 0.8rem; color: #64748b; margin-top: auto; padding-top: 30px; }
+        .hidden { display: none !important; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); } 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); } }
+    </style>
+</head>
+<body>
+
+<!-- =========================================================
+     VIEW 1: LOGIN
+========================================================== -->
+<div id="view-login" class="container">
+    <div class="text-center" style="margin-bottom: 20px;">
+        <h1 class="text-cyan">MISSION LOGIN</h1>
+        <p>ระบุตัวตนก่อนเข้าสู่แบบฝึกหัดหน้า 20-21</p>
+    </div>
+    <div class="input-group">
+        <label>รหัสประจำตัว (Agent ID)</label>
+        <input type="number" id="loginId" placeholder="- - - - -">
+    </div>
+    <div class="input-group">
+        <label>ชื่อจริง (ภาษาไทย ไม่ต้องมีคำนำหน้า)</label>
+        <input type="text" id="loginName" placeholder="เช่น ... สมฤดี">
+    </div>
+    <button class="btn-primary" onclick="login()">ยืนยันตัวตน (VERIFY)</button>
+    <button class="btn-back" onclick="window.location.href='https://paloliiz.github.io/chronos-grammar-basicenglish6126/'">⬅️ กลับสู่หน้า Hub หลัก</button>
+    
+</div>
+
+<!-- =========================================================
+     VIEW 3: MISSION A (Page 20-21)
+========================================================== -->
+<div id="view-mission-a" class="container hidden">
+    
+    <div id="miniCodeBanner" class="hidden" style="background: rgba(16, 185, 129, 0.15); border: 1px solid var(--neon-green); color: var(--neon-green); padding: 10px; border-radius: 8px; text-align: center; margin-bottom: 15px; font-weight: bold; letter-spacing: 1px;">CODE: P20-XXX</div>
+
+    <!-- MISSION NAV (เปิดให้กดสลับข้อได้อิสระ) -->
+    <div id="missionNav" class="tab-container">
+        <button id="tab1" class="tab-btn active" onclick="goToPhase(1)">Ex 1</button>
+        <button id="tab2" class="tab-btn" onclick="goToPhase(2)">Ex 2</button>
+        <button id="tab3" class="tab-btn" onclick="goToPhase(3)">Grammar</button>
+        <button id="tab4" class="tab-btn" onclick="goToPhase(4)">Ex 6</button>
+        <button id="tab5" class="tab-btn" onclick="goToPhase(5)">Ex 7-8</button>
+        <!-- ปุ่มกลับหน้า Hub หลัก -->
+        <button class="tab-btn" style="background: var(--unit-red); color: white; border: none; max-width: 50px;" onclick="window.location.href='https://paloliiz.github.io/chronos-grammar-basicenglish6126/'">ออก</button>
+    </div>
+
+    <div class="header-mission" id="mainHeader">
+        <h2>Mission 2.1</h2>
+        <span id="pageBadge" style="background: #334155; padding: 5px 12px; border-radius: 20px; font-size: 0.8rem;">Page 20</span>
+    </div>
+
+    <!-- PHASE 1: VOCABULARY - LISTEN & NUMBER -->
+    <div id="phase1">
+        <div class="section-title">A. Vocabulary</div>
+        <div class="card">
+            <p style="color: var(--neon-cyan); margin-bottom: 10px; font-size: 0.95rem;"><b>1. Listen and number. (ฟังเสียงและเรียงลำดับคำศัพท์ 1-8 ให้ตรงรูปภาพ)</b></p>
+            <div class="audio-container">
+                <span style="font-size: 0.85rem; color: #cbd5e1; display: block; margin-bottom: 5px;">🎧 Track 2-01</span>
+                <audio controls><source src="Track 2-01.mp3" type="audio/mpeg"></audio>
+            </div>
+            <div class="vocab-grid">
+                <div class="vocab-item"><label>stunning</label><input type="number" id="v1_stun" min="1" max="8"></div>
+                <div class="vocab-item"><label>perspective</label><input type="number" id="v1_pers" min="1" max="8"></div>
+                <div class="vocab-item"><label>quite</label><input type="number" id="v1_quite" min="1" max="8"></div>
+                <div class="vocab-item"><label>attractive</label><input type="number" id="v1_attr" min="1" max="8"></div>
+                <div class="vocab-item"><label>extensive</label><input type="number" id="v1_ext" min="1" max="8"></div>
+                <div class="vocab-item"><label>instant</label><input type="number" id="v1_inst" min="1" max="8"></div>
+                <div class="vocab-item"><label>proud</label><input type="number" id="v1_proud" min="1" max="8"></div>
+                <div class="vocab-item"><label>aside from</label><input type="number" id="v1_aside" min="1" max="8"></div>
+            </div>
+            <div id="fb-p1" class="master-feedback"></div>
+            <button class="btn-check" id="btn-check-1" onclick="checkPhase1()">ตรวจคำตอบ ข้อ 1</button>
+            <button class="btn-next hidden" id="btn-next-1" onclick="goToPhase(2)">➔ ไปทำแบบฝึกหัดที่ 2</button>
+        </div>
+    </div>
+
+    <!-- PHASE 2: VOCABULARY - MATCH -->
+    <div id="phase2" class="hidden">
+        <div class="section-title">A. Vocabulary</div>
+        <div class="card">
+            <p style="color: var(--neon-cyan); margin-bottom: 15px; font-size: 0.95rem;"><b>2. Match the words with the definitions. (จับคู่คำศัพท์ให้ตรงความหมาย)</b></p>
+            
+            <div class="question"><div class="q-text">a. except for</div><select id="v2_a"><option value="">-- เลือก --</option><option value="proud">proud</option><option value="perspective">perspective</option><option value="aside from">aside from</option><option value="extensive">extensive</option><option value="quite">quite</option><option value="instant">instant</option><option value="attractive">attractive</option><option value="stunning">stunning</option></select></div>
+            <div class="question"><div class="q-text">b. very full or complete; wide in range</div><select id="v2_b"><option value="">-- เลือก --</option><option value="proud">proud</option><option value="perspective">perspective</option><option value="aside from">aside from</option><option value="extensive">extensive</option><option value="quite">quite</option><option value="instant">instant</option><option value="attractive">attractive</option><option value="stunning">stunning</option></select></div>
+            <div class="question"><div class="q-text">c. happening immediately; without delay</div><select id="v2_c"><option value="">-- เลือก --</option><option value="proud">proud</option><option value="perspective">perspective</option><option value="aside from">aside from</option><option value="extensive">extensive</option><option value="quite">quite</option><option value="instant">instant</option><option value="attractive">attractive</option><option value="stunning">stunning</option></select></div>
+            <div class="question"><div class="q-text">d. something that is interesting and appeals to someone</div><select id="v2_d"><option value="">-- เลือก --</option><option value="proud">proud</option><option value="perspective">perspective</option><option value="aside from">aside from</option><option value="extensive">extensive</option><option value="quite">quite</option><option value="instant">instant</option><option value="attractive">attractive</option><option value="stunning">stunning</option></select></div>
+            <div class="question"><div class="q-text">e. feeling very pleased because you've done something well</div><select id="v2_e"><option value="">-- เลือก --</option><option value="proud">proud</option><option value="perspective">perspective</option><option value="aside from">aside from</option><option value="extensive">extensive</option><option value="quite">quite</option><option value="instant">instant</option><option value="attractive">attractive</option><option value="stunning">stunning</option></select></div>
+            <div class="question"><div class="q-text">f. a little or a lot but not completely</div><select id="v2_f"><option value="">-- เลือก --</option><option value="proud">proud</option><option value="perspective">perspective</option><option value="aside from">aside from</option><option value="extensive">extensive</option><option value="quite">quite</option><option value="instant">instant</option><option value="attractive">attractive</option><option value="stunning">stunning</option></select></div>
+            <div class="question"><div class="q-text">g. extremely beautiful</div><select id="v2_g"><option value="">-- เลือก --</option><option value="proud">proud</option><option value="perspective">perspective</option><option value="aside from">aside from</option><option value="extensive">extensive</option><option value="quite">quite</option><option value="instant">instant</option><option value="attractive">attractive</option><option value="stunning">stunning</option></select></div>
+            <div class="question"><div class="q-text">h. a way of thinking about or considering something</div><select id="v2_h"><option value="">-- เลือก --</option><option value="proud">proud</option><option value="perspective">perspective</option><option value="aside from">aside from</option><option value="extensive">extensive</option><option value="quite">quite</option><option value="instant">instant</option><option value="attractive">attractive</option><option value="stunning">stunning</option></select></div>
+
+            <div id="fb-p2" class="master-feedback"></div>
+            <button class="btn-check" id="btn-check-2" onclick="checkPhase2()">ตรวจคำตอบ ข้อ 2</button>
+            <button class="btn-next hidden" id="btn-next-2" onclick="goToPhase(3)">➔ เข้าสู่โหมด Grammar</button>
+        </div>
+    </div>
+
+    <!-- PHASE 3: GRAMMAR LOGS -->
+    <div id="phase3" class="hidden">
+        <div class="section-title">B. Grammar (Data Logs)</div>
+        <p style="color: var(--neon-cyan); margin-bottom: 15px; font-size: 1.1rem; text-align: center;"><b>5. Look at the table. (ศึกษาแฟ้มข้อมูลไวยากรณ์)</b></p>
+
+        <div class="grammar-slide">
+            <div style="background: rgba(6, 182, 212, 0.2); display: inline-block; padding: 5px 15px; border-radius: 20px; color: var(--neon-cyan); font-weight: bold; margin-bottom: 10px;">DATA LOG 01</div>
+            <h3 style="color: white; border-bottom: 1px solid #475569; padding-bottom: 10px; margin-bottom: 15px;">Present Perfect Simple</h3>
+            <p style="color: var(--gold); font-size: 1.1rem; font-weight: bold;">โครงสร้าง: Subject + have/has + V.3</p>
+            <p><b>วิธีใช้:</b> พูดถึงเหตุการณ์ที่เกิดขึ้นในอดีต ดำเนินมาจนถึงปัจจุบัน หรือ <span class="highlight">เหตุการณ์ในอดีตที่ยังส่งผลมาถึงตอนที่เราพูด</span> มักใช้กับประสบการณ์</p>
+            <div style="background: rgba(2, 6, 23, 0.5); padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 3px solid var(--neon-cyan);">
+                <b>ตัวอย่าง (Examples):</b><br>
+                <span style="color: var(--text-muted);">"I <span class="highlight" style="color: var(--neon-cyan);">have traveled</span> to Madagascar three times in the last year."</span><br>
+                (ฉันเคยไปมาดากัสการ์ 3 ครั้งแล้วในปีที่ผ่านมา -> <i>ประสบการณ์สะสมมาถึงปัจจุบัน</i>)<br><br>
+                <span style="color: var(--text-muted);">"My uncle <span class="highlight" style="color: var(--neon-cyan);">has traveled</span> to New York 20 times."</span><br>
+            </div>
+        </div>
+
+        <div class="grammar-slide" style="border-color: var(--neon-orange);">
+            <div style="background: rgba(245, 158, 11, 0.2); display: inline-block; padding: 5px 15px; border-radius: 20px; color: var(--neon-orange); font-weight: bold; margin-bottom: 10px;">DATA LOG 02</div>
+            <h3 style="color: white; border-bottom: 1px solid #475569; padding-bottom: 10px; margin-bottom: 15px;">Past Perfect Simple</h3>
+            <p style="color: var(--gold); font-size: 1.1rem; font-weight: bold;">โครงสร้าง: Subject + had + V.3</p>
+            <p><b>วิธีใช้:</b> พูดถึงเหตุการณ์ที่เกิดขึ้น <span class="highlight">และจบลงไปแล้วอย่างสมบูรณ์</span> ก่อนที่จะมีอีกเหตุการณ์หนึ่งเกิดขึ้นตามมาในอดีต (อดีตซ้อนอดีต) มักมีคำเชื่อมเช่น before, after</p>
+            <div style="background: rgba(2, 6, 23, 0.5); padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 3px solid var(--neon-orange);">
+                <b>ตัวอย่าง (Examples):</b><br>
+                <span style="color: var(--text-muted);">"I <span class="highlight" style="color: var(--neon-orange);">had already been</span> to the store before my brother woke up."</span><br>
+                (ฉันไปร้านค้าเรียบร้อยแล้ว ก่อนที่น้องชายจะตื่น -> <i>ไปร้านค้าจบก่อน</i>)<br><br>
+                <span style="color: var(--text-muted);">"Before I graduated, I <span class="highlight" style="color: var(--neon-orange);">had filled</span> out several university applications."</span>
+            </div>
+        </div>
+
+        <div class="grammar-slide" style="border-color: var(--unit-red);">
+            <div style="background: rgba(239, 68, 68, 0.2); display: inline-block; padding: 5px 15px; border-radius: 20px; color: var(--neon-red); font-weight: bold; margin-bottom: 10px;">SYSTEM WARNING</div>
+            <p>ห้ามใช้ Present Perfect กับคำบอกเวลาที่จบไปแล้วในอดีตเด็ดขาด!</p>
+            <div style="background: rgba(239, 68, 68, 0.1); padding: 15px; border-radius: 8px; margin-top: 10px;">
+                ❌ <span style="text-decoration: line-through; color: var(--text-muted);">I've been to another country yesterday.</span><br>
+                ✔️ I <b>went</b> to another country yesterday.
+            </div>
+        </div>
+
+        <button class="btn-next" style="margin-top: 25px;" onclick="goToPhase(4)">สแกนข้อมูลเรียบร้อย ➔ ไปทำแบบฝึกหัดที่ 6</button>
+    </div>
+
+    <!-- PHASE 4: GRAMMAR EXERCISE -->
+    <div id="phase4" class="hidden">
+        <div class="section-title">B. Grammar</div>
+        <div class="card">
+            <p style="color: var(--neon-cyan); margin-bottom: 15px; font-size: 0.95rem;"><b>6. Fill in the blanks with the given verbs and tenses.</b></p>
+            <div class="question"><div class="q-text">1. They _____________ to Australia twice. <span style="color: var(--text-muted); font-size: 0.85rem;">(travel, present perfect)</span></div><input type="text" id="g1" placeholder="พิมพ์คำตอบ (เช่น have traveled)"></div>
+            <div class="question"><div class="q-text">2. Stephen _____________ for the airline for 25 years. <span style="color: var(--text-muted); font-size: 0.85rem;">(work, present perfect)</span></div><input type="text" id="g2" placeholder="พิมพ์คำตอบ"></div>
+            <div class="question"><div class="q-text">3. You said that before you ate lunch, you _____________ your mother. <span style="color: var(--text-muted); font-size: 0.85rem;">(call, past perfect)</span></div><input type="text" id="g3" placeholder="พิมพ์คำตอบ"></div>
+            <div class="question"><div class="q-text">4. Kerry _____________ the entire bottle of water before she got to the halfway point. <span style="color: var(--text-muted); font-size: 0.85rem;">(drink, past perfect)</span></div><input type="text" id="g4" placeholder="พิมพ์คำตอบ"></div>
+            <div class="question"><div class="q-text">5. I met them after they _____________ to the countryside. <span style="color: var(--text-muted); font-size: 0.85rem;">(be, past perfect)</span></div><input type="text" id="g5" placeholder="พิมพ์คำตอบ"></div>
+            <div class="question"><div class="q-text">6. I _____________ my ticket, so I couldn't get on the plane. <span style="color: var(--text-muted); font-size: 0.85rem;">(forget, past perfect)</span></div><input type="text" id="g6" placeholder="พิมพ์คำตอบ"></div>
+            
+            <div id="fb-p4" class="master-feedback"></div>
+            <button class="btn-check" id="btn-check-4" onclick="checkPhase4()">ตรวจคำตอบ ข้อ 6</button>
+            <button class="btn-next hidden" id="btn-next-4" onclick="goToPhase(5)">➔ ไปด่านสุดท้าย (Listen Up)</button>
+        </div>
+    </div>
+
+    <!-- PHASE 5: LISTEN UP -->
+    <div id="phase5" class="hidden">
+        <div class="section-title">C. Listen Up</div>
+        <div class="card">
+            <p style="color: var(--neon-cyan); margin-bottom: 10px; font-size: 0.95rem;"><b>7. Listen and fill in the blanks. (ฟังและนำคำศัพท์มาเติม)</b></p>
+            
+            <div class="audio-container">
+                <span style="font-size: 0.85rem; color: #cbd5e1; display: block; margin-bottom: 5px;">🎧 Track 2-02</span>
+                <audio controls><source src="Track 2-02.mp3" type="audio/mpeg"></audio>
+            </div>
+
+            <!-- สลับที่คำศัพท์ Word Bank เรียบร้อย -->
+            <div class="word-bank">
+                <span style="width: 100%; text-align: center; font-size: 0.85rem; color: #cbd5e1; margin-bottom: 5px;">💡 นำคำศัพท์เหล่านี้ไปเติมในช่องว่าง:</span>
+                <span class="word-chip">who've</span>
+                <span class="word-chip">straight to university</span>
+                <span class="word-chip">offer in terms</span>
+                <span class="word-chip">aside from</span>
+                <span class="word-chip">been there</span>
+                <span class="word-chip">been preserved</span>
+            </div>
+
+            <div class="question">
+                <div class="q-text">1. I did. I've <input type="text" id="lu7_1" class="blank-input" placeholder="พิมพ์คำตอบ"> a few times over the years. Why do you ask?<br><button class="btn-hint" onclick="toggleHint('hint-lu1')">🔍 คำใบ้</button></div>
+                <div id="hint-lu1" class="hint-text">ฉันเคย <b>"ไปที่นั่น"</b> มา 2-3 ครั้งแล้วในช่วงหลายปีที่ผ่านมา...</div>
+            </div>
+            
+            <div class="question">
+                <div class="q-text">2. Well, I'm not sure what they <input type="text" id="lu7_2" class="blank-input" placeholder="พิมพ์คำตอบ"> of education.<br><button class="btn-hint" onclick="toggleHint('hint-lu2')">🔍 คำใบ้</button></div>
+                <div id="hint-lu2" class="hint-text">ฉันไม่ค่อยแน่ใจว่าพวกเขาจะ <b>"มีข้อเสนอในแง่ของ"</b> การศึกษาอย่างไรบ้าง</div>
+            </div>
+            
+            <div class="question">
+                <div class="q-text">3. You know... Instead of going <input type="text" id="lu7_3" class="blank-input" placeholder="พิมพ์คำตอบ">, I'm taking some time off.<br><button class="btn-hint" onclick="toggleHint('hint-lu3')">🔍 คำใบ้</button></div>
+                <div id="hint-lu3" class="hint-text">แทนที่จะเรียน <b>"ตรงเข้ามหาวิทยาลัย"</b> เลย ฉันขอหยุดพักสักปีดีกว่า</div>
+            </div>
+            
+            <div class="question">
+                <div class="q-text">4. It's an ancient city that's <input type="text" id="lu7_4" class="blank-input" placeholder="พิมพ์คำตอบ"> for hundreds of years.<br><button class="btn-hint" onclick="toggleHint('hint-lu4')">🔍 คำใบ้</button></div>
+                <div id="hint-lu4" class="hint-text">มันเป็นเมืองโบราณที่ <b>"ถูกอนุรักษ์ไว้"</b> มานานนับร้อยปีเลยล่ะ</div>
+            </div>
+            
+            <div class="question" style="border-bottom: 2px solid var(--neon-cyan);">
+                <div class="q-text">5. <input type="text" id="lu7_5a" class="blank-input" style="width:100px !important;" placeholder="พิมพ์คำตอบ"> learning about all the kings <input type="text" id="lu7_5b" class="blank-input" style="width:80px !important;" placeholder="พิมพ์คำตอบ"> ruled Royal Hill, you'll also learn about the city's extensive history.<br><button class="btn-hint" onclick="toggleHint('hint-lu5')">🔍 คำใบ้</button></div>
+                <div id="hint-lu5" class="hint-text"><b>"นอกเหนือจาก"</b> การเรียนรู้เกี่ยวกับกษัตริย์ <b>"ผู้ที่ได้"</b> ปกครอง Royal Hill แล้ว คุณจะได้เรียนรู้ประวัติศาสตร์ของเมืองด้วย</div>
+            </div>
+
+            <p style="color: var(--neon-cyan); margin-top: 20px; margin-bottom: 10px; font-size: 0.95rem;"><b>8. Listen again. Circle the answers.</b></p>
+            
+            <div class="question">
+                <div class="q-text">1. What field will she be studying?</div>
+                <select id="lu8_1"><option value="">-- เลือกคำตอบ --</option><option value="a">a. history</option><option value="b">b. travel</option><option value="c">c. culture</option><option value="d">d. doesn't say</option></select>
+            </div>
+            <div class="question">
+                <div class="q-text">2. What had the woman planned to do after graduating?</div>
+                <select id="lu8_2"><option value="">-- เลือกคำตอบ --</option><option value="a">a. go to university</option><option value="b">b. work with her brother</option><option value="c">c. go to Madagascar</option><option value="d">d. doesn't say</option></select>
+            </div>
+            <div class="question">
+                <div class="q-text">3. What is NOT true about the Royal Hill of Ambohimanga?</div>
+                <select id="lu8_3"><option value="">-- เลือกคำตอบ --</option><option value="a">a. It's over 200 years old.</option><option value="b">b. It was built in a special location.</option><option value="c">c. It was built to be easy to defend.</option><option value="d">d. It is where the current king lives.</option></select>
+            </div>
+
+            <div id="fb-p5" class="master-feedback"></div>
+            <button class="btn-check" id="btn-check-5" onclick="checkPhase5()">ตรวจคำตอบ ข้อ 7-8</button>
+            <button class="btn-next hidden" id="btn-next-5" onclick="showFinalResult()">➔ ดูรหัส Transmission Code</button>
+        </div>
+    </div>
+</div>
+
+<!-- =========================================================
+     VIEW 4: RESULT / CODE REVEAL
+========================================================== -->
+<div id="view-result" class="container hidden text-center" style="border-color: var(--neon-green);">
+    <h2 style="color: var(--neon-green);">MISSION CLEARED!</h2>
+    <div style="font-family: 'Poppins'; font-size: 2rem; font-weight: bold; color: var(--gold); background: #020617; padding: 15px; border-radius: 8px; margin: 15px 0; letter-spacing: 2px;" id="transmissionCode">
+        P20-XXX
+    </div>
+    
+    <!-- กล่องแจ้งเตือนให้จดรหัส (Alert Box) -->
+    <div style="background: rgba(245, 158, 11, 0.15); border: 2px dashed var(--neon-orange); padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+        <div style="font-size: 1.5rem; margin-bottom: 5px;">⚠️ สำคัญมาก ⚠️</div>
+        <p style="font-size: 1.2rem; color: var(--neon-orange); font-weight: bold; margin: 0; line-height: 1.5;">
+            โปรดจดรหัสนี้ลงในมุมหนังสือ "หน้า 21"<br>เพื่อใช้เป็นหลักฐานการเก็บคะแนน!
+        </p>
+    </div>
+
+    <button style="background: transparent; border: 2px solid var(--neon-cyan); color: var(--neon-cyan); width: 100%; padding: 12px; border-radius: 8px; font-family: 'Kanit'; font-weight: bold; font-size: 1.1rem; cursor: pointer; transition: 0.3s;" onclick="enterReviewMode()" onmouseover="this.style.background='rgba(6, 182, 212, 0.2)'" onmouseout="this.style.background='transparent'">
+        🔍 ทบทวนคำตอบและจดลงหนังสือ
+    </button>
+    
+    <!-- เปลี่ยนปุ่มให้ลิงก์กลับไปที่ index.html ภายนอก -->
+    <button style="background: #334155; margin-top: 15px;" onclick="window.location.href='https://paloliiz.github.io/chronos-grammar-basicenglish6126/'">กลับสู่ Dashboard หลัก</button>
+</div>
+
+<footer>
+    BASIC ENGLISH | Teacher Saruta J.<br>Official Property of English Dept. • Khao Chakan Witthayakhom School
+</footer>
+
+<script>
+    // ==========================================
+    // 1. ฐานข้อมูลนักเรียน (Student DB)
+    // ==========================================
+    const studentDB = {
+        "7238": { firstName: "พะโล้", lastName: "Jantaket", rollNumber: 0 },
+        "11702": { firstName: "นที", lastName: "ภัสสรรัชนีกร", rollNumber: 1 },
+        "11703": { firstName: "เบญจมิณทร์", lastName: "เชิดฉิน", rollNumber: 2 },
+        "11710": { firstName: "ศักดิธัช", lastName: "ทิพย์โอสถ", rollNumber: 3 },
+        "11736": { firstName: "พงศกร", lastName: "อานุการ", rollNumber: 4 },
+        "11763": { firstName: "ทวีรัตน์", lastName: "สิงห์โต", rollNumber: 5 },
+        "11713": { firstName: "กนกพร", lastName: "อินอุ่นโชติ", rollNumber: 6 },
+        "11714": { firstName: "กัญญารัตน์", lastName: "จึงตระกูล", rollNumber: 7 },
+        "11717": { firstName: "ญารินดา", lastName: "เลื่อนลอย", rollNumber: 8 },
+        "11773": { firstName: "กวินธิดา", lastName: "นวลตา", rollNumber: 9 },
+        "11815": { firstName: "รพีพรรณ", lastName: "พันนาม", rollNumber: 10 }
+    };
+
+    let currentUser = null;
+    let phaseStatus = { 1: false, 2: false, 4: false, 5: false };
+
+    // ==========================================
+    // 2. ระบบ Login ก่อนเข้าภารกิจ
+    // ==========================================
+    function showView(viewId) {
+        ['view-login', 'view-mission-a', 'view-result'].forEach(id => {
+            document.getElementById(id).classList.add('hidden');
+        });
+        document.getElementById(viewId).classList.remove('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function login() {
+        const idInput = document.getElementById('loginId').value.trim();
+        const nameInput = document.getElementById('loginName').value.trim();
+
+        if (!idInput || !nameInput) { alert("⚠️ โปรดกรอกรหัสและชื่อให้ครบถ้วน"); return; }
+
+        const student = studentDB[idInput];
+        if (student && student.firstName === nameInput) {
+            currentUser = { id: idInput, ...student };
+            
+            // เช็คว่าเด็กเคยทำผ่านแล้วหรือยัง ถ้าผ่านแล้วให้ข้ามไปหน้าเฉลยเลย (เผื่ออยากจดรหัสใหม่)
+            if (localStorage.getItem(`${currentUser.id}_M2_1`) === 'CLEARED') {
+                showFinalResult();
+            } else {
+                startMission();
+            }
+        } else {
+            alert("❌ ข้อมูลไม่ถูกต้อง! รหัสประจำตัวหรือชื่อจริงไม่ตรงกับฐานข้อมูล");
+        }
+    }
+
+    function startMission() {
+        document.getElementById('miniCodeBanner').classList.add('hidden');
+        phaseStatus = { 1: false, 2: false, 4: false, 5: false };
+        
+        const tNames = {1:'Ex 1', 2:'Ex 2', 3:'Grammar', 4:'Ex 6', 5:'Ex 7-8'};
+        for(let i=1; i<=5; i++) {
+            let t = document.getElementById('tab'+i);
+            t.innerHTML = tNames[i];
+            t.style.color = "var(--text-muted)";
+        }
+
+        document.querySelectorAll('.btn-check').forEach(btn => btn.classList.remove('hidden'));
+        document.querySelectorAll('.btn-next').forEach(btn => btn.classList.add('hidden'));
+        
+        goToPhase(1);
+        showView('view-mission-a');
+    }
+
+    // ==========================================
+    // 3. ระบบจัดการ Mission A (Phases)
+    // ==========================================
+    function goToPhase(phaseNum) {
+        document.querySelectorAll('#phase1, #phase2, #phase3, #phase4, #phase5').forEach(el => el.classList.add('hidden'));
+        document.getElementById('phase' + phaseNum).classList.remove('hidden');
+        
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        if(phaseNum <= 5) document.getElementById('tab' + phaseNum).classList.add('active');
+
+        const badge = document.getElementById('pageBadge');
+        if(phaseNum <= 2) badge.innerText = "Page 20";
+        else badge.innerText = "Page 21";
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function toggleHint(hintId) {
+        const hintEl = document.getElementById(hintId);
+        hintEl.style.display = (hintEl.style.display === 'block') ? 'none' : 'block';
+    }
+
+    function checkMissionComplete() {
+        if (phaseStatus[1] && phaseStatus[2] && phaseStatus[4] && phaseStatus[5]) {
+            setTimeout(() => { showFinalResult(); }, 1500);
+            return true;
+        }
+        return false;
+    }
+
+    // --- ตรวจคำตอบ ---
+    function checkPhase1() {
+        const answers = { v1_stun: '6', v1_pers: '3', v1_quite: '2', v1_attr: '4', v1_ext: '7', v1_inst: '8', v1_proud: '1', v1_aside: '5' };
+        let correct = true;
+        for (let key in answers) {
+            let inputEl = document.getElementById(key);
+            if (inputEl.value !== answers[key]) {
+                correct = false; inputEl.style.borderColor = 'var(--neon-red)';
+            } else { inputEl.style.borderColor = 'var(--neon-green)'; }
+        }
+        const fb = document.getElementById('fb-p1'); fb.style.display = 'block';
+        if (correct) {
+            phaseStatus[1] = true;
+            document.getElementById('tab1').innerHTML = "Ex 1 ✔️";
+            document.getElementById('tab1').style.color = "var(--neon-green)";
+            fb.className = 'master-feedback correct'; 
+            
+            if(!checkMissionComplete()) {
+                fb.innerHTML = `✔️ <b>ยอดเยี่ยม!</b> เรียงลำดับถูกต้อง (อย่าลืมกดเมนูด้านบนไปทำด่านอื่นต่อด้วยนะ)`;
+                document.getElementById('btn-next-1').classList.remove('hidden');
+            } else {
+                fb.innerHTML = `✔️ <b>ยอดเยี่ยม!</b> คุณเคลียร์ครบทุกด่านแล้ว กำลังประมวลผลรหัสลับ...`;
+            }
+            document.getElementById('btn-check-1').classList.add('hidden');
+            document.querySelectorAll('#phase1 input').forEach(i => i.disabled = true);
+        } else {
+            fb.className = 'master-feedback wrong'; fb.innerHTML = `❌ <b>ยังไม่ถูกต้องทั้งหมด</b> สังเกตช่องสีแดงแล้วแก้ตัวเลขนะ`;
+        }
+    }
+
+    function checkPhase2() {
+        const answers = { v2_a: 'aside from', v2_b: 'extensive', v2_c: 'instant', v2_d: 'attractive', v2_e: 'proud', v2_f: 'quite', v2_g: 'stunning', v2_h: 'perspective' };
+        let correct = true;
+        for (let key in answers) {
+            const selectEl = document.getElementById(key);
+            if (selectEl.value !== answers[key]) {
+                correct = false; selectEl.style.borderColor = 'var(--neon-red)';
+            } else { selectEl.style.borderColor = 'var(--neon-green)'; }
+        }
+        const fb = document.getElementById('fb-p2'); fb.style.display = 'block';
+        if (correct) {
+            phaseStatus[2] = true;
+            document.getElementById('tab2').innerHTML = "Ex 2 ✔️";
+            document.getElementById('tab2').style.color = "var(--neon-green)";
+            fb.className = 'master-feedback correct'; 
+            
+            if(!checkMissionComplete()) {
+                fb.innerHTML = `✔️ <b>ถูกต้องครบถ้วน!</b> เก่งมากค่ะ`;
+                document.getElementById('btn-next-2').classList.remove('hidden');
+            } else {
+                fb.innerHTML = `✔️ <b>ยอดเยี่ยม!</b> คุณเคลียร์ครบทุกด่านแล้ว กำลังประมวลผลรหัสลับ...`;
+            }
+            document.getElementById('btn-check-2').classList.add('hidden');
+            document.querySelectorAll('#phase2 select').forEach(i => i.disabled = true);
+        } else {
+            fb.className = 'master-feedback wrong'; fb.innerHTML = `❌ <b>ยังมีข้อผิดอยู่</b> สังเกตช่องสีแดงแล้วลองเลือกใหม่นะคะ`;
+        }
+    }
+
+    function checkPhase4() {
+        const answers = { g1: ['have traveled', 'have travelled'], g2: ['has worked'], g3: ['had called'], g4: ['had drunk'], g5: ['had been'], g6: ['had forgotten'] };
+        let correctCount = 0;
+        for (let key in answers) {
+            let inputEl = document.getElementById(key);
+            let val = inputEl.value.trim().toLowerCase().replace(/\s+/g, ' '); 
+            if (answers[key].includes(val)) {
+                correctCount++; inputEl.style.borderColor = 'var(--neon-green)';
+            } else { inputEl.style.borderColor = 'var(--neon-red)'; }
+        }
+        const fb = document.getElementById('fb-p4'); fb.style.display = 'block';
+        if (correctCount === 6) {
+            phaseStatus[4] = true;
+            document.getElementById('tab4').innerHTML = "Ex 6 ✔️";
+            document.getElementById('tab4').style.color = "var(--neon-green)";
+            fb.className = 'master-feedback correct'; 
+            
+            if(!checkMissionComplete()) {
+                fb.innerHTML = `✔️ <b>เก่งมาก!</b> วิเคราะห์ Tense ได้ถูกต้องครบเลย`;
+                document.getElementById('btn-next-4').classList.remove('hidden');
+            } else {
+                fb.innerHTML = `✔️ <b>ยอดเยี่ยม!</b> คุณเคลียร์ครบทุกด่านแล้ว กำลังประมวลผลรหัสลับ...`;
+            }
+            document.getElementById('btn-check-4').classList.add('hidden');
+            for (let i = 1; i <= 6; i++) document.getElementById('g' + i).disabled = true;
+        } else {
+            fb.className = 'master-feedback wrong'; fb.innerHTML = `❌ <b>ยังมีข้อผิดอยู่ ${6 - correctCount} ข้อ</b> <br><span style="font-size:0.85rem; font-weight:normal;">สังเกตกรอบสีแดงนะ: Present P.(have/has + V.3), Past P.(had + V.3)</span>`;
+        }
+    }
+
+    function checkPhase5() {
+        const getVal = (id) => document.getElementById(id).value.trim().toLowerCase().replace(/\s+/g, ' ');
+        const ans7 = { q1: getVal('lu7_1'), q2: getVal('lu7_2'), q3: getVal('lu7_3'), q4: getVal('lu7_4'), q5a: getVal('lu7_5a'), q5b: getVal('lu7_5b') };
+        const ans8 = { q1: document.getElementById('lu8_1').value, q2: document.getElementById('lu8_2').value, q3: document.getElementById('lu8_3').value };
+        
+        let correct7 = 0; let correct8 = 0;
+
+        if (ans7.q1 === 'been there') correct7++; else document.getElementById('lu7_1').style.borderBottomColor = 'var(--neon-red)';
+        if (ans7.q2 === 'offer in terms') correct7++; else document.getElementById('lu7_2').style.borderBottomColor = 'var(--neon-red)';
+        if (ans7.q3 === 'straight to university') correct7++; else document.getElementById('lu7_3').style.borderBottomColor = 'var(--neon-red)';
+        if (ans7.q4 === 'been preserved') correct7++; else document.getElementById('lu7_4').style.borderBottomColor = 'var(--neon-red)';
+        if (ans7.q5a === 'aside from') correct7++; else document.getElementById('lu7_5a').style.borderBottomColor = 'var(--neon-red)';
+        if (ans7.q5b === "who've" || ans7.q5b === "who have") correct7++; else document.getElementById('lu7_5b').style.borderBottomColor = 'var(--neon-red)';
+
+        if (ans8.q1 === 'd') correct8++; else document.getElementById('lu8_1').style.borderColor = 'var(--neon-red)';
+        if (ans8.q2 === 'b') correct8++; else document.getElementById('lu8_2').style.borderColor = 'var(--neon-red)';
+        if (ans8.q3 === 'd') correct8++; else document.getElementById('lu8_3').style.borderColor = 'var(--neon-red)';
+
+        const fb = document.getElementById('fb-p5'); fb.style.display = 'block';
+
+        if (correct7 === 6 && correct8 === 3) {
+            phaseStatus[5] = true;
+            document.getElementById('tab5').innerHTML = "Ex 7-8 ✔️";
+            document.getElementById('tab5').style.color = "var(--neon-green)";
+            fb.className = 'master-feedback correct'; 
+            
+            if (!checkMissionComplete()) {
+                fb.innerHTML = `✔️ <b>Part 7 และ 8 ถูกต้องแล้ว!</b><br><span style="font-size:0.85rem; font-weight:normal;">แต่ยังมีด่านอื่นที่คุณยังไม่ได้ทำ ลองเช็คแถบเมนูด้านบนดูนะ</span>`;
+            } else {
+                fb.innerHTML = `✔️ <b>ยอดเยี่ยม!</b> คุณเคลียร์ครบทุกด่านแล้ว กำลังประมวลผลรหัสลับ...`;
+            }
+
+            document.getElementById('btn-check-5').classList.add('hidden');
+            document.querySelectorAll('#phase5 input, #phase5 select').forEach(i => {
+                i.disabled = true;
+                if(i.tagName === 'INPUT') i.style.borderBottomColor = 'var(--neon-green)'; else i.style.borderColor = 'var(--neon-green)';
+            });
+        } else {
+            fb.className = 'master-feedback wrong'; 
+            fb.innerHTML = `❌ <b>ยังมีข้อผิดพลาด</b> สังเกตช่องที่มีสีแดงแล้วแก้ตัวใหม่นะ`;
+            
+            if (ans7.q1 === 'been there') document.getElementById('lu7_1').style.borderBottomColor = 'var(--neon-green)';
+            if (ans7.q2 === 'offer in terms') document.getElementById('lu7_2').style.borderBottomColor = 'var(--neon-green)';
+            if (ans7.q3 === 'straight to university') document.getElementById('lu7_3').style.borderBottomColor = 'var(--neon-green)';
+            if (ans7.q4 === 'been preserved') document.getElementById('lu7_4').style.borderBottomColor = 'var(--neon-green)';
+            if (ans7.q5a === 'aside from') document.getElementById('lu7_5a').style.borderBottomColor = 'var(--neon-green)';
+            if (ans7.q5b === "who've" || ans7.q5b === "who have") document.getElementById('lu7_5b').style.borderBottomColor = 'var(--neon-green)';
+            if (ans8.q1 === 'd') document.getElementById('lu8_1').style.borderColor = 'var(--neon-green)';
+            if (ans8.q2 === 'b') document.getElementById('lu8_2').style.borderColor = 'var(--neon-green)';
+            if (ans8.q3 === 'd') document.getElementById('lu8_3').style.borderColor = 'var(--neon-green)';
+        }
+    }
+
+    // ==========================================
+    // 4. ระบบออกรหัสและโหมดทบทวน (Result & Review)
+    // ==========================================
+    function getEngInitial(text) {
+        let firstChar = text.charAt(0);
+        if (['เ', 'แ', 'โ', 'ไ', 'ใ'].includes(firstChar)) firstChar = text.charAt(1);
+        const charMap = { 'ก':'K','ข':'K','ค':'K','ฆ':'K','ง':'N','จ':'J','ช':'C','ซ':'S','ญ':'Y','ด':'D','ต':'T','ถ':'T','ท':'T','ธ':'T','น':'N','บ':'B','ป':'P','ผ':'P','ฝ':'F','พ':'P','ฟ':'F','ภ':'P','ม':'M','ย':'Y','ร':'R','ล':'L','ว':'W','ศ':'S','ษ':'S','ส':'S','ห':'H','ฮ':'H','อ':'A' };
+        return charMap[firstChar] || 'X';
+    }
+
+    function showFinalResult() {
+        const initialFirst = getEngInitial(currentUser.firstName);
+        const initialLast = getEngInitial(currentUser.lastName);
+        const tCode = `P21-${initialFirst}${currentUser.id.slice(-2)}-${initialLast}${currentUser.rollNumber.toString().padStart(2, '0')}`;
+        
+        document.getElementById('transmissionCode').innerText = tCode;
+        document.getElementById('miniCodeBanner').innerText = "CODE: " + tCode;
+        
+        // บันทึกความก้าวหน้าลงระบบ (ให้หน้า index.html ไปเช็คได้)
+        localStorage.setItem(`${currentUser.id}_M2_1`, 'CLEARED');
+        
+        showView('view-result');
+    }
+
+    function enterReviewMode() {
+        showView('view-mission-a');
+        document.getElementById('miniCodeBanner').classList.remove('hidden');
+        
+        // ในโหมดทบทวน ซ่อนปุ่มต่างๆ ไม่ให้กวนใจ
+        document.querySelectorAll('.btn-next, .btn-back, .btn-check').forEach(btn => btn.classList.add('hidden'));
+        reviewPhase(1);
+    }
+
+    function reviewPhase(phaseNum) {
+        document.querySelectorAll('#phase1, #phase2, #phase3, #phase4, #phase5').forEach(el => el.classList.add('hidden'));
+        document.getElementById('phase' + phaseNum).classList.remove('hidden');
+        
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.getElementById('tab' + phaseNum).classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+</script>
+
+</body>
+</html>
