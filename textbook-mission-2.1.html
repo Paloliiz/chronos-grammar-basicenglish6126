@@ -48,6 +48,15 @@
         select:focus, input:focus { border-color: var(--neon-cyan); outline: none; }
         select:disabled, input:disabled { opacity: 0.8; cursor: not-allowed; border-color: var(--neon-green); color: var(--neon-green);}
 
+        /* แก้บัคช่องเติมคำให้แสดงสีแดงได้ (Mobile Friendly) */
+        input[type="text"].blank-input {
+            border: none; border-bottom: 2px solid var(--neon-cyan);
+            background: transparent; color: var(--gold);
+            text-align: center; padding: 2px 5px; border-radius: 0;
+            width: 140px; display: inline-block; font-weight: bold;
+        }
+        input[type="text"].blank-input:focus { border-bottom-color: var(--neon-green); outline: none; }
+
         button {
             width: 100%; padding: 12px; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: bold; 
             cursor: pointer; font-family: 'Kanit'; margin-top: 10px; transition: all 0.2s;
@@ -76,14 +85,6 @@
         .question { margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #334155; }
         .question:last-child { border-bottom: none; }
         .q-text { font-size: 1rem; margin-bottom: 10px; }
-
-        .blank-input {
-            border: none !important; border-bottom: 2px solid var(--neon-cyan) !important;
-            background: transparent !important; color: var(--gold) !important;
-            text-align: center; padding: 2px 5px !important; border-radius: 0 !important;
-            width: 140px !important; display: inline-block; font-weight: bold;
-        }
-        .blank-input:focus { border-bottom-color: var(--neon-green) !important; outline: none; }
 
         .word-bank { background: rgba(2, 6, 23, 0.5); border: 1px dashed var(--neon-cyan); padding: 15px; border-radius: 8px; margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
         .word-chip { background: #1e293b; color: var(--neon-cyan); padding: 5px 12px; border-radius: 15px; font-size: 0.85rem; border: 1px solid #334155; }
@@ -132,7 +133,6 @@
     </div>
     <button class="btn-primary" onclick="login()">ยืนยันตัวตน (VERIFY)</button>
     <button class="btn-back" onclick="window.location.href='https://paloliiz.github.io/chronos-grammar-basicenglish6126/'">⬅️ กลับสู่หน้า Hub หลัก</button>
-    
 </div>
 
 <!-- =========================================================
@@ -276,7 +276,6 @@
                 <audio controls><source src="Track 2-02.mp3" type="audio/mpeg"></audio>
             </div>
 
-            <!-- สลับที่คำศัพท์ Word Bank เรียบร้อย -->
             <div class="word-bank">
                 <span style="width: 100%; text-align: center; font-size: 0.85rem; color: #cbd5e1; margin-bottom: 5px;">💡 นำคำศัพท์เหล่านี้ไปเติมในช่องว่าง:</span>
                 <span class="word-chip">who've</span>
@@ -343,7 +342,7 @@
         P20-XXX
     </div>
     
-    <!-- กล่องแจ้งเตือนให้จดรหัส (Alert Box) -->
+    <!-- กล่องแจ้งเตือนให้จดรหัส -->
     <div style="background: rgba(245, 158, 11, 0.15); border: 2px dashed var(--neon-orange); padding: 15px; border-radius: 8px; margin-bottom: 20px;">
         <div style="font-size: 1.5rem; margin-bottom: 5px;">⚠️ สำคัญมาก ⚠️</div>
         <p style="font-size: 1.2rem; color: var(--neon-orange); font-weight: bold; margin: 0; line-height: 1.5;">
@@ -365,7 +364,7 @@
 
 <script>
     // ==========================================
-    // 1. ฐานข้อมูลนักเรียน (Student DB)
+    // 1. ฐานข้อมูลนักเรียน
     // ==========================================
     const studentDB = {
         "7238": { firstName: "พะโล้", lastName: "Jantaket", rollNumber: 0 },
@@ -405,7 +404,6 @@
         if (student && student.firstName === nameInput) {
             currentUser = { id: idInput, ...student };
             
-            // เช็คว่าเด็กเคยทำผ่านแล้วหรือยัง ถ้าผ่านแล้วให้ข้ามไปหน้าเฉลยเลย (เผื่ออยากจดรหัสใหม่)
             if (localStorage.getItem(`${currentUser.id}_M2_1`) === 'CLEARED') {
                 showFinalResult();
             } else {
@@ -463,15 +461,15 @@
         return false;
     }
 
-    // --- ตรวจคำตอบ ---
+    // --- ตรวจคำตอบ แบบใหม่ใช้ setProperty ---
     function checkPhase1() {
         const answers = { v1_stun: '6', v1_pers: '3', v1_quite: '2', v1_attr: '4', v1_ext: '7', v1_inst: '8', v1_proud: '1', v1_aside: '5' };
         let correct = true;
         for (let key in answers) {
             let inputEl = document.getElementById(key);
             if (inputEl.value !== answers[key]) {
-                correct = false; inputEl.style.borderColor = 'var(--neon-red)';
-            } else { inputEl.style.borderColor = 'var(--neon-green)'; }
+                correct = false; inputEl.style.setProperty('border-color', 'var(--neon-red)', 'important');
+            } else { inputEl.style.setProperty('border-color', 'var(--neon-green)', 'important'); }
         }
         const fb = document.getElementById('fb-p1'); fb.style.display = 'block';
         if (correct) {
@@ -499,8 +497,8 @@
         for (let key in answers) {
             const selectEl = document.getElementById(key);
             if (selectEl.value !== answers[key]) {
-                correct = false; selectEl.style.borderColor = 'var(--neon-red)';
-            } else { selectEl.style.borderColor = 'var(--neon-green)'; }
+                correct = false; selectEl.style.setProperty('border-color', 'var(--neon-red)', 'important');
+            } else { selectEl.style.setProperty('border-color', 'var(--neon-green)', 'important'); }
         }
         const fb = document.getElementById('fb-p2'); fb.style.display = 'block';
         if (correct) {
@@ -529,8 +527,8 @@
             let inputEl = document.getElementById(key);
             let val = inputEl.value.trim().toLowerCase().replace(/\s+/g, ' '); 
             if (answers[key].includes(val)) {
-                correctCount++; inputEl.style.borderColor = 'var(--neon-green)';
-            } else { inputEl.style.borderColor = 'var(--neon-red)'; }
+                correctCount++; inputEl.style.setProperty('border-color', 'var(--neon-green)', 'important');
+            } else { inputEl.style.setProperty('border-color', 'var(--neon-red)', 'important'); }
         }
         const fb = document.getElementById('fb-p4'); fb.style.display = 'block';
         if (correctCount === 6) {
@@ -559,16 +557,16 @@
         
         let correct7 = 0; let correct8 = 0;
 
-        if (ans7.q1 === 'been there') correct7++; else document.getElementById('lu7_1').style.borderBottomColor = 'var(--neon-red)';
-        if (ans7.q2 === 'offer in terms') correct7++; else document.getElementById('lu7_2').style.borderBottomColor = 'var(--neon-red)';
-        if (ans7.q3 === 'straight to university') correct7++; else document.getElementById('lu7_3').style.borderBottomColor = 'var(--neon-red)';
-        if (ans7.q4 === 'been preserved') correct7++; else document.getElementById('lu7_4').style.borderBottomColor = 'var(--neon-red)';
-        if (ans7.q5a === 'aside from') correct7++; else document.getElementById('lu7_5a').style.borderBottomColor = 'var(--neon-red)';
-        if (ans7.q5b === "who've" || ans7.q5b === "who have") correct7++; else document.getElementById('lu7_5b').style.borderBottomColor = 'var(--neon-red)';
+        if (ans7.q1 === 'been there') correct7++; else document.getElementById('lu7_1').style.setProperty('border-bottom-color', 'var(--neon-red)', 'important');
+        if (ans7.q2 === 'offer in terms') correct7++; else document.getElementById('lu7_2').style.setProperty('border-bottom-color', 'var(--neon-red)', 'important');
+        if (ans7.q3 === 'straight to university') correct7++; else document.getElementById('lu7_3').style.setProperty('border-bottom-color', 'var(--neon-red)', 'important');
+        if (ans7.q4 === 'been preserved') correct7++; else document.getElementById('lu7_4').style.setProperty('border-bottom-color', 'var(--neon-red)', 'important');
+        if (ans7.q5a === 'aside from') correct7++; else document.getElementById('lu7_5a').style.setProperty('border-bottom-color', 'var(--neon-red)', 'important');
+        if (ans7.q5b === "who've" || ans7.q5b === "who have") correct7++; else document.getElementById('lu7_5b').style.setProperty('border-bottom-color', 'var(--neon-red)', 'important');
 
-        if (ans8.q1 === 'd') correct8++; else document.getElementById('lu8_1').style.borderColor = 'var(--neon-red)';
-        if (ans8.q2 === 'b') correct8++; else document.getElementById('lu8_2').style.borderColor = 'var(--neon-red)';
-        if (ans8.q3 === 'd') correct8++; else document.getElementById('lu8_3').style.borderColor = 'var(--neon-red)';
+        if (ans8.q1 === 'd') correct8++; else document.getElementById('lu8_1').style.setProperty('border-color', 'var(--neon-red)', 'important');
+        if (ans8.q2 === 'b') correct8++; else document.getElementById('lu8_2').style.setProperty('border-color', 'var(--neon-red)', 'important');
+        if (ans8.q3 === 'd') correct8++; else document.getElementById('lu8_3').style.setProperty('border-color', 'var(--neon-red)', 'important');
 
         const fb = document.getElementById('fb-p5'); fb.style.display = 'block';
 
@@ -587,21 +585,22 @@
             document.getElementById('btn-check-5').classList.add('hidden');
             document.querySelectorAll('#phase5 input, #phase5 select').forEach(i => {
                 i.disabled = true;
-                if(i.tagName === 'INPUT') i.style.borderBottomColor = 'var(--neon-green)'; else i.style.borderColor = 'var(--neon-green)';
+                if(i.tagName === 'INPUT') i.style.setProperty('border-bottom-color', 'var(--neon-green)', 'important'); 
+                else i.style.setProperty('border-color', 'var(--neon-green)', 'important');
             });
         } else {
             fb.className = 'master-feedback wrong'; 
             fb.innerHTML = `❌ <b>ยังมีข้อผิดพลาด</b> สังเกตช่องที่มีสีแดงแล้วแก้ตัวใหม่นะ`;
             
-            if (ans7.q1 === 'been there') document.getElementById('lu7_1').style.borderBottomColor = 'var(--neon-green)';
-            if (ans7.q2 === 'offer in terms') document.getElementById('lu7_2').style.borderBottomColor = 'var(--neon-green)';
-            if (ans7.q3 === 'straight to university') document.getElementById('lu7_3').style.borderBottomColor = 'var(--neon-green)';
-            if (ans7.q4 === 'been preserved') document.getElementById('lu7_4').style.borderBottomColor = 'var(--neon-green)';
-            if (ans7.q5a === 'aside from') document.getElementById('lu7_5a').style.borderBottomColor = 'var(--neon-green)';
-            if (ans7.q5b === "who've" || ans7.q5b === "who have") document.getElementById('lu7_5b').style.borderBottomColor = 'var(--neon-green)';
-            if (ans8.q1 === 'd') document.getElementById('lu8_1').style.borderColor = 'var(--neon-green)';
-            if (ans8.q2 === 'b') document.getElementById('lu8_2').style.borderColor = 'var(--neon-green)';
-            if (ans8.q3 === 'd') document.getElementById('lu8_3').style.borderColor = 'var(--neon-green)';
+            if (ans7.q1 === 'been there') document.getElementById('lu7_1').style.setProperty('border-bottom-color', 'var(--neon-green)', 'important');
+            if (ans7.q2 === 'offer in terms') document.getElementById('lu7_2').style.setProperty('border-bottom-color', 'var(--neon-green)', 'important');
+            if (ans7.q3 === 'straight to university') document.getElementById('lu7_3').style.setProperty('border-bottom-color', 'var(--neon-green)', 'important');
+            if (ans7.q4 === 'been preserved') document.getElementById('lu7_4').style.setProperty('border-bottom-color', 'var(--neon-green)', 'important');
+            if (ans7.q5a === 'aside from') document.getElementById('lu7_5a').style.setProperty('border-bottom-color', 'var(--neon-green)', 'important');
+            if (ans7.q5b === "who've" || ans7.q5b === "who have") document.getElementById('lu7_5b').style.setProperty('border-bottom-color', 'var(--neon-green)', 'important');
+            if (ans8.q1 === 'd') document.getElementById('lu8_1').style.setProperty('border-color', 'var(--neon-green)', 'important');
+            if (ans8.q2 === 'b') document.getElementById('lu8_2').style.setProperty('border-color', 'var(--neon-green)', 'important');
+            if (ans8.q3 === 'd') document.getElementById('lu8_3').style.setProperty('border-color', 'var(--neon-green)', 'important');
         }
     }
 
