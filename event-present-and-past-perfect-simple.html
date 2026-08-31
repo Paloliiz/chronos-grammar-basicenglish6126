@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CHRONOS HQ: Ultimate Event Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Kanit:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #020617; --panel: #0f172a; --panel-alt: #1e293b; --line: #334155;
+            --text: #f8fafc; --muted: #94a3b8; --pp-orange: #f59e0b; --ps-steel: #9FB0CE;
+            --prp-blue: #06b6d4; --good: #10b981; --warn: #FBBF24; --danger: #ef4444; --purple: #a855f7;
+            --radius: 12px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Kanit', 'IBM Plex Sans Thai', sans-serif; -webkit-tap-highlight-color: transparent;}
+        body { background-color: var(--bg); color: var(--text); padding: 10px; line-height: 1.6; 
+               background-image: radial-gradient(circle at 50% 10%, rgba(6, 182, 212, 0.05) 0%, transparent 60%); }
+
+        .app-container { max-width: 900px; margin: 0 auto; background-color: var(--panel); border-radius: var(--radius); border: 1px solid var(--line); box-shadow: 0 10px 40px rgba(0,0,0,0.6); overflow: hidden; }
+        
+        .mono { font-family: 'JetBrains Mono', monospace; letter-spacing: 0.02em; }
+        .poppins { font-family: 'Poppins', sans-serif; }
+
+        /* ---------- Header ---------- */
+        .c-header { padding: 20px 25px 15px; background: linear-gradient(180deg, #050b14 0%, #020617 100%); border-bottom: 1px solid var(--line); position: relative; }
+        .c-header::after { content:""; position:absolute; left:0; right:0; bottom:-1px; height:2px; background:linear-gradient(90deg, transparent, var(--prp-blue), var(--pp-orange), transparent); opacity:0.8; }
+        .c-eyebrow { font-size: 11px; color: var(--prp-blue); font-weight: 600; letter-spacing: 0.15em; display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+        .c-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--good); box-shadow: 0 0 10px var(--good); animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+        .c-title { font-size: 24px; font-weight: 800; margin: 0; color: var(--prp-blue); letter-spacing: 1px;}
+        .c-title span { color: var(--pp-orange); }
+        .c-sub { color: var(--muted); font-size: 13.5px; margin-top: 4px; }
+
+        /* ---------- Tabs ---------- */
+        .c-tabs { display: flex; gap: 6px; margin-top: 20px; flex-wrap: wrap; }
+        .c-tab { font-weight: 600; font-size: 13.5px; background: transparent; border: 1px solid var(--line); color: var(--muted); padding: 10px 12px; border-radius: 8px; cursor: pointer; transition: all .2s; flex: 1; text-align: center; min-width: 140px;}
+        .c-tab:hover { border-color: var(--prp-blue); color: var(--text); background: rgba(6, 182, 212, 0.05); }
+        .c-tab.active { background: var(--prp-blue); border-color: var(--prp-blue); color: #020617; }
+
+        /* ---------- Panels & Cards ---------- */
+        .c-body { padding: 25px; }
+        .c-panel { display: none; animation: fadeIn .3s ease; }
+        .c-panel.active { display: block; }
+        @keyframes fadeIn { from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
+
+        .c-card { background: var(--panel-alt); border: 1px solid var(--line); border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+        .c-card-title { font-size: 16px; font-weight: 700; color: white; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--line); padding-bottom: 10px;}
+        
+        .c-btn { font-weight: 600; font-size: 15px; background: var(--prp-blue); color: #020617; border: none; border-radius: 8px; padding: 12px 20px; cursor: pointer; transition: 0.2s; width: 100%; font-family: 'Kanit';}
+        .c-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(6, 182, 212, 0.3); }
+        .c-btn.orange { background: linear-gradient(135deg, #f59e0b, #d97706); box-shadow: 0 4px 10px rgba(245, 158, 11, 0.2); }
+        .c-btn.orange:hover { box-shadow: 0 6px 15px rgba(245, 158, 11, 0.4); }
+        .c-btn.purple { background: linear-gradient(135deg, var(--purple), #7e22ce); color: white; }
+        .c-btn.secondary { background: transparent; border: 1px dashed var(--prp-blue); color: var(--prp-blue); width: auto; padding: 8px 15px; font-size: 13px; }
+        .c-btn.secondary:hover { background: rgba(6, 182, 212, 0.1); }
+
+        label.c-label { display: block; font-size: 13px; color: var(--prp-blue); margin-bottom: 8px; font-weight: 600; }
+        input[type=text], textarea, select { width: 100%; background: #020617; border: 1px solid var(--line); color: var(--text); border-radius: 8px; padding: 12px; font-family: 'Kanit', sans-serif; font-size: 14px; margin-bottom: 16px; transition: 0.2s; }
+        textarea { resize: vertical; min-height: 60px; }
+        input:focus, textarea:focus, select:focus { outline: none; border-color: var(--prp-blue); background: #050b14; }
+
+        /* ---------- Uploads ---------- */
+        .upload-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+        @media(max-width: 600px) { .upload-row { grid-template-columns: 1fr; } }
+        .upload-box { border: 2px dashed var(--line); border-radius: 10px; padding: 20px; text-align: center; cursor: pointer; position: relative; min-height: 120px; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(2, 6, 23, 0.5); transition: 0.2s; }
+        .upload-box:hover { border-color: var(--prp-blue); background: rgba(6, 182, 212, 0.05); }
+        .upload-box img { max-width: 100%; max-height: 120px; border-radius: 6px; z-index: 2; }
+        .upload-box input { position: absolute; inset: 0; opacity: 0; cursor: pointer; z-index: 3; }
+
+        /* ---------- Tags & Mission Details ---------- */
+        .stage-tag { display: inline-flex; align-items: center; gap: 6px; font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; letter-spacing: 0.05em; padding: 4px 10px; border-radius: 6px; margin-bottom: 8px; }
+        .stage-tag.pp { background: rgba(245, 158, 11, 0.15); color: var(--pp-orange); border: 1px solid rgba(245, 158, 11, 0.4); }
+        .stage-tag.ps { background: rgba(159, 176, 206, 0.15); color: var(--text); border: 1px solid rgba(159, 176, 206, 0.4); }
+        .stage-tag.prp { background: rgba(6, 182, 212, 0.15); color: var(--prp-blue); border: 1px solid rgba(6, 182, 212, 0.4); }
+
+        #mission-details { display: none; background: #020617; padding: 20px; border-radius: 10px; border: 1px dashed var(--pp-orange); animation: fadeIn 0.5s ease; margin-top: 15px; }
+        .situation-box { background: rgba(6, 182, 212, 0.1); padding: 15px; border-left: 4px solid var(--prp-blue); border-radius: 0 8px 8px 0; margin-bottom: 20px; font-size: 1.05rem; color: #f8fafc; }
+        .blank-input { background: #020617; border: 1px solid var(--line); border-bottom: 2px solid var(--prp-blue); color: var(--warn); padding: 5px 10px; border-radius: 4px; font-size: 1rem; width: 100%; max-width: 300px; font-weight: bold; }
+        .blank-input:focus { outline: none; border-bottom-color: var(--good); background: rgba(16, 185, 129, 0.1); }
+        .keyword-hint { font-size: 0.9rem; color: var(--pp-orange); display: block; margin-top: 5px; margin-bottom: 15px; background: rgba(245, 158, 11, 0.1); padding: 10px; border-radius: 6px; border-left: 3px solid var(--pp-orange); }
+
+        /* ---------- Board List ---------- */
+        .mission-list { display: grid; grid-template-columns: 1fr; gap: 20px; }
+        .m-card { background: var(--panel-alt); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+        .m-head { padding: 15px; background: rgba(0,0,0,0.3); display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--line);}
+        .m-title { font-size: 16px; font-weight: 700; color: var(--pp-orange); }
+        .m-members { font-size: 12.5px; color: var(--muted); margin-top: 5px; }
+        .m-body { padding: 15px; display: flex; gap: 20px; flex-wrap: wrap; }
+        .m-imgs { flex: 1; min-width: 250px; }
+        .m-imgs img { width: 100%; border-radius: 8px; border: 1px solid var(--line); margin-bottom: 10px; }
+        .m-data { flex: 2; min-width: 250px; }
+        .node-text { font-size: 15px; line-height: 1.6; margin-bottom: 15px; background: rgba(2,6,23,0.5); padding: 10px; border-radius: 8px;}
+
+        /* ---------- Present Mode ---------- */
+        .present-stage { background: #000; border: 2px solid var(--prp-blue); border-radius: 16px; padding: 30px; box-shadow: 0 0 30px rgba(6, 182, 212, 0.15); display: flex; gap: 30px; flex-wrap: wrap; align-items: center; }
+        .p-img-box { flex: 1; min-width: 300px; text-align: center; }
+        .p-img-box img { width: 100%; border-radius: 12px; border: 2px solid var(--line); }
+        .p-info-box { flex: 1.5; min-width: 300px; }
+        .p-name { font-size: 28px; font-weight: 800; color: var(--pp-orange); margin-bottom: 5px; }
+        .p-members { font-size: 14px; color: var(--muted); margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px dashed var(--line); }
+        .present-nav { display: flex; gap: 15px; justify-content: center; margin-top: 20px; align-items: center; }
+
+        /* ---------- Eval Mode ---------- */
+        .rate-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--line); gap: 10px; }
+        .rate-row:last-of-type { border-bottom: none; }
+        .rate-label { font-size: 14px; }
+        .rate-scale { display: flex; gap: 6px; flex-shrink: 0; }
+        .rate-scale button { width: 38px; height: 38px; border-radius: 8px; border: 1px solid var(--line); background: #020617; color: var(--muted); font-weight: 700; cursor: pointer; font-size: 15px; transition: 0.2s;}
+        .rate-scale button.sel { background: var(--prp-blue); color: #020617; border-color: var(--prp-blue); }
+        
+        table.lead { width: 100%; border-collapse: collapse; font-size: 14px; margin-top: 10px;}
+        table.lead th { text-align: left; color: var(--muted); font-weight: 600; font-size: 12px; padding: 8px; border-bottom: 1px solid var(--line); background: rgba(0,0,0,0.2);}
+        table.lead td { padding: 10px 8px; border-bottom: 1px solid var(--line); }
+        table.lead tr:hover { background: rgba(6, 182, 212, 0.05); }
+        .rank-num { font-weight: bold; color: var(--prp-blue); }
+
+        .status-line { font-size: 13.5px; color: var(--muted); margin-top: 10px; text-align: center; font-weight: bold; }
+        .status-line.ok { color: var(--good); }
+
+        /* Modal Dictionary */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(2,6,23,0.8); display: none; justify-content: center; align-items: center; z-index: 100; backdrop-filter: blur(4px); }
+        .modal-card { background: var(--panel-alt); padding: 25px; border-radius: 12px; width: 90%; max-width: 500px; border: 1px solid var(--prp-blue); max-height: 80vh; overflow-y: auto; }
+        .dict-table { width: 100%; border-collapse: collapse; margin-top: 15px; text-align: left; }
+        .dict-table th { background: #020617; color: var(--prp-blue); padding: 10px; border-bottom: 1px solid var(--line); }
+        .dict-table td { padding: 10px; border-bottom: 1px dashed var(--line); font-size: 14px; }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <div class="c-header">
+        <div class="c-eyebrow"><span class="c-dot"></span>LIVE EVENT HUB : CHRONOS</div>
+        <h3 class="c-title">MISSION <span>LOG</span> :: Travel Disasters</h3>
+        <div class="c-sub">ระบบจัดการภารกิจ ส่งผลงาน นำเสนอ และประเมินเพื่อนแบบเรียลไทม์</div>
+        
+        <div class="c-tabs">
+            <button class="c-tab active" data-tab="mission">🎲 1. สุ่มภารกิจ</button>
+            <button class="c-tab" data-tab="submit">📌 2. ส่งงาน</button>
+            <button class="c-tab" data-tab="present">🎬 3. นำเสนอ</button>
+            <button class="c-tab" data-tab="eval">⭐ 4. ประเมิน</button>
+        </div>
+    </div>
+
+    <div class="c-body">
+
+        <!-- ================= TAB 1: MISSION GENERATOR ================= -->
+        <div class="c-panel active" id="panel-mission">
+            <div class="c-card">
+                <div class="c-card-title">🌌 VISUAL ANOMALY RECONSTRUCTION</div>
+                <p style="color: var(--muted); font-size: 14px; margin-bottom: 15px;">ภารกิจสร้างภาพจำลองกาลเวลาที่บิดเบี้ยว (ทำงานเป็นทีม)</p>
+                
+                <button class="c-btn orange" onclick="generateMission()">🎲 สุ่มเหตุการณ์วิกฤต (SCAN TIMELINE)</button>
+                <button class="c-btn secondary" onclick="toggleDictionary()" style="width: 100%; margin-top: 10px; display: block; text-align: center;">📖 เปิดคัมภีร์ กริยา 3 ช่อง (VERB DICTIONARY)</button>
+                
+                <div id="mission-details">
+                    <div style="text-align: center; margin-bottom: 15px;">
+                        <span style="background: rgba(245, 158, 11, 0.2); color: var(--pp-orange); padding: 5px 12px; border-radius: 20px; font-weight: bold; border: 1px solid var(--pp-orange);" id="m-id">CASE-00</span>
+                        <div style="font-size: 1.2rem; font-weight: bold; color: white; margin-top: 5px;" id="m-name">-</div>
+                    </div>
+                    
+                    <div style="color: var(--pp-orange); font-weight: bold; margin-bottom: 5px;">📍 สถานการณ์ที่เผชิญ (Situation):</div>
+                    <div class="situation-box" id="m-situation">-</div>
+                    
+                    <div style="background: var(--panel); padding: 15px; border-radius: 8px; border: 1px solid var(--line); margin-bottom: 20px;">
+                        <div style="color: var(--prp-blue); font-weight: bold; margin-bottom: 10px;">📝 TASK: ค้นหาคำกริยาและแต่งประโยค</div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <span class="stage-tag prp">1. Present Perfect (ประสบการณ์)</span><br>
+                            We have traveled to <input type="text" id="input-loc" class="blank-input" placeholder="พิมพ์ชื่อสถานที่/ประเทศ">.
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <span class="stage-tag ps">2. Past Simple (เหตุการณ์เกิดแทรก)</span><br>
+                            Everything was fine until we <input type="text" id="input-v2" class="blank-input" placeholder="พิมพ์ประโยค (ต้องใช้ V.2)">.
+                            <span class="keyword-hint" id="hint-v2">💡 Hint: -</span>
+                        </div>
+                        
+                        <div>
+                            <span class="stage-tag pp">3. Past Perfect (ต้นเหตุทำไปก่อน)</span><br>
+                            We were in trouble because we had <input type="text" id="input-v3" class="blank-input" placeholder="พิมพ์ประโยค (ต้องใช้ V.3)">!
+                            <span class="keyword-hint" id="hint-v3">💡 Hint: -</span>
+                        </div>
+                    </div>
+
+                    <button class="c-btn purple" onclick="copyPrompt()">✨ คัดลอกประโยคไปสร้างภาพ AI (COPY PROMPT)</button>
+                    <div class="status-line" id="copyStatus"></div>
+                    <p style="font-size: 12px; color: var(--muted); text-align: center; margin-top: 10px;">(นำคำสั่งไปวางใน Bing Image Creator หรือ Canva แล้วนำรูปมาส่งในแท็บถัดไป)</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= TAB 2: SUBMIT BOARD ================= -->
+        <div class="c-panel" id="panel-submit">
+            <div class="c-card">
+                <div class="c-card-title">📤 UPLOAD MISSION DATA (ส่งผลงาน)</div>
+                
+                <label class="c-label">1. ชื่อกลุ่ม (Group Name)</label>
+                <input type="text" id="in-group" placeholder="เช่น กลุ่ม 3 — Typhoon Squad">
+
+                <label class="c-label">2. รายชื่อสมาชิก (Members) - ใส่ชื่อและเลขที่</label>
+                <textarea id="in-members" placeholder="1. นาย นที ภัสสรรัชนีกร เลขที่ 1&#10;2. นางสาว วารี มานะประสพสุข เลขที่ 15" rows="3"></textarea>
+
+                <label class="c-label">3. แนบหลักฐานภาพถ่าย (Visual Evidences)</label>
+                <div class="upload-row">
+                    <div class="upload-box" id="box-ai">
+                        <div id="ai-placeholder">🖼️<br><span style="font-size: 12px; color: var(--muted);">ภาพจาก AI (Bing/Canva)</span></div>
+                        <input type="file" accept="image/*" id="in-ai">
+                    </div>
+                    <div class="upload-box" id="box-ss">
+                        <div id="ss-placeholder">🖥️<br><span style="font-size: 12px; color: var(--muted);">ภาพหน้าจอตอนแต่งประโยค</span></div>
+                        <input type="file" accept="image/*" id="in-ss">
+                    </div>
+                </div>
+
+                <label class="c-label">4. บันทึกเส้นเวลา (Timeline Sentences) - ก๊อปปี้จากแท็บแรกมาวาง</label>
+                <textarea id="in-pp" placeholder="[Past Perfect เกิดก่อน] เช่น We were in trouble because we had boarded the wrong plane." rows="2"></textarea>
+                <textarea id="in-ps" placeholder="[Past Simple เกิดแทรก] เช่น Everything was fine until we woke up in the wrong country." rows="2"></textarea>
+                <textarea id="in-prp" placeholder="[Present Perfect ประสบการณ์] เช่น We have traveled to Australia twice." rows="2"></textarea>
+
+                <button class="c-btn" onclick="submitData()">🚀 ส่งข้อมูลขึ้นบอร์ด (SUBMIT)</button>
+                <div class="status-line" id="submit-status"></div>
+            </div>
+
+            <div class="c-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--line); padding-bottom: 10px; margin-bottom: 15px;">
+                    <div class="c-card-title" style="border: none; margin: 0; padding: 0;">📌 MISSION ENTRIES</div>
+                    <button class="c-btn secondary" onclick="loadEntries()">↻ รีเฟรช</button>
+                </div>
+                <div class="mission-list" id="mission-list">
+                    <div style="text-align: center; color: var(--muted); padding: 20px;">ไม่มีข้อมูล / กำลังโหลด...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= TAB 3: PRESENT ================= -->
+        <div class="c-panel" id="panel-present">
+            <div id="present-wrap">
+                <div style="text-align: center; color: var(--muted); padding: 50px;">🎬 ยังไม่มีผลงานให้นำเสนอ — รอรับข้อมูลจากบอร์ดส่งงาน</div>
+            </div>
+        </div>
+
+        <!-- ================= TAB 4: PEER EVALUATION ================= -->
+        <div class="c-panel" id="panel-eval">
+            <div class="c-card">
+                <div class="c-card-title">⭐ ให้คะแนนกลุ่มเพื่อน (Peer Evaluation)</div>
+                <label class="c-label">ชื่อผู้ประเมิน</label>
+                <input type="text" id="evaluator" placeholder="ชื่อ-นามสกุล หรือเลขที่ของคุณ">
+
+                <label class="c-label">เลือกกลุ่มที่จะประเมิน (ดึงชื่อมาจากบอร์ดส่งงาน)</label>
+                <select id="group-select"><option value="">— เลือกกลุ่ม —</option></select>
+
+                <div id="rate-rows" style="margin-bottom: 20px;">
+                    <div class="rate-row" data-key="timeline">
+                        <div class="rate-label">1. ลำดับเหตุการณ์ก่อน–หลังชัดเจน สมเหตุสมผล</div>
+                        <div class="rate-scale"><button data-v="1">1</button><button data-v="2">2</button><button data-v="3">3</button><button data-v="4">4</button></div>
+                    </div>
+                    <div class="rate-row" data-key="grammar">
+                        <div class="rate-label">2. ใช้ Tense (V.2 / V.3) ถูกต้องตามหลักไวยากรณ์</div>
+                        <div class="rate-scale"><button data-v="1">1</button><button data-v="2">2</button><button data-v="3">3</button><button data-v="4">4</button></div>
+                    </div>
+                    <div class="rate-row" data-key="coherence">
+                        <div class="rate-label">3. ภาพ AI และประโยคสื่อความหมายสอดคล้องกันดี</div>
+                        <div class="rate-scale"><button data-v="1">1</button><button data-v="2">2</button><button data-v="3">3</button><button data-v="4">4</button></div>
+                    </div>
+                </div>
+
+                <button class="c-btn orange" onclick="submitEval()">✅ ส่งคะแนนประเมิน</button>
+                <div class="status-line" id="eval-status"></div>
+            </div>
+
+            <div class="c-card">
+                <div class="c-card-title">🏆 สรุปคะแนนสด (Live Leaderboard)</div>
+                <div id="leaderboard"><div style="text-align: center; color: var(--muted); padding: 20px;">ยังไม่มีการประเมิน</div></div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Modal Dictionary -->
+<div class="modal-overlay" id="dict-modal">
+    <div class="modal-card">
+        <h3 style="color: var(--prp-blue); margin-bottom: 5px;">📖 VERB DICTIONARY</h3>
+        <p style="font-size: 0.9rem; color: var(--muted);">คัมภีร์กริยา 3 ช่อง (ค้นหาคำกริยาที่ตรงกับความหมายใน Hint)</p>
+        <table class="dict-table">
+            <tr><th>V.1 (Base)</th><th>V.2 (Past)</th><th>V.3 (Participle)</th></tr>
+            <tr><td>arrive (มาถึง)</td><td>arrived</td><td>arrived</td></tr>
+            <tr><td>board (ขึ้นเครื่อง)</td><td>boarded</td><td>boarded</td></tr>
+            <tr><td>book (จอง)</td><td>booked</td><td>booked</td></tr>
+            <tr><td>buy (ซื้อ)</td><td>bought</td><td>bought</td></tr>
+            <tr><td>drop (ทำตก)</td><td>dropped</td><td>dropped</td></tr>
+            <tr><td>eat (กิน)</td><td>ate</td><td>eaten</td></tr>
+            <tr><td>find (พบ/เจอ)</td><td>found</td><td>found</td></tr>
+            <tr><td>forget (ลืม)</td><td>forgot</td><td>forgotten</td></tr>
+            <tr><td>get (ได้รับ/กลายเป็น)</td><td>got</td><td>gotten</td></tr>
+            <tr><td>ignore (เพิกเฉย)</td><td>ignored</td><td>ignored</td></tr>
+            <tr><td>leave (ทิ้งไว้)</td><td>left</td><td>left</td></tr>
+            <tr><td>lose (ทำหาย)</td><td>lost</td><td>lost</td></tr>
+            <tr><td>realize (ตระหนัก/รู้ตัว)</td><td>realized</td><td>realized</td></tr>
+            <tr><td>see (เห็น)</td><td>saw</td><td>seen</td></tr>
+            <tr><td>start (เริ่ม)</td><td>started</td><td>started</td></tr>
+            <tr><td>try (พยายาม)</td><td>tried</td><td>tried</td></tr>
+            <tr><td>wake (ตื่นนอน)</td><td>woke</td><td>woken</td></tr>
+            <tr><td>verb to be (เป็น/อยู่/คือ)</td><td>was/were</td><td>been</td></tr>
+        </table>
+        <button class="c-btn secondary" onclick="toggleDictionary()" style="width: 100%; margin-top: 15px;">ปิดคัมภีร์ ❌</button>
+    </div>
+</div>
+
+<script>
+    const $ = (id) => document.getElementById(id);
+    let entriesData = JSON.parse(localStorage.getItem('chronos_entries') || '[]');
+    let evalData = JSON.parse(localStorage.getItem('chronos_evals') || '[]');
+    let presentIdx = 0;
+
+    // ---------- Tab Switching ----------
+    document.querySelectorAll('.c-tab').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.c-tab').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.c-panel').forEach(p => p.classList.remove('active'));
+            btn.classList.add('active');
+            $('panel-' + btn.dataset.tab).classList.add('active');
+            
+            if (btn.dataset.tab === 'present') renderPresent();
+            if (btn.dataset.tab === 'eval') updateGroupSelect();
+        });
+    });
+
+    // ---------- TAB 1: MISSION GENERATOR ----------
+    // ปรับปรุงคำใบ้เป็น "ช่องว่าง + ความหมายภาษาไทย" เพื่อให้เด็กต้องไปค้นหา V.1 ในคัมภีร์เอง
+    const missions = [
+        { id: "CASE-01", name: "เที่ยวบินสลับขั้ว (The Wrong Flight)", situation: "ตั้งใจจะบินไปออสเตรเลีย แต่พอตื่นมาอีกทีดันอยู่ที่ออสเตรีย!", v2_hint: "_____ up in the wrong country (กริยา: ตื่นนอน)", v3_hint: "_____ the wrong plane (กริยา: ขึ้นเครื่อง)" },
+        { id: "CASE-02", name: "ทริปล่องเรือสำราญสุดป่วน (Cruise Ship Chaos)", situation: "ลงไปเดินเล่นที่เกาะตอนเรือเทียบท่า แต่พอกลับมาเรือสำราญก็หายไปแล้ว!", v2_hint: "_____ the empty ocean (กริยา: เห็น)", v3_hint: "_____ track of time (กริยา: ทำหาย)" },
+        { id: "CASE-03", name: "โรงแรมทิพย์ (The Ghost Hotel)", situation: "เดินทางมาถึงจุดหมายเพื่อพักในโรงแรมหรู แต่พบแค่ที่ดินว่างเปล่า!", v2_hint: "_____ at an empty field (กริยา: มาถึง)", v3_hint: "_____ the wrong location (กริยา: จอง)" },
+        { id: "CASE-04", name: "ซาฟารีหนีตาย (Jungle Safari)", situation: "ขับรถชมสัตว์ป่าแปลกตาอยู่ดีๆ ก็หลงทางกลางป่ากว้าง!", v2_hint: "_____ lost in the wild (กริยา: กลายเป็น/ได้รับ)", v3_hint: "_____ our map (กริยา: ทำตก)" },
+        { id: "CASE-05", name: "หิมะถล่มทลายทริป (Snowstorm Survivor)", situation: "ติดพายุหิมะอยู่บนภูเขาสูง สั่นเป็นเจ้าเข้าเพราะไม่มีเสื้อกันหนาว!", v2_hint: "_____ freezing in the snow (กริยา: เริ่ม)", v3_hint: "_____ to pack winter coats (กริยา: ลืม)" },
+        { id: "CASE-06", name: "เมนูเปิบพิสดาร (Dreadful Food Poisoning)", situation: "ท้องเสียอย่างหนักจนต้องเข้าโรงพยาบาลและพลาดเที่ยวบินกลับบ้าน!", v2_hint: "_____ sick and go to the hospital (กริยา: กลายเป็น/ได้รับ)", v3_hint: "_____ weird street food (กริยา: กิน)" },
+        { id: "CASE-07", name: "คอนเสิร์ตข้ามโลก (The Fake Concert)", situation: "บินข้ามทวีปมาดูศิลปินคนโปรด แต่โดนการ์ดห้ามเข้างานคอนเสิร์ต!", v2_hint: "_____ kicked out by security (กริยา: เป็น/อยู่/คือ)", v3_hint: "_____ fake tickets (กริยา: ซื้อ)" },
+        { id: "CASE-08", name: "แคมป์ปิ้งไร้เต็นท์ (Camping Catastrophe)", situation: "ขับรถขึ้นภูเขาไปตั้งแคมป์ พอจะกางเต็นท์นอนถึงรู้ว่าไม่มีเต็นท์!", v2_hint: "_____ we had no place to sleep (กริยา: ตระหนัก/รู้ตัว)", v3_hint: "_____ the tent in the garage (กริยา: ทิ้งไว้)" },
+        { id: "CASE-09", name: "ดำน้ำดูปะการังสุดเฟล (Scuba Diving Fail)", situation: "ไปดำน้ำที่จุดดำน้ำระดับโลก แต่ไม่มีรูปถ่ายกลับมาสักรูปเดียว!", v2_hint: "_____ a beautiful shark (กริยา: เห็น)", v3_hint: "_____ to charge the camera (กริยา: ลืม)" },
+        { id: "CASE-10", name: "ซากเรือโจรสลัด (The Shipwreck)", situation: "เช่าเรือออกไปดูซากเรืออับปาง แต่ดันเจอพายุจนเรือตัวเองเครื่องเสีย!", v2_hint: "_____ trapped in a huge storm (กริยา: เป็น/อยู่/คือ)", v3_hint: "_____ the weather warning (กริยา: เพิกเฉย)" },
+        { id: "CASE-11", name: "โจรกรรมลิงจ๋อ (Monkey Thieves)", situation: "ไปถ่ายรูปกับสถาปัตยกรรมที่โดดเด่น แต่พาสปอร์ตและกระเป๋าเงินหายไป!", v2_hint: "_____ our bags completely empty (กริยา: พบ/เจอ)", v3_hint: "_____ the zipper open (กริยา: ทิ้งไว้)" },
+        { id: "CASE-12", name: "แบตหมดผิดเวลา (Dead Phone in the Desert)", situation: "เช่ารถขับเที่ยวกลางทะเลทราย รถเสีย แต่โทรขอความช่วยเหลือใครไม่ได้เลย!", v2_hint: "_____ to call for help (กริยา: พยายาม)", v3_hint: "_____ the power bank (กริยา: ลืม)" }
+    ];
+
+    function generateMission() {
+        const m = missions[Math.floor(Math.random() * missions.length)];
+        $('m-id').innerText = m.id;
+        $('m-name').innerText = m.name;
+        $('m-situation').innerText = m.situation;
+        
+        // อัปเดต Hint รูปแบบใหม่
+        $('hint-v2').innerHTML = `💡 <span style="color:var(--warn); font-weight:bold;">${m.v2_hint}</span> <br><small style="color:var(--text);">(หาคำกริยาภาษาอังกฤษจากคัมภีร์มาเติม แล้วผันเป็น <span style="color:white;">V.2</span>)</small>`;
+        $('hint-v3').innerHTML = `💡 <span style="color:var(--warn); font-weight:bold;">${m.v3_hint}</span> <br><small style="color:var(--text);">(หาคำกริยาภาษาอังกฤษจากคัมภีร์มาเติม แล้วผันเป็น <span style="color:var(--pp-orange);">V.3</span>)</small>`;
+        
+        $('mission-details').style.display = 'block';
+        $('copyStatus').textContent = '';
+        ['input-loc', 'input-v2', 'input-v3'].forEach(id => { $(id).value = ''; $(id).style.borderColor = 'var(--line)'; });
+    }
+
+    function toggleDictionary() {
+        const modal = $('dict-modal');
+        modal.style.display = (modal.style.display === 'flex') ? 'none' : 'flex';
+    }
+
+    function copyPrompt() {
+        const loc = $('input-loc').value.trim();
+        const v2 = $('input-v2').value.trim();
+        const v3 = $('input-v3').value.trim();
+        if(!loc || !v2 || !v3) { alert("⚠️ เติมคำในช่องว่างให้ครบทั้ง 3 ช่องก่อนคัดลอก!"); return; }
+
+        const prompt = `We have traveled to ${loc}. Everything was fine until we ${v2}. We were in trouble because we had ${v3}. Create a funny, highly detailed, Pixar-style 3D animated picture showing this travel disaster situation. Cinematic lighting.`;
+        navigator.clipboard.writeText(prompt).then(() => {
+            $('copyStatus').textContent = "✅ คัดลอก Prompt สำเร็จ! นำไปวางใน Bing/Canva ได้เลย";
+            $('copyStatus').className = "status-line ok";
+        });
+    }
+
+    // ---------- TAB 2: SUBMIT BOARD ----------
+    function compressImage(file) {
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const scale = Math.min(1, 500 / img.width);
+                    canvas.width = img.width * scale; canvas.height = img.height * scale;
+                    canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+                    resolve(canvas.toDataURL('image/jpeg', 0.6));
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
+    let aiImg = "", ssImg = "";
+    $('in-ai').addEventListener('change', async (e) => { if(e.target.files[0]) { aiImg = await compressImage(e.target.files[0]); $('ai-placeholder').innerHTML = `<img src="${aiImg}">`; }});
+    $('in-ss').addEventListener('change', async (e) => { if(e.target.files[0]) { ssImg = await compressImage(e.target.files[0]); $('ss-placeholder').innerHTML = `<img src="${ssImg}">`; }});
+
+    function submitData() {
+        const payload = {
+            id: "G" + Date.now().toString().slice(-5),
+            group: $('in-group').value.trim(), members: $('in-members').value.trim(),
+            pp: $('in-pp').value.trim(), ps: $('in-ps').value.trim(), prp: $('in-prp').value.trim(),
+            aiData: aiImg, ssData: ssImg
+        };
+
+        if(!payload.group || !payload.members || !payload.pp || !aiImg) {
+            $('submit-status').textContent = "⚠️ กรุณากรอกชื่อกลุ่ม, สมาชิก, ประโยค และแนบภาพ AI ให้ครบ";
+            $('submit-status').className = "status-line"; $('submit-status').style.color = "var(--danger)"; return;
+        }
+
+        entriesData.push(payload);
+        localStorage.setItem('chronos_entries', JSON.stringify(entriesData));
+        $('submit-status').textContent = "✅ บันทึกข้อมูลขึ้นบอร์ดสำเร็จ!"; $('submit-status').className = "status-line ok";
+        
+        ['in-group','in-members','in-pp','in-ps','in-prp'].forEach(id => $(id).value = '');
+        aiImg = ""; ssImg = ""; $('ai-placeholder').innerHTML = "🖼️"; $('ss-placeholder').innerHTML = "🖥️";
+        loadEntries(); updateGroupSelect();
+    }
+
+    function loadEntries() {
+        entriesData = JSON.parse(localStorage.getItem('chronos_entries') || '[]');
+        const wrap = $('mission-list');
+        if(entriesData.length === 0) { wrap.innerHTML = '<div style="text-align:center; color:var(--muted); padding:20px;">ไม่มีข้อมูลผลงาน</div>'; return; }
+        
+        wrap.innerHTML = entriesData.map(it => `
+            <div class="m-card">
+                <div class="m-head"><div class="m-title">📌 ${it.group}</div></div>
+                <div class="m-body">
+                    <div class="m-imgs"><img src="${it.aiData}"><img src="${it.ssData || ''}" style="opacity:0.8;"></div>
+                    <div class="m-data">
+                        <div class="node-text"><span class="stage-tag pp">PAST PERFECT</span><br>${it.pp}</div>
+                        <div class="node-text"><span class="stage-tag ps">PAST SIMPLE</span><br>${it.ps}</div>
+                        <div class="node-text"><span class="stage-tag prp">PRESENT PERFECT</span><br>${it.prp}</div>
+                    </div>
+                </div>
+            </div>
+        `).reverse().join('');
+    }
+
+    // ---------- TAB 3: PRESENT ----------
+    function renderPresent() {
+        const wrap = $('present-wrap');
+        if(entriesData.length === 0) return;
+        if(presentIdx >= entriesData.length) presentIdx = 0;
+        const it = entriesData[presentIdx];
+
+        wrap.innerHTML = `
+            <div class="present-stage">
+                <div class="p-img-box"><img src="${it.aiData}"></div>
+                <div class="p-info-box">
+                    <div class="p-name">${it.group}</div>
+                    <div class="p-members"><b>MEMBERS:</b><br>${it.members.replace(/\n/g, '<br>')}</div>
+                    <div class="node-text"><span class="stage-tag pp">1. PAST PERFECT</span><br><span style="font-size:18px; color:white;">${it.pp}</span></div>
+                    <div class="node-text"><span class="stage-tag ps">2. PAST SIMPLE</span><br><span style="font-size:18px; color:white;">${it.ps}</span></div>
+                    <div class="node-text"><span class="stage-tag prp">3. PRESENT PERFECT</span><br><span style="font-size:18px; color:white;">${it.prp}</span></div>
+                </div>
+            </div>
+            <div class="present-nav">
+                <button class="c-btn secondary" onclick="changeSlide(-1)">← PREV</button>
+                <span style="color:var(--prp-blue); font-weight:bold;">[ ${presentIdx + 1} / ${entriesData.length} ]</span>
+                <button class="c-btn secondary" onclick="changeSlide(1)">NEXT →</button>
+            </div>
+        `;
+    }
+    function changeSlide(dir) { presentIdx = (presentIdx + dir + entriesData.length) % entriesData.length; renderPresent(); }
+
+    // ---------- TAB 4: PEER EVALUATION ----------
+    const ratings = { timeline: null, grammar: null, coherence: null };
+    document.querySelectorAll('.rate-scale').forEach(sc => {
+        sc.addEventListener('click', e => {
+            const btn = e.target.closest('button'); if (!btn) return;
+            const key = sc.closest('.rate-row').dataset.key;
+            ratings[key] = Number(btn.dataset.v);
+            sc.querySelectorAll('button').forEach(b => b.classList.toggle('sel', b === btn));
+        });
+    });
+
+    function updateGroupSelect() {
+        const sel = $('group-select');
+        sel.innerHTML = '<option value="">— เลือกกลุ่ม —</option>' + entriesData.map(it => `<option value="${it.group}">${it.group}</option>`).join('');
+    }
+
+    function submitEval() {
+        const evaluator = $('evaluator').value.trim();
+        const group = $('group-select').value;
+        const statusEl = $('eval-status');
+
+        if (!evaluator || !group || !ratings.timeline || !ratings.grammar || !ratings.coherence) {
+            statusEl.textContent = '⚠️ กรุณากรอกชื่อ เลือกกลุ่ม และให้คะแนนครบทั้ง 3 ข้อ';
+            statusEl.className = 'status-line'; statusEl.style.color = "var(--danger)"; return;
+        }
+
+        evalData.push({ evaluator, group, ...ratings });
+        localStorage.setItem('chronos_evals', JSON.stringify(evalData));
+        
+        statusEl.textContent = '✅ บันทึกคะแนนประเมินเรียบร้อย!'; statusEl.className = 'status-line ok';
+        renderLeaderboard();
+        
+        // Reset buttons
+        document.querySelectorAll('.rate-scale button').forEach(b => b.classList.remove('sel'));
+        ratings.timeline = null; ratings.grammar = null; ratings.coherence = null;
+    }
+
+    function renderLeaderboard() {
+        evalData = JSON.parse(localStorage.getItem('chronos_evals') || '[]');
+        const wrap = $('leaderboard');
+        if(evalData.length === 0) return;
+
+        const byGroup = {};
+        evalData.forEach(ev => {
+            if(!byGroup[ev.group]) byGroup[ev.group] = { timeline:[], grammar:[], coherence:[] };
+            byGroup[ev.group].timeline.push(ev.timeline);
+            byGroup[ev.group].grammar.push(ev.grammar);
+            byGroup[ev.group].coherence.push(ev.coherence);
+        });
+
+        const avg = arr => arr.reduce((a,b)=>a+b,0) / arr.length;
+        const rows = Object.keys(byGroup).map(g => {
+            const t = avg(byGroup[g].timeline), gr = avg(byGroup[g].grammar), c = avg(byGroup[g].coherence);
+            return { group: g, t, gr, c, overall: (t+gr+c)/3, count: byGroup[g].timeline.length };
+        }).sort((a,b) => b.overall - a.overall);
+
+        wrap.innerHTML = `
+            <table class="lead">
+                <thead><tr><th>#</th><th>กลุ่ม</th><th>ไทม์ไลน์</th><th>แกรมมาร์</th><th>สอดคล้อง</th><th>เฉลี่ยรวม</th><th>โหวต</th></tr></thead>
+                <tbody>
+                    ${rows.map((r,i) => `<tr><td class="rank-num">${i+1}</td><td>${r.group}</td><td>${r.t.toFixed(1)}</td><td>${r.gr.toFixed(1)}</td><td>${r.c.toFixed(1)}</td><td class="rank-num">${r.overall.toFixed(2)}</td><td>${r.count}</td></tr>`).join('')}
+                </tbody>
+            </table>
+        `;
+    }
+
+    // Initialize
+    loadEntries();
+    updateGroupSelect();
+    renderLeaderboard();
+</script>
+
+</body>
+</html>
