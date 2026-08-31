@@ -48,12 +48,14 @@
         .c-card-title { font-size: 16px; font-weight: 700; color: white; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--line); padding-bottom: 10px;}
         
         .c-btn { font-weight: 600; font-size: 15px; background: var(--prp-blue); color: #020617; border: none; border-radius: 8px; padding: 12px 20px; cursor: pointer; transition: 0.2s; width: 100%; font-family: 'Kanit';}
-        .c-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(6, 182, 212, 0.3); }
+        .c-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(6, 182, 212, 0.3); }
         .c-btn.orange { background: linear-gradient(135deg, #f59e0b, #d97706); box-shadow: 0 4px 10px rgba(245, 158, 11, 0.2); }
-        .c-btn.orange:hover { box-shadow: 0 6px 15px rgba(245, 158, 11, 0.4); }
+        .c-btn.orange:hover:not(:disabled) { box-shadow: 0 6px 15px rgba(245, 158, 11, 0.4); }
         .c-btn.purple { background: linear-gradient(135deg, var(--purple), #7e22ce); color: white; }
         .c-btn.secondary { background: transparent; border: 1px dashed var(--prp-blue); color: var(--prp-blue); width: auto; padding: 8px 15px; font-size: 13px; }
         .c-btn.secondary:hover { background: rgba(6, 182, 212, 0.1); }
+        
+        .c-btn:disabled { background: var(--line); color: var(--muted); cursor: not-allowed; box-shadow: none; border: none; }
 
         label.c-label { display: block; font-size: 13px; color: var(--prp-blue); margin-bottom: 8px; font-weight: 600; }
         input[type=text], textarea, select { width: 100%; background: #020617; border: 1px solid var(--line); color: var(--text); border-radius: 8px; padding: 12px; font-family: 'Kanit', sans-serif; font-size: 14px; margin-bottom: 16px; transition: 0.2s; }
@@ -150,7 +152,7 @@
                 <div class="c-card-title">🌌 VISUAL ANOMALY RECONSTRUCTION</div>
                 <p style="color: var(--muted); font-size: 14px; margin-bottom: 15px;">ภารกิจสร้างภาพจำลองกาลเวลาที่บิดเบี้ยว (ทำงานเป็นทีม)</p>
                 
-                <button class="c-btn orange" onclick="generateMission()">🎲 สุ่มเหตุการณ์วิกฤต (SCAN TIMELINE)</button>
+                <button class="c-btn orange" id="btn-gen" onclick="generateMission()">🎲 สุ่มเหตุการณ์วิกฤต (SCAN TIMELINE)</button>
                 <button class="c-btn secondary" onclick="toggleDictionary()" style="width: 100%; margin-top: 10px; display: block; text-align: center;">📖 เปิดคัมภีร์ กริยา 3 ช่อง (VERB DICTIONARY)</button>
                 
                 <div id="mission-details">
@@ -172,13 +174,13 @@
                         
                         <div style="margin-bottom: 15px;">
                             <span class="stage-tag ps">2. Past Simple (เหตุการณ์เกิดแทรก)</span><br>
-                            Everything was fine until we <input type="text" id="input-v2" class="blank-input" placeholder="พิมพ์ประโยค (ใช้ V.2)">.
+                            Everything was fine until we <input type="text" id="input-v2" class="blank-input" placeholder="พิมพ์ประโยค (ต้องใช้ V.2)">.
                             <span class="keyword-hint" id="hint-v2">💡 Hint: -</span>
                         </div>
                         
                         <div>
                             <span class="stage-tag pp">3. Past Perfect (ต้นเหตุทำไปก่อน)</span><br>
-                            We were in trouble because we had <input type="text" id="input-v3" class="blank-input" placeholder="พิมพ์ประโยค (ใช้ V.3)">!
+                            We were in trouble because we had <input type="text" id="input-v3" class="blank-input" placeholder="พิมพ์ประโยค (ต้องใช้ V.3)">!
                             <span class="keyword-hint" id="hint-v3">💡 Hint: -</span>
                         </div>
                     </div>
@@ -310,12 +312,26 @@
 
 <script>
     // 🛑 นำ URL ที่ก๊อปปี้จาก Google Sheets มาวางในเครื่องหมายคำพูดด้านล่างนี้ 🛑
-    const API_URL = "https://script.google.com/macros/s/AKfycbyrDwNz-HcHYQWwAouV-48p4CC8hv1zfSNVnf-nvwEJoRbKwTjhI2pz599JEGkJptyjvg/exec";
+    const API_URL = "วางลิงก์ที่ก๊อปปี้มาตรงนี้";
 
     const $ = (id) => document.getElementById(id);
     let entriesData = [];
     let evalData = [];
     let presentIdx = 0;
+    
+    // ตั้งค่าตัวแปรจำกัดจำนวนการสุ่ม (ดึงจาก LocalStorage ถ้าเคยมี)
+    let generateCount = parseInt(localStorage.getItem('chronos_gen_count') || '0');
+
+    // โค้ดส่วนการอัปเดตปุ่มตั้งแต่เปิดหน้าเว็บ
+    window.addEventListener('DOMContentLoaded', () => {
+        const btnGen = $('btn-gen');
+        if (generateCount > 0 && generateCount < 3) {
+            btnGen.innerText = `🔄 สุ่มเหตุการณ์ใหม่ (เหลือสิทธิ์อีก ${3 - generateCount} ครั้ง)`;
+        } else if (generateCount >= 3) {
+            btnGen.innerText = "❌ หมดสิทธิ์สุ่มภารกิจ";
+            btnGen.disabled = true;
+        }
+    });
 
     // ---------- Tab Switching ----------
     document.querySelectorAll('.c-tab').forEach(btn => {
@@ -326,6 +342,7 @@
             $('panel-' + btn.dataset.tab).classList.add('active');
             
             if (btn.dataset.tab === 'present') renderPresent();
+            if (btn.dataset.tab === 'eval') updateGroupSelect();
         });
     });
 
@@ -346,17 +363,45 @@
     ];
 
     function generateMission() {
+        const btn = $('btn-gen');
+        
+        // เช็คสิทธิ์การสุ่ม
+        if (generateCount >= 3) {
+            alert("⚠️ พลังงานการสุ่มหมดแล้ว! คุณใช้สิทธิ์สุ่มภารกิจครบ 3 ครั้งแล้ว กรุณาทำภารกิจที่ได้ครับ");
+            return;
+        }
+
+        // เพิ่มจำนวนครั้งและบันทึก
+        generateCount++;
+        localStorage.setItem('chronos_gen_count', generateCount);
+
         const m = missions[Math.floor(Math.random() * missions.length)];
-        $('m-id').innerText = m.id;
-        $('m-name').innerText = m.name;
-        $('m-situation').innerText = m.situation;
         
-        $('hint-v2').innerHTML = `💡 <span style="color:var(--warn); font-weight:bold;">${m.v2_hint}</span> <br><small style="color:var(--text);">(หาคำกริยาภาษาอังกฤษจากคัมภีร์มาเติม แล้วผันเป็น <span style="color:white;">V.2</span>)</small>`;
-        $('hint-v3').innerHTML = `💡 <span style="color:var(--warn); font-weight:bold;">${m.v3_hint}</span> <br><small style="color:var(--text);">(หาคำกริยาภาษาอังกฤษจากคัมภีร์มาเติม แล้วผันเป็น <span style="color:var(--pp-orange);">V.3</span>)</small>`;
+        btn.style.display = 'none';
+        $('mission-details').style.display = 'none';
         
-        $('mission-details').style.display = 'block';
-        $('copyStatus').textContent = '';
-        ['input-loc', 'input-v2', 'input-v3'].forEach(id => { $(id).value = ''; $(id).style.borderColor = 'var(--line)'; });
+        setTimeout(() => {
+            $('m-id').innerText = m.id;
+            $('m-name').innerText = m.name;
+            $('m-situation').innerText = m.situation;
+            
+            $('hint-v2').innerHTML = `💡 <span style="color:var(--warn); font-weight:bold;">${m.v2_hint}</span> <br><small style="color:var(--text);">(หาคำกริยาภาษาอังกฤษจากคัมภีร์มาเติม แล้วผันเป็น <span style="color:white;">V.2</span>)</small>`;
+            $('hint-v3').innerHTML = `💡 <span style="color:var(--warn); font-weight:bold;">${m.v3_hint}</span> <br><small style="color:var(--text);">(หาคำกริยาภาษาอังกฤษจากคัมภีร์มาเติม แล้วผันเป็น <span style="color:var(--pp-orange);">V.3</span>)</small>`;
+            
+            $('mission-details').style.display = 'block';
+            $('copyStatus').textContent = '';
+            ['input-loc', 'input-v2', 'input-v3'].forEach(id => { $(id).value = ''; $(id).style.borderColor = 'var(--line)'; });
+            
+            // อัปเดตปุ่มหลังสุ่มเสร็จ
+            btn.style.display = 'block';
+            let remaining = 3 - generateCount;
+            if (remaining > 0) {
+                btn.innerText = `🔄 สุ่มเหตุการณ์ใหม่ (เหลือสิทธิ์อีก ${remaining} ครั้ง)`;
+            } else {
+                btn.innerText = "❌ หมดสิทธิ์สุ่มภารกิจ";
+                btn.disabled = true;
+            }
+        }, 300);
     }
 
     function toggleDictionary() {
@@ -428,6 +473,15 @@
             $('submit-status').textContent = "✅ บันทึกข้อมูลขึ้นบอร์ดสำเร็จ!"; $('submit-status').className = "status-line ok";
             ['in-group','in-members','in-pp','in-ps','in-prp'].forEach(id => $(id).value = '');
             aiImg = ""; ssImg = ""; $('ai-placeholder').innerHTML = "🖼️"; $('ss-placeholder').innerHTML = "🖥️";
+            
+            // รีเซ็ตจำนวนการสุ่มหลังจากส่งงานสำเร็จ เพื่อเผื่อเครื่องนี้ถูกเวียนให้กลุ่มอื่นใช้ต่อ
+            localStorage.setItem('chronos_gen_count', '0');
+            generateCount = 0;
+            const btnGen = $('btn-gen');
+            btnGen.innerText = "🎲 สุ่มเหตุการณ์วิกฤต (SCAN TIMELINE)";
+            btnGen.disabled = false;
+            $('mission-details').style.display = 'none';
+
             setTimeout(fetchData, 2000);
         }).catch(() => {
             $('submit-status').textContent = "❌ การส่งข้อมูลขัดข้อง กรุณาลองใหม่"; $('submit-status').style.color = "var(--danger)";
