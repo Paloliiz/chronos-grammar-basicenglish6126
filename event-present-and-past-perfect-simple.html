@@ -78,7 +78,7 @@
         .situation-box { background: rgba(6, 182, 212, 0.1); padding: 15px; border-left: 4px solid var(--prp-blue); border-radius: 0 8px 8px 0; margin-bottom: 20px; font-size: 1.05rem; color: #f8fafc; }
         .blank-input { background: #020617; border: 1px solid var(--line); border-bottom: 2px solid var(--prp-blue); color: var(--warn); padding: 5px 10px; border-radius: 4px; font-size: 1rem; width: 100%; max-width: 300px; font-weight: bold; }
         .blank-input:focus { outline: none; border-bottom-color: var(--good); background: rgba(16, 185, 129, 0.1); }
-        .keyword-hint { font-size: 0.9rem; color: var(--pp-orange); display: block; margin-top: 5px; margin-bottom: 15px; background: rgba(245, 158, 11, 0.1); padding: 10px; border-radius: 6px; border-left: 3px solid var(--pp-orange); }
+        .keyword-hint { font-size: 0.9rem; color: var(--pp-orange); display: block; margin-top: 5px; margin-bottom: 15px; background: rgba(245, 158, 11, 0.1); padding: 8px; border-radius: 6px; border-left: 3px solid var(--pp-orange); }
 
         /* ---------- Board List ---------- */
         .mission-list { display: grid; grid-template-columns: 1fr; gap: 20px; }
@@ -163,7 +163,7 @@
                     <div class="situation-box" id="m-situation">-</div>
                     
                     <div style="background: var(--panel); padding: 15px; border-radius: 8px; border: 1px solid var(--line); margin-bottom: 20px;">
-                        <div style="color: var(--prp-blue); font-weight: bold; margin-bottom: 10px;">📝 TASK: ค้นหาคำกริยาและแต่งประโยค</div>
+                        <div style="color: var(--prp-blue); font-weight: bold; margin-bottom: 10px;">📝 TASK: เติมคำและแปลงกริยา V.1 เป็น V.2/V.3</div>
                         
                         <div style="margin-bottom: 15px;">
                             <span class="stage-tag prp">1. Present Perfect (ประสบการณ์)</span><br>
@@ -172,13 +172,13 @@
                         
                         <div style="margin-bottom: 15px;">
                             <span class="stage-tag ps">2. Past Simple (เหตุการณ์เกิดแทรก)</span><br>
-                            Everything was fine until we <input type="text" id="input-v2" class="blank-input" placeholder="พิมพ์ประโยค (ต้องใช้ V.2)">.
+                            Everything was fine until we <input type="text" id="input-v2" class="blank-input" placeholder="พิมพ์ประโยค (ใช้ V.2)">.
                             <span class="keyword-hint" id="hint-v2">💡 Hint: -</span>
                         </div>
                         
                         <div>
                             <span class="stage-tag pp">3. Past Perfect (ต้นเหตุทำไปก่อน)</span><br>
-                            We were in trouble because we had <input type="text" id="input-v3" class="blank-input" placeholder="พิมพ์ประโยค (ต้องใช้ V.3)">!
+                            We were in trouble because we had <input type="text" id="input-v3" class="blank-input" placeholder="พิมพ์ประโยค (ใช้ V.3)">!
                             <span class="keyword-hint" id="hint-v3">💡 Hint: -</span>
                         </div>
                     </div>
@@ -225,7 +225,7 @@
             <div class="c-card">
                 <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--line); padding-bottom: 10px; margin-bottom: 15px;">
                     <div class="c-card-title" style="border: none; margin: 0; padding: 0;">📌 MISSION ENTRIES</div>
-                    <button class="c-btn secondary" onclick="loadEntries()">↻ รีเฟรช</button>
+                    <button class="c-btn secondary" onclick="fetchData()">↻ รีเฟรช</button>
                 </div>
                 <div class="mission-list" id="mission-list">
                     <div style="text-align: center; color: var(--muted); padding: 20px;">ไม่มีข้อมูล / กำลังโหลด...</div>
@@ -271,7 +271,7 @@
 
             <div class="c-card">
                 <div class="c-card-title">🏆 สรุปคะแนนสด (Live Leaderboard)</div>
-                <div id="leaderboard"><div style="text-align: center; color: var(--muted); padding: 20px;">ยังไม่มีการประเมิน</div></div>
+                <div id="leaderboard"><div style="text-align: center; color: var(--muted); padding: 20px;">กำลังโหลดกระดานคะแนน...</div></div>
             </div>
         </div>
 
@@ -309,9 +309,12 @@
 </div>
 
 <script>
+    // 🛑 นำ URL ที่ก๊อปปี้จาก Google Sheets มาวางในเครื่องหมายคำพูดด้านล่างนี้ 🛑
+    const API_URL = "https://script.google.com/macros/s/AKfycbyrDwNz-HcHYQWwAouV-48p4CC8hv1zfSNVnf-nvwEJoRbKwTjhI2pz599JEGkJptyjvg/exec";
+
     const $ = (id) => document.getElementById(id);
-    let entriesData = JSON.parse(localStorage.getItem('chronos_entries') || '[]');
-    let evalData = JSON.parse(localStorage.getItem('chronos_evals') || '[]');
+    let entriesData = [];
+    let evalData = [];
     let presentIdx = 0;
 
     // ---------- Tab Switching ----------
@@ -323,12 +326,10 @@
             $('panel-' + btn.dataset.tab).classList.add('active');
             
             if (btn.dataset.tab === 'present') renderPresent();
-            if (btn.dataset.tab === 'eval') updateGroupSelect();
         });
     });
 
     // ---------- TAB 1: MISSION GENERATOR ----------
-    // ปรับปรุงคำใบ้เป็น "ช่องว่าง + ความหมายภาษาไทย" เพื่อให้เด็กต้องไปค้นหา V.1 ในคัมภีร์เอง
     const missions = [
         { id: "CASE-01", name: "เที่ยวบินสลับขั้ว (The Wrong Flight)", situation: "ตั้งใจจะบินไปออสเตรเลีย แต่พอตื่นมาอีกทีดันอยู่ที่ออสเตรีย!", v2_hint: "_____ up in the wrong country (กริยา: ตื่นนอน)", v3_hint: "_____ the wrong plane (กริยา: ขึ้นเครื่อง)" },
         { id: "CASE-02", name: "ทริปล่องเรือสำราญสุดป่วน (Cruise Ship Chaos)", situation: "ลงไปเดินเล่นที่เกาะตอนเรือเทียบท่า แต่พอกลับมาเรือสำราญก็หายไปแล้ว!", v2_hint: "_____ the empty ocean (กริยา: เห็น)", v3_hint: "_____ track of time (กริยา: ทำหาย)" },
@@ -350,7 +351,6 @@
         $('m-name').innerText = m.name;
         $('m-situation').innerText = m.situation;
         
-        // อัปเดต Hint รูปแบบใหม่
         $('hint-v2').innerHTML = `💡 <span style="color:var(--warn); font-weight:bold;">${m.v2_hint}</span> <br><small style="color:var(--text);">(หาคำกริยาภาษาอังกฤษจากคัมภีร์มาเติม แล้วผันเป็น <span style="color:white;">V.2</span>)</small>`;
         $('hint-v3').innerHTML = `💡 <span style="color:var(--warn); font-weight:bold;">${m.v3_hint}</span> <br><small style="color:var(--text);">(หาคำกริยาภาษาอังกฤษจากคัมภีร์มาเติม แล้วผันเป็น <span style="color:var(--pp-orange);">V.3</span>)</small>`;
         
@@ -377,7 +377,7 @@
         });
     }
 
-    // ---------- TAB 2: SUBMIT BOARD ----------
+    // ---------- TAB 2 & CLOUD API ----------
     function compressImage(file) {
         return new Promise((resolve) => {
             const reader = new FileReader();
@@ -385,10 +385,10 @@
                 const img = new Image();
                 img.onload = () => {
                     const canvas = document.createElement('canvas');
-                    const scale = Math.min(1, 500 / img.width);
+                    const scale = Math.min(1, 400 / img.width);
                     canvas.width = img.width * scale; canvas.height = img.height * scale;
                     canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
-                    resolve(canvas.toDataURL('image/jpeg', 0.6));
+                    resolve(canvas.toDataURL('image/jpeg', 0.5));
                 };
                 img.src = e.target.result;
             };
@@ -401,8 +401,13 @@
     $('in-ss').addEventListener('change', async (e) => { if(e.target.files[0]) { ssImg = await compressImage(e.target.files[0]); $('ss-placeholder').innerHTML = `<img src="${ssImg}">`; }});
 
     function submitData() {
+        if(!API_URL || API_URL.includes("วางลิงก์")) {
+            alert("⚠️ ยังไม่ได้ตั้งค่าระบบหลังบ้าน! คุณครูต้องนำ API URL มาใส่ในโค้ดก่อนครับ"); return;
+        }
+
         const payload = {
-            id: "G" + Date.now().toString().slice(-5),
+            action: "save",
+            id: "G" + Date.now().toString().slice(-4),
             group: $('in-group').value.trim(), members: $('in-members').value.trim(),
             pp: $('in-pp').value.trim(), ps: $('in-ps').value.trim(), prp: $('in-prp').value.trim(),
             aiData: aiImg, ssData: ssImg
@@ -413,17 +418,34 @@
             $('submit-status').className = "status-line"; $('submit-status').style.color = "var(--danger)"; return;
         }
 
-        entriesData.push(payload);
-        localStorage.setItem('chronos_entries', JSON.stringify(entriesData));
-        $('submit-status').textContent = "✅ บันทึกข้อมูลขึ้นบอร์ดสำเร็จ!"; $('submit-status').className = "status-line ok";
+        $('submit-status').textContent = "กำลังส่งข้อมูลสู่ระบบคลาวด์... ⏳"; $('submit-status').style.color = "var(--muted)";
         
-        ['in-group','in-members','in-pp','in-ps','in-prp'].forEach(id => $(id).value = '');
-        aiImg = ""; ssImg = ""; $('ai-placeholder').innerHTML = "🖼️"; $('ss-placeholder').innerHTML = "🖥️";
-        loadEntries(); updateGroupSelect();
+        fetch(API_URL, {
+            method: 'POST', mode: 'no-cors',
+            headers: {'Content-Type': 'text/plain;charset=utf-8'},
+            body: JSON.stringify(payload)
+        }).then(() => {
+            $('submit-status').textContent = "✅ บันทึกข้อมูลขึ้นบอร์ดสำเร็จ!"; $('submit-status').className = "status-line ok";
+            ['in-group','in-members','in-pp','in-ps','in-prp'].forEach(id => $(id).value = '');
+            aiImg = ""; ssImg = ""; $('ai-placeholder').innerHTML = "🖼️"; $('ss-placeholder').innerHTML = "🖥️";
+            setTimeout(fetchData, 2000);
+        }).catch(() => {
+            $('submit-status').textContent = "❌ การส่งข้อมูลขัดข้อง กรุณาลองใหม่"; $('submit-status').style.color = "var(--danger)";
+        });
     }
 
-    function loadEntries() {
-        entriesData = JSON.parse(localStorage.getItem('chronos_entries') || '[]');
+    async function fetchData() {
+        if(!API_URL || API_URL.includes("วางลิงก์")) return;
+        try {
+            const res = await fetch(API_URL + "?action=get_missions");
+            entriesData = await res.json();
+            renderBoard();
+            updateGroupSelect();
+            if($('panel-present').classList.contains('active')) renderPresent();
+        } catch(e) {}
+    }
+
+    function renderBoard() {
         const wrap = $('mission-list');
         if(entriesData.length === 0) { wrap.innerHTML = '<div style="text-align:center; color:var(--muted); padding:20px;">ไม่มีข้อมูลผลงาน</div>'; return; }
         
@@ -486,6 +508,8 @@
     }
 
     function submitEval() {
+        if(!API_URL || API_URL.includes("วางลิงก์")) return;
+
         const evaluator = $('evaluator').value.trim();
         const group = $('group-select').value;
         const statusEl = $('eval-status');
@@ -495,21 +519,33 @@
             statusEl.className = 'status-line'; statusEl.style.color = "var(--danger)"; return;
         }
 
-        evalData.push({ evaluator, group, ...ratings });
-        localStorage.setItem('chronos_evals', JSON.stringify(evalData));
+        statusEl.textContent = 'กำลังส่งคะแนนโหวต... ⏳'; statusEl.style.color = "var(--muted)";
         
-        statusEl.textContent = '✅ บันทึกคะแนนประเมินเรียบร้อย!'; statusEl.className = 'status-line ok';
-        renderLeaderboard();
-        
-        // Reset buttons
-        document.querySelectorAll('.rate-scale button').forEach(b => b.classList.remove('sel'));
-        ratings.timeline = null; ratings.grammar = null; ratings.coherence = null;
+        const payload = { action: "save_eval", evaluator, group, ...ratings };
+        fetch(API_URL, {
+            method: 'POST', mode: 'no-cors',
+            headers: {'Content-Type': 'text/plain;charset=utf-8'},
+            body: JSON.stringify(payload)
+        }).then(() => {
+            statusEl.textContent = '✅ บันทึกคะแนนประเมินเรียบร้อย!'; statusEl.className = 'status-line ok';
+            document.querySelectorAll('.rate-scale button').forEach(b => b.classList.remove('sel'));
+            ratings.timeline = null; ratings.grammar = null; ratings.coherence = null;
+            setTimeout(fetchEvals, 2000);
+        });
+    }
+
+    async function fetchEvals() {
+        if(!API_URL || API_URL.includes("วางลิงก์")) return;
+        try {
+            const res = await fetch(API_URL + "?action=get_evals");
+            evalData = await res.json();
+            renderLeaderboard();
+        } catch(e) {}
     }
 
     function renderLeaderboard() {
-        evalData = JSON.parse(localStorage.getItem('chronos_evals') || '[]');
         const wrap = $('leaderboard');
-        if(evalData.length === 0) return;
+        if(evalData.length === 0) { wrap.innerHTML = '<div style="text-align: center; color: var(--muted); padding: 20px;">ไม่มีข้อมูลคะแนนโหวต</div>'; return; }
 
         const byGroup = {};
         evalData.forEach(ev => {
@@ -535,10 +571,9 @@
         `;
     }
 
-    // Initialize
-    loadEntries();
-    updateGroupSelect();
-    renderLeaderboard();
+    // Auto-polling every 5 seconds for live updates
+    setInterval(() => { fetchData(); fetchEvals(); }, 5000);
+    fetchData(); fetchEvals();
 </script>
 
 </body>
