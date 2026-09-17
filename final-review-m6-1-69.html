@@ -1,0 +1,1486 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>New Frontiers 6 — ทบทวนก่อนสอบปลายภาค</title>
+<meta name="description" content="ระบบทบทวนเนื้อหาและฝึกทำข้อสอบวิชาภาษาอังกฤษพื้นฐาน อ33101 ม.6">
+<meta name="theme-color" content="#0F2133">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Final Exam Review">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%230F2133'/%3E%3Cpath d='M50 20 L50 65 M30 65 Q50 80 70 65 M50 20 L68 32 L50 40 Z' stroke='%23D6A54C' stroke-width='5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%230F2133'/%3E%3Cpath d='M50 20 L50 65 M30 65 Q50 80 70 65 M50 20 L68 32 L50 40 Z' stroke='%23D6A54C' stroke-width='5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22Set%20Sail%20Review%20-%20New%20Frontiers%206%22%2C%22short_name%22%3A%22Set%20Sail%20Review%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23F5F1E3%22%2C%22theme_color%22%3A%22%230F2133%22%7D">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============ TOKENS ============ */
+:root{
+  --navy-900:#0B1826;
+  --navy-800:#0F2133;
+  --navy-700:#173049;
+  --navy-600:#20415F;
+  --teal-600:#2A8A78;
+  --teal-500:#37A08C;
+  --teal-100:#DCEEE8;
+  --gold-500:#D6A54C;
+  --gold-100:#F7E9CD;
+  --coral-500:#C1552C;
+  --coral-100:#F6DFD3;
+  --success-500:#3F8F5F;
+  --success-100:#DCEFE1;
+  --paper:#F5F1E3;
+  --paper-card:#FFFDF7;
+  --ink-900:#1C2A33;
+  --ink-600:#57666E;
+  --ink-400:#8B98A0;
+  --line:#E2DAC3;
+  --line-soft:#EFE9D6;
+  --radius-s:10px;
+  --radius-m:16px;
+  --radius-l:24px;
+  --shadow-card:0 1px 2px rgba(15,33,51,.06), 0 6px 20px rgba(15,33,51,.07);
+  --font-display:"Fraunces", serif;
+  --font-body:"Sarabun", sans-serif;
+}
+body[data-theme="dark"]{
+  --navy-900:#080F18;
+  --paper:#101B27;
+  --paper-card:#16222F;
+  --ink-900:#EAF0F3;
+  --ink-600:#A9B7C1;
+  --ink-400:#71828C;
+  --line:#233241;
+  --line-soft:#1C2938;
+  --teal-100:#183630;
+  --gold-100:#3A2E17;
+  --coral-100:#3A241C;
+  --success-100:#173325;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--paper);
+  color:var(--ink-900);
+  font-family:var(--font-body);
+  -webkit-font-smoothing:antialiased;
+  min-height:100vh;
+  padding-bottom:calc(72px + env(safe-area-inset-bottom));
+  transition:background .2s, color .2s;
+}
+h1,h2,h3{font-family:var(--font-display);margin:0;line-height:1.15;font-weight:600;}
+p{margin:0;}
+button{font-family:inherit;}
+a{color:inherit;}
+::selection{background:var(--gold-100);}
+:focus-visible{outline:3px solid var(--gold-500);outline-offset:2px;}
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:.01ms !important; transition-duration:.01ms !important;}
+}
+
+/* ============ APP SHELL ============ */
+.app-header{
+  position:sticky; top:0; z-index:40;
+  background:var(--navy-800);
+  color:#fff;
+  padding:14px 18px;
+  display:flex; align-items:center; justify-content:space-between;
+  box-shadow:0 2px 14px rgba(11,24,38,.25);
+}
+.brand{display:flex; align-items:center; gap:10px;}
+.brand svg{flex:none;}
+.brand-text{display:flex; flex-direction:column; line-height:1.1;}
+.brand-text b{font-family:var(--font-display); font-size:17px; font-weight:600; letter-spacing:.2px;}
+.brand-text span{font-size:11px; color:#B9C7D3; letter-spacing:.3px;}
+.streak-chip{
+  display:flex; align-items:center; gap:6px;
+  background:rgba(214,165,76,.16);
+  border:1px solid rgba(214,165,76,.4);
+  color:var(--gold-500);
+  padding:6px 11px; border-radius:999px;
+  font-size:12.5px; font-weight:600;
+}
+.header-actions{display:flex; align-items:center; gap:8px;}
+.theme-toggle{
+  width:34px; height:34px; border-radius:50%; border:1px solid rgba(255,255,255,.25);
+  background:rgba(255,255,255,.08); cursor:pointer; display:flex; align-items:center; justify-content:center; flex:none;
+}
+.theme-toggle svg{width:16px; height:16px; stroke:#fff;}
+
+.container{max-width:880px; margin:0 auto; padding:20px 16px 40px;}
+.view{display:none; animation:fadeIn .35s ease;}
+.view.active{display:block;}
+@keyframes fadeIn{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:none;}}
+
+/* Bottom tab nav (mobile-first) */
+.tabbar{
+  position:fixed; left:0; right:0; bottom:0; z-index:50;
+  background:rgba(255,253,247,.92);
+  backdrop-filter:blur(10px);
+  border-top:1px solid var(--line);
+  display:flex;
+  padding-bottom:env(safe-area-inset-bottom);
+}
+.tab{
+  flex:1; border:none; background:none; cursor:pointer;
+  display:flex; flex-direction:column; align-items:center; gap:3px;
+  padding:10px 4px 8px; color:var(--ink-400);
+  font-size:11.5px; font-weight:600; font-family:var(--font-body);
+}
+.tab svg{width:22px; height:22px; stroke:var(--ink-400); transition:stroke .15s, transform .15s;}
+.tab.active{color:var(--teal-600);}
+.tab.active svg{stroke:var(--teal-600); transform:translateY(-1px);}
+
+/* Desktop side nav */
+@media (min-width:900px){
+  body{padding-bottom:0;}
+  .app-header{padding:14px 28px;}
+  .layout{max-width:1120px; margin:0 auto; display:grid; grid-template-columns:220px 1fr; gap:0; align-items:start;}
+  .sidenav{
+    position:sticky; top:70px;
+    display:flex; flex-direction:column; gap:4px;
+    padding:24px 14px;
+  }
+  .tabbar{display:none;}
+  .tab-desktop{
+    display:flex; align-items:center; gap:12px;
+    border:none; background:none; cursor:pointer;
+    padding:11px 14px; border-radius:var(--radius-s);
+    color:var(--ink-600); font-size:14.5px; font-weight:600;
+    text-align:left;
+  }
+  .tab-desktop svg{width:19px; height:19px; stroke:var(--ink-400);}
+  .tab-desktop.active{background:var(--navy-800); color:#fff;}
+  .tab-desktop.active svg{stroke:var(--gold-500);}
+  .container{padding:28px 28px 60px;}
+}
+@media (max-width:899px){ .sidenav{display:none;} }
+
+/* ============ COMMON COMPONENTS ============ */
+.section-label{
+  font-size:12.5px; font-weight:700; letter-spacing:.3px;
+  color:var(--teal-600); margin-bottom:6px;
+}
+.card{
+  background:var(--paper-card);
+  border:1px solid var(--line);
+  border-radius:var(--radius-m);
+  box-shadow:var(--shadow-card);
+}
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  border:none; border-radius:999px; cursor:pointer;
+  font-family:var(--font-body); font-weight:600; font-size:14.5px;
+  padding:13px 22px; transition:transform .12s ease, box-shadow .12s ease;
+}
+.btn:active{transform:scale(.97);}
+.btn-primary{background:var(--teal-600); color:#fff; box-shadow:0 6px 16px rgba(42,138,120,.3);}
+.btn-primary:hover{background:var(--teal-500);}
+.btn-ghost{background:transparent; color:var(--navy-800); border:1.5px solid var(--line);}
+.btn-ghost:hover{border-color:var(--teal-600); color:var(--teal-600);}
+.btn-gold{background:var(--gold-500); color:var(--navy-900); box-shadow:0 6px 16px rgba(214,165,76,.35);}
+.btn-block{width:100%;}
+.pill{display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:700; padding:4px 10px; border-radius:999px;}
+.pill-teal{background:var(--teal-100); color:var(--teal-600);}
+.pill-gold{background:var(--gold-100); color:#8A6416;}
+.pill-coral{background:var(--coral-100); color:var(--coral-500);}
+
+/* ============ HOME VIEW ============ */
+.hero{
+  background:linear-gradient(160deg, var(--navy-800), var(--navy-700) 60%, var(--navy-600));
+  color:#fff; border-radius:var(--radius-l);
+  padding:28px 22px 24px;
+  position:relative; overflow:hidden;
+  margin-bottom:22px;
+}
+.hero::after{
+  content:""; position:absolute; inset:0;
+  background:radial-gradient(circle at 85% 0%, rgba(214,165,76,.18), transparent 55%);
+  pointer-events:none;
+}
+.hero-eyebrow{color:var(--gold-500); font-size:13px; font-weight:600; margin-bottom:8px;}
+.hero h1{font-size:clamp(24px,6vw,32px); color:#fff; max-width:20ch;}
+.hero p.sub{margin-top:10px; color:#C7D4DD; font-size:14.5px; max-width:42ch; line-height:1.55;}
+
+.route{
+  margin-top:22px; display:flex; align-items:center; gap:0;
+  position:relative;
+}
+.route-line{position:absolute; left:22px; right:22px; top:16px; height:2px; background:repeating-linear-gradient(90deg, rgba(255,255,255,.35) 0 6px, transparent 6px 12px);}
+.route-stop{flex:1; display:flex; flex-direction:column; align-items:center; gap:8px; position:relative; z-index:1;}
+.route-dot{
+  width:34px; height:34px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  background:var(--navy-700); border:2px solid rgba(255,255,255,.3);
+  font-size:14px; font-weight:700; color:#C7D4DD;
+}
+.route-stop.done .route-dot{background:var(--teal-600); border-color:var(--teal-600); color:#fff;}
+.route-stop.current .route-dot{background:var(--gold-500); border-color:var(--gold-500); color:var(--navy-900);}
+.route-stop span{font-size:11.5px; color:#C7D4DD; text-align:center; max-width:9ch;}
+
+.stats-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:20px 0;}
+.stat-card{background:var(--paper-card); border:1px solid var(--line); border-radius:var(--radius-m); padding:14px 10px; text-align:center;}
+.stat-num{font-family:var(--font-display); font-size:26px; font-weight:700; color:var(--navy-800);}
+.stat-label{font-size:11px; color:var(--ink-600); margin-top:2px;}
+
+.quick-links{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:10px;}
+.quick-link{
+  background:var(--paper-card); border:1px solid var(--line); border-radius:var(--radius-m);
+  padding:16px; display:flex; flex-direction:column; gap:10px; cursor:pointer; text-align:left;
+  transition:border-color .15s, transform .12s;
+}
+.quick-link:active{transform:scale(.98);}
+.quick-link:hover{border-color:var(--teal-600);}
+.quick-link .qicon{width:34px; height:34px; border-radius:10px; display:flex; align-items:center; justify-content:center;}
+.quick-link .qicon svg{width:18px; height:18px;}
+.quick-link h3{font-size:15px;}
+.quick-link p{font-size:12.5px; color:var(--ink-600); margin-top:2px;}
+
+/* ============ REVIEW VIEW ============ */
+.glossary-search{position:relative; margin-bottom:16px;}
+.glossary-search input{
+  width:100%; padding:13px 14px 13px 42px; border-radius:999px; border:1.5px solid var(--line);
+  background:var(--paper-card); color:var(--ink-900); font-family:var(--font-body); font-size:14px;
+}
+.glossary-search input:focus{border-color:var(--teal-600);}
+.glossary-search svg{position:absolute; left:15px; top:50%; transform:translateY(-50%); width:17px; height:17px; stroke:var(--ink-400); pointer-events:none;}
+.glossary-results{margin-bottom:16px;}
+.glossary-results .word-chip{margin-bottom:8px;}
+.glossary-empty{font-size:13px; color:var(--ink-600); padding:10px 4px;}
+
+.unit-switch{display:flex; gap:8px; margin-bottom:18px; background:var(--paper-card); padding:5px; border-radius:999px; border:1px solid var(--line);}
+.unit-switch button{flex:1; border:none; background:none; padding:10px 8px; border-radius:999px; font-weight:600; font-size:13.5px; color:var(--ink-600); cursor:pointer;}
+.unit-switch button.active{background:var(--navy-800); color:#fff;}
+
+.unit-hero{border-radius:var(--radius-m); padding:18px; margin-bottom:18px; color:#fff;}
+.unit-hero.u1{background:linear-gradient(135deg,#1B3350,#2A8A78);}
+.unit-hero.u2{background:linear-gradient(135deg,#173049,#20415F);}
+.unit-hero .tag{font-size:11.5px; letter-spacing:.3px; color:var(--gold-100); font-weight:600;}
+.unit-hero h2{color:#fff; font-size:22px; margin-top:4px;}
+.unit-hero p{font-size:13px; color:#D9E2E7; margin-top:6px; line-height:1.5;}
+
+.accordion{border:1px solid var(--line); border-radius:var(--radius-m); overflow:hidden; margin-bottom:12px; background:var(--paper-card);}
+.accordion-head{
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+  padding:15px 16px; cursor:pointer; user-select:none;
+}
+.accordion-head h3{font-size:15.5px;}
+.accordion-head .chev{width:18px; height:18px; stroke:var(--ink-400); transition:transform .2s;}
+.accordion.open .chev{transform:rotate(180deg);}
+.accordion-body{max-height:0; overflow:hidden; transition:max-height .3s ease;}
+.accordion.open .accordion-body{max-height:4000px;}
+.accordion-inner{padding:0 16px 18px;}
+
+.vocab-table{width:100%; border-collapse:collapse; font-size:13.5px;}
+.vocab-table th{text-align:left; font-size:11px; color:var(--ink-600); text-transform:none; padding:6px 8px; border-bottom:2px solid var(--line);}
+.vocab-table td{padding:8px 8px; border-bottom:1px solid var(--line-soft); vertical-align:top;}
+.vocab-table tr:last-child td{border-bottom:none;}
+.vocab-table .en{font-weight:600; color:var(--navy-800);}
+.vocab-table .pos{color:var(--teal-600); font-size:11.5px;}
+
+.word-chip-grid{display:grid; grid-template-columns:1fr; gap:8px;}
+.word-chip{
+  display:flex; justify-content:space-between; align-items:center; gap:10px;
+  padding:10px 12px; border:1px solid var(--line-soft); border-radius:var(--radius-s);
+  font-size:13.5px;
+}
+.word-chip .w{font-weight:600; color:var(--navy-800);}
+.word-chip .meta{color:var(--ink-600); font-size:12px; text-align:right;}
+
+.gram-card{border-left:4px solid var(--teal-600); background:var(--paper-card); border-radius:0 var(--radius-s) var(--radius-s) 0; padding:14px 16px; margin-bottom:12px; border-top:1px solid var(--line); border-right:1px solid var(--line); border-bottom:1px solid var(--line);}
+.gram-card h4{font-size:14.5px; font-family:var(--font-body); font-weight:700; color:var(--navy-800); margin-bottom:6px;}
+.gram-card ul{margin:8px 0 0; padding-left:18px; font-size:13.5px; line-height:1.6; color:var(--ink-900);}
+.gram-card .ex{margin-top:8px; background:var(--teal-100); color:var(--teal-600); font-size:12.5px; padding:8px 10px; border-radius:8px; font-style:italic;}
+
+/* ============ FLASHCARDS ============ */
+.fc-toolbar{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px;}
+.fc-filter{border:1.5px solid var(--line); background:var(--paper-card); padding:8px 14px; border-radius:999px; font-size:13px; font-weight:600; color:var(--ink-600); cursor:pointer;}
+.fc-filter.active{background:var(--navy-800); color:#fff; border-color:var(--navy-800);}
+
+.fc-progress-wrap{margin-bottom:18px;}
+.fc-progress-track{height:8px; background:var(--line-soft); border-radius:999px; overflow:hidden;}
+.fc-progress-fill{height:100%; background:linear-gradient(90deg,var(--teal-600),var(--gold-500)); border-radius:999px; transition:width .3s;}
+.fc-progress-text{font-size:12px; color:var(--ink-600); margin-top:6px; display:flex; justify-content:space-between;}
+
+.fc-stage{display:flex; flex-direction:column; align-items:center;}
+.flip-card{
+  width:100%; max-width:380px; height:230px;
+  perspective:1200px; cursor:pointer; margin:0 auto;
+}
+.flip-inner{position:relative; width:100%; height:100%; transition:transform .5s; transform-style:preserve-3d;}
+.flip-card.flipped .flip-inner{transform:rotateY(180deg);}
+.flip-face{
+  position:absolute; inset:0; backface-visibility:hidden;
+  border-radius:var(--radius-l); display:flex; flex-direction:column; align-items:center; justify-content:center;
+  padding:24px; text-align:center; box-shadow:var(--shadow-card); border:1px solid var(--line);
+}
+.flip-front{background:var(--paper-card);}
+.flip-front .word{font-family:var(--font-display); font-size:30px; font-weight:600; color:var(--navy-800);}
+.flip-front .pos-tag{margin-top:10px;}
+.flip-front .hint{margin-top:16px; font-size:11.5px; color:var(--ink-400);}
+.flip-back{background:var(--navy-800); color:#fff; transform:rotateY(180deg);}
+.flip-back .th{font-size:22px; font-weight:600; font-family:var(--font-display);}
+.flip-back .note{margin-top:10px; font-size:13px; color:#C7D4DD; line-height:1.5;}
+
+.fc-actions{display:flex; gap:12px; margin-top:22px; width:100%; max-width:380px;}
+.fc-actions button{flex:1;}
+.fc-know{background:var(--success-100); color:var(--success-500);}
+.fc-unknown{background:var(--coral-100); color:var(--coral-500);}
+.fc-nav{display:flex; align-items:center; gap:16px; margin-top:16px;}
+.fc-nav button{background:none; border:none; cursor:pointer; color:var(--ink-600); padding:8px;}
+.fc-nav svg{width:22px; height:22px; stroke:var(--navy-800);}
+.fc-count{font-size:13px; color:var(--ink-600); font-weight:600;}
+
+.fc-empty{text-align:center; padding:50px 20px; color:var(--ink-600);}
+
+/* ============ QUIZ ============ */
+.weak-suggest{
+  display:flex; align-items:center; gap:12px; padding:14px 16px; margin-bottom:18px;
+  border-left:5px solid var(--gold-500);
+}
+.weak-suggest .ws-icon{width:36px; height:36px; border-radius:10px; background:var(--gold-100); display:flex; align-items:center; justify-content:center; flex:none;}
+.weak-suggest .ws-icon svg{width:18px; height:18px; stroke:#8A6416;}
+.weak-suggest h3{font-size:13.5px; margin-bottom:2px;}
+.weak-suggest p{font-size:12px; color:var(--ink-600);}
+
+.quiz-parts{display:grid; grid-template-columns:1fr; gap:12px;}
+.quiz-part-card{
+  display:flex; align-items:center; gap:14px; padding:16px; cursor:pointer;
+  border-left:5px solid var(--teal-600);
+}
+.quiz-part-card.featured{
+  border-left-color:var(--gold-500);
+  background:linear-gradient(135deg, var(--paper-card), var(--gold-100) 220%);
+}
+.quiz-part-card.featured .qp-icon{background:var(--gold-100);}
+.quiz-part-card.featured .qp-icon svg{stroke:#8A6416;}
+.quiz-part-card .qp-icon{width:42px; height:42px; border-radius:12px; background:var(--teal-100); display:flex; align-items:center; justify-content:center; flex:none;}
+.quiz-part-card .qp-icon svg{width:20px; height:20px; stroke:var(--teal-600);}
+.quiz-part-card .qp-info{flex:1;}
+.quiz-part-card h3{font-size:15px;}
+.quiz-part-card p{font-size:12.5px; color:var(--ink-600); margin-top:3px;}
+.quiz-part-card .qp-best{font-size:11.5px; color:var(--gold-500); font-weight:700; margin-top:6px;}
+.quiz-part-card .chev{width:18px; height:18px; stroke:var(--ink-400); flex:none;}
+
+.quiz-runner-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;}
+.quiz-progress-track{flex:1; height:7px; background:var(--line-soft); border-radius:999px; margin:0 12px; overflow:hidden;}
+.quiz-progress-fill{height:100%; background:var(--teal-600); border-radius:999px; transition:width .25s;}
+.quiz-close{background:none; border:none; cursor:pointer; padding:4px;}
+.quiz-close svg{width:20px; height:20px; stroke:var(--ink-600);}
+.quiz-qnum{font-size:12.5px; font-weight:700; color:var(--ink-600); white-space:nowrap;}
+.quiz-timer{font-size:11.5px; font-weight:600; color:var(--ink-400); white-space:nowrap; margin-left:10px; display:flex; align-items:center; gap:4px;}
+.quiz-timer svg{width:13px; height:13px; stroke:var(--ink-400);}
+
+.quiz-explain{margin-top:10px; padding:11px 13px; border-radius:var(--radius-s); background:var(--teal-100); font-size:12.5px; line-height:1.55; color:var(--navy-800); display:none;}
+.quiz-explain.show{display:block;}
+.quiz-explain b{color:var(--teal-600);}
+
+.quiz-question-card{padding:20px 18px 18px;}
+.quiz-question-card .qlabel{font-size:11.5px; color:var(--teal-600); font-weight:700; margin-bottom:8px;}
+.quiz-question-card h3{font-size:16.5px; font-weight:600; font-family:var(--font-body); line-height:1.5;}
+.quiz-passage{background:var(--teal-100); border-radius:var(--radius-s); padding:12px 14px; font-size:13px; line-height:1.6; color:var(--navy-800); margin-bottom:14px; font-style:italic;}
+
+.quiz-options{display:flex; flex-direction:column; gap:10px; margin-top:16px;}
+.quiz-option{
+  display:flex; align-items:center; gap:12px; text-align:left;
+  border:1.5px solid var(--line); background:var(--paper-card); border-radius:var(--radius-s);
+  padding:13px 14px; cursor:pointer; font-size:14px; line-height:1.4;
+}
+.quiz-option .opt-letter{
+  width:26px; height:26px; border-radius:50%; flex:none;
+  background:var(--line-soft); color:var(--ink-600); font-weight:700; font-size:12.5px;
+  display:flex; align-items:center; justify-content:center;
+}
+.quiz-option.correct{border-color:var(--success-500); background:var(--success-100);}
+.quiz-option.correct .opt-letter{background:var(--success-500); color:#fff;}
+.quiz-option.wrong{border-color:var(--coral-500); background:var(--coral-100);}
+.quiz-option.wrong .opt-letter{background:var(--coral-500); color:#fff;}
+.quiz-option.disabled{cursor:default;}
+
+.quiz-feedback{margin-top:14px; padding:12px 14px; border-radius:var(--radius-s); font-size:13px; line-height:1.55; display:none;}
+.quiz-feedback.show{display:block;}
+.quiz-feedback.ok{background:var(--success-100); color:#2A6B44;}
+.quiz-feedback.bad{background:var(--coral-100); color:#8C3E1F;}
+
+.quiz-footer{margin-top:18px; display:flex; justify-content:flex-end;}
+
+.result-hero{text-align:center; padding:30px 20px 24px;}
+.result-score{font-family:var(--font-display); font-size:52px; font-weight:700; color:var(--navy-800);}
+.result-score span{font-size:22px; color:var(--ink-400);}
+.result-msg{margin-top:8px; font-size:14px; color:var(--ink-600);}
+.result-bar-track{height:10px; background:var(--line-soft); border-radius:999px; margin:18px auto 0; max-width:320px; overflow:hidden;}
+.result-bar-fill{height:100%; border-radius:999px; background:linear-gradient(90deg,var(--teal-600),var(--gold-500));}
+.result-actions{display:flex; gap:10px; margin-top:22px; padding:0 20px;}
+.result-actions .btn{flex:1;}
+
+.review-list{margin-top:8px;}
+.review-item{padding:14px 16px; border-bottom:1px solid var(--line-soft);}
+.review-item:last-child{border-bottom:none;}
+.review-item .rq{font-size:13.5px; font-weight:600; margin-bottom:6px;}
+.review-item .ra{font-size:12.5px; color:var(--ink-600); line-height:1.5;}
+.review-item .ra b.ok{color:var(--success-500);}
+.review-item .ra b.bad{color:var(--coral-500);}
+
+.empty-banner{
+  text-align:center; padding:40px 20px; color:var(--ink-600); font-size:13.5px;
+}
+.section-title{font-size:19px; margin-bottom:4px;}
+.section-sub{font-size:13px; color:var(--ink-600); margin-bottom:18px;}
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="brand">
+    <svg width="30" height="30" viewBox="0 0 100 100" fill="none"><rect width="100" height="100" rx="22" fill="#0F2133"/><path d="M50 22 L50 62 M32 62 Q50 76 68 62 M50 22 L66 33 L50 40 Z" stroke="#D6A54C" stroke-width="5.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <div class="brand-text">
+      <b>Final Exam Review</b>
+      <span>New Frontiers 6 · อ33101</span>
+    </div>
+  </div>
+  <div class="header-actions">
+    <div class="streak-chip" id="headerStreak">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z"/></svg>
+      <span id="headerStreakText">เริ่มทบทวน</span>
+    </div>
+    <button class="theme-toggle" id="themeToggleBtn" aria-label="สลับโหมดมืด/สว่าง">
+      <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="layout">
+<nav class="sidenav" id="sidenavDesktop"></nav>
+
+<div class="container">
+
+  <!-- ============ HOME ============ -->
+  <section class="view active" id="view-home">
+    <div class="hero">
+      <div class="hero-eyebrow">เส้นทางสู่ข้อสอบปลายภาค</div>
+      <h1>พร้อมออกเดินทางสู่ห้องสอบหรือยัง?</h1>
+      <p class="sub">ทบทวนคำศัพท์และไวยากรณ์จาก Unit 1–2 แล้วฝึกทำข้อสอบคู่ขนานก่อนลงสนามจริง</p>
+      <div class="route">
+        <div class="route-line"></div>
+        <div class="route-stop done"><div class="route-dot">1</div><span>Unit 1<br>ก่อนเข้ามหาวิทยาลัย</span></div>
+        <div class="route-stop done"><div class="route-dot">2</div><span>Unit 2<br>ออกเดินเรือ</span></div>
+        <div class="route-stop current"><div class="route-dot">★</div><span>สอบปลายภาค<br>พร้อมลุย!</span></div>
+      </div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-num" id="statMastered">0</div><div class="stat-label">คำศัพท์จำได้</div></div>
+      <div class="stat-card"><div class="stat-num" id="statQuizzes">0</div><div class="stat-label">ครั้งที่ทำข้อสอบ</div></div>
+      <div class="stat-card"><div class="stat-num" id="statBest">0%</div><div class="stat-label">คะแนนเฉลี่ยล่าสุด</div></div>
+    </div>
+
+    <div id="weakSuggestSlot"></div>
+
+    <div class="section-label">เริ่มทบทวนต่อจากตรงนี้</div>
+    <div class="quick-links">
+      <button class="quick-link" data-goto="review">
+        <div class="qicon" style="background:var(--teal-100)"><svg viewBox="0 0 24 24" fill="none" stroke="#2A8A78" stroke-width="2"><path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v18H6.5A2.5 2.5 0 0 0 4 22.5V4.5z"/><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/></svg></div>
+        <h3>สรุปเนื้อหา</h3>
+        <p>คำศัพท์ + ไวยากรณ์ ครบทั้งเทอม</p>
+      </button>
+      <button class="quick-link" data-goto="flashcards">
+        <div class="qicon" style="background:var(--gold-100)"><svg viewBox="0 0 24 24" fill="none" stroke="#8A6416" stroke-width="2"><rect x="3" y="7" width="14" height="14" rx="2"/><path d="M7 7V4a1 1 0 0 1 1-1h11a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-3"/></svg></div>
+        <h3>บัตรคำศัพท์</h3>
+        <p>พลิกทบทวนคำศัพท์ทั้งหมด</p>
+      </button>
+      <button class="quick-link" data-goto="quiz">
+        <div class="qicon" style="background:var(--coral-100)"><svg viewBox="0 0 24 24" fill="none" stroke="#C1552C" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+        <h3>ข้อสอบคู่ขนาน</h3>
+        <p>ฝึกทำโจทย์แนวเดียวกับปลายภาค</p>
+      </button>
+      <button class="quick-link" data-goto="about">
+        <div class="qicon" style="background:#E7ECF0"><svg viewBox="0 0 24 24" fill="none" stroke="#57666E" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg></div>
+        <h3>วิธีใช้งาน</h3>
+        <p>ใช้เว็บนี้ให้ได้ประโยชน์สูงสุด</p>
+      </button>
+    </div>
+  </section>
+
+  <!-- ============ REVIEW ============ -->
+  <section class="view" id="view-review">
+    <h2 class="section-title">สรุปเนื้อหา</h2>
+    <p class="section-sub">รวมคำศัพท์และไวยากรณ์ที่เรียนมาตลอดเทอม แตะหัวข้อเพื่อขยาย</p>
+
+    <div class="glossary-search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.3-4.3"/></svg>
+      <input type="text" id="glossarySearchInput" placeholder="ค้นหาคำศัพท์ เช่น voyage, perspective, เพียงพอ...">
+    </div>
+    <div class="glossary-results" id="glossaryResults" style="display:none;"></div>
+
+    <div id="reviewMain">
+      <div class="unit-switch">
+        <button class="u-btn active" data-unit="1">Unit 1</button>
+        <button class="u-btn" data-unit="2">Unit 2</button>
+      </div>
+      <div id="reviewContent"></div>
+    </div>
+  </section>
+
+  <!-- ============ FLASHCARDS ============ -->
+  <section class="view" id="view-flashcards">
+    <h2 class="section-title">บัตรคำศัพท์</h2>
+    <p class="section-sub">แตะที่การ์ดเพื่อพลิกดูความหมาย แล้วกดว่า “จำได้” หรือ “ยังไม่แม่น”</p>
+    <div class="fc-toolbar" id="fcFilters"></div>
+    <div class="fc-progress-wrap">
+      <div class="fc-progress-track"><div class="fc-progress-fill" id="fcProgressFill" style="width:0%"></div></div>
+      <div class="fc-progress-text"><span id="fcProgressText">0 / 0 คำ</span><span id="fcMasteredText">จำได้ 0 คำ</span></div>
+    </div>
+    <div class="fc-stage" id="fcStage"></div>
+  </section>
+
+  <!-- ============ QUIZ ============ -->
+  <section class="view" id="view-quiz">
+    <div id="quizPartsScreen">
+      <h2 class="section-title">ข้อสอบคู่ขนาน</h2>
+      <p class="section-sub">โครงสร้างเดียวกับข้อสอบปลายภาค 4 พาท แต่โจทย์แตกต่างกัน — ฝึกได้ไม่จำกัดจำนวนครั้ง</p>
+      <div class="quiz-parts" id="quizPartsList"></div>
+    </div>
+    <div id="quizRunnerScreen" style="display:none;"></div>
+    <div id="quizResultScreen" style="display:none;"></div>
+  </section>
+
+  <!-- ============ ABOUT ============ -->
+  <section class="view" id="view-about">
+    <h2 class="section-title">วิธีใช้งานเว็บนี้</h2>
+    <p class="section-sub">แนวทางทบทวนให้ได้ผลก่อนสอบปลายภาค</p>
+    <div class="card" style="padding:18px; margin-bottom:14px;">
+      <h3 style="font-size:15px; margin-bottom:8px;">1. เริ่มที่สรุปเนื้อหา</h3>
+      <p style="font-size:13.5px; color:var(--ink-600); line-height:1.6;">อ่านคำศัพท์และไวยากรณ์ของแต่ละ Unit ให้ครบก่อน เพื่อปูพื้นฐานความเข้าใจ</p>
+    </div>
+    <div class="card" style="padding:18px; margin-bottom:14px;">
+      <h3 style="font-size:15px; margin-bottom:8px;">2. ฝึกจำด้วยบัตรคำศัพท์</h3>
+      <p style="font-size:13.5px; color:var(--ink-600); line-height:1.6;">ใช้บัตรคำศัพท์ทบทวนซ้ำ ๆ จนกว่าจะกด “จำได้” ครบทุกใบ ระบบจะบันทึกความคืบหน้าไว้ในเครื่องนี้อัตโนมัติ</p>
+    </div>
+    <div class="card" style="padding:18px; margin-bottom:14px;">
+      <h3 style="font-size:15px; margin-bottom:8px;">3. ลองทำข้อสอบคู่ขนาน</h3>
+      <p style="font-size:13.5px; color:var(--ink-600); line-height:1.6;">ทำข้อสอบแต่ละพาทเพื่อประเมินตัวเอง ระบบจะเฉลยพร้อมคำอธิบายทันทีหลังตอบแต่ละข้อ ทำซ้ำได้เรื่อย ๆ จนมั่นใจ</p>
+    </div>
+    <div class="card" style="padding:18px; margin-bottom:14px;">
+      <h3 style="font-size:15px; margin-bottom:8px;">ข้อมูลจะหายไหมถ้าปิดเว็บ?</h3>
+      <p style="font-size:13.5px; color:var(--ink-600); line-height:1.6;">ไม่หาย ระบบบันทึกความคืบหน้าไว้ในเบราว์เซอร์ของอุปกรณ์นี้เท่านั้น (ไม่ส่งข้อมูลออกไปที่ใด) หากเปลี่ยนอุปกรณ์หรือล้างข้อมูลเบราว์เซอร์ ความคืบหน้าจะรีเซ็ตใหม่</p>
+    </div>
+    <div class="card" style="padding:18px; margin-bottom:14px;">
+      <h3 style="font-size:15px; margin-bottom:8px;">📱 เพิ่มเว็บนี้ไว้ที่หน้าจอโฮม</h3>
+      <p style="font-size:13.5px; color:var(--ink-600); line-height:1.6;">
+        <b>iPhone (Safari):</b> แตะปุ่มแชร์ (□↑) แล้วเลือก “เพิ่มไปยังหน้าจอโฮม”<br>
+        <b>Android (Chrome):</b> แตะเมนู ⋮ มุมขวาบน แล้วเลือก “ติดตั้งแอป” หรือ “เพิ่มไปยังหน้าจอโฮม”<br>
+        เมื่อติดตั้งแล้ว จะเปิดใช้งานได้เหมือนแอปทั่วไป ไม่ต้องเปิดผ่านเบราว์เซอร์ทุกครั้ง
+      </p>
+    </div>
+    <div class="card" style="padding:18px;">
+      <h3 style="font-size:15px; margin-bottom:8px;">ล้างความคืบหน้าทั้งหมด</h3>
+      <p style="font-size:13.5px; color:var(--ink-600); line-height:1.6; margin-bottom:12px;">รีเซ็ตสถานะบัตรคำศัพท์และประวัติคะแนนข้อสอบทั้งหมดในอุปกรณ์นี้ (ใช้เมื่อต้องการเริ่มทบทวนใหม่ตั้งแต่ต้น)</p>
+      <button class="btn btn-ghost" id="resetProgressBtn" style="border-color:var(--coral-500); color:var(--coral-500);">ล้างความคืบหน้าทั้งหมด</button>
+    </div>
+  </section>
+
+</div>
+</div>
+
+<nav class="tabbar" id="tabbarMobile"></nav>
+
+<script>
+/* =========================================================================
+   NAVIGATION
+   ========================================================================= */
+const NAV_ITEMS = [
+  { id:"home", label:"หน้าแรก", icon:'<path d="M3 11l9-8 9 8"/><path d="M5 10v10a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V10"/>' },
+  { id:"review", label:"ทบทวน", icon:'<path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v18H6.5A2.5 2.5 0 0 0 4 22.5V4.5z"/><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>' },
+  { id:"flashcards", label:"คำศัพท์", icon:'<rect x="3" y="7" width="14" height="14" rx="2"/><path d="M7 7V4a1 1 0 0 1 1-1h11a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-3"/>' },
+  { id:"quiz", label:"ข้อสอบ", icon:'<path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>' },
+];
+
+function buildNav(){
+  const tabbar = document.getElementById("tabbarMobile");
+  const side = document.getElementById("sidenavDesktop");
+  tabbar.innerHTML = "";
+  side.innerHTML = "";
+  NAV_ITEMS.forEach(item=>{
+    const btnM = document.createElement("button");
+    btnM.className = "tab"; btnM.dataset.view = item.id;
+    btnM.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${item.icon}</svg><span>${item.label}</span>`;
+    btnM.onclick = ()=>goTo(item.id);
+    tabbar.appendChild(btnM);
+
+    const btnD = document.createElement("button");
+    btnD.className = "tab-desktop"; btnD.dataset.view = item.id;
+    btnD.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${item.icon}</svg><span>${item.label}</span>`;
+    btnD.onclick = ()=>goTo(item.id);
+    side.appendChild(btnD);
+  });
+}
+
+function goTo(viewId){
+  document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
+  const target = document.getElementById("view-"+viewId);
+  if(target) target.classList.add("active");
+  document.querySelectorAll(".tab, .tab-desktop").forEach(t=>{
+    t.classList.toggle("active", t.dataset.view===viewId);
+  });
+  window.scrollTo({top:0, behavior:"instant"});
+  if(viewId==="review" && !window.__reviewRendered){ renderReview(1); window.__reviewRendered = true; }
+  if(viewId==="flashcards" && !window.__fcRendered){ initFlashcards(); window.__fcRendered = true; }
+  if(viewId==="quiz"){ showQuizParts(); }
+}
+
+document.querySelectorAll("[data-goto]").forEach(el=>{
+  el.addEventListener("click", ()=>goTo(el.dataset.goto));
+});
+
+/* =========================================================================
+   DARK MODE
+   ========================================================================= */
+const THEME_KEY = "nf6_theme";
+const MOON_PATH = '<path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/>';
+const SUN_PATH = '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>';
+function applyTheme(theme){
+  document.body.setAttribute("data-theme", theme);
+  document.getElementById("themeIcon").innerHTML = theme==="dark" ? SUN_PATH : MOON_PATH;
+  document.querySelector('meta[name="theme-color"]').setAttribute("content", theme==="dark" ? "#080F18" : "#0F2133");
+}
+function initTheme(){
+  const saved = localStorage.getItem(THEME_KEY);
+  const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+  applyTheme(saved || (prefersDark ? "dark" : "light"));
+}
+document.getElementById("themeToggleBtn").addEventListener("click", ()=>{
+  const next = document.body.getAttribute("data-theme")==="dark" ? "light" : "dark";
+  applyTheme(next);
+  localStorage.setItem(THEME_KEY, next);
+});
+initTheme();
+
+/* =========================================================================
+   RESET PROGRESS
+   ========================================================================= */
+document.getElementById("resetProgressBtn").addEventListener("click", ()=>{
+  const ok = window.confirm("ต้องการล้างความคืบหน้าทั้งหมด (บัตรคำศัพท์ + ประวัติคะแนนข้อสอบ) ใช่หรือไม่? การกระทำนี้ไม่สามารถย้อนกลับได้");
+  if(!ok) return;
+  localStorage.removeItem("nf6_flashcard_known");
+  localStorage.removeItem("nf6_quiz_history");
+  window.__fcRendered = false;
+  updateHomeStats();
+  window.alert("ล้างความคืบหน้าเรียบร้อยแล้ว");
+  goTo("home");
+});
+
+/* =========================================================================
+   CONTENT DATA — VOCABULARY
+   ========================================================================= */
+const UNIT1_FAMILIES = [
+  {n:"association", v:"associate", a:"associated", th:"ความสัมพันธ์ / เชื่อมโยง"},
+  {n:"institution", v:"—", a:"—", th:"สถาบัน"},
+  {n:"competition", v:"compete", a:"competitive", th:"การแข่งขัน"},
+  {n:"response", v:"respond", a:"responsive", th:"การตอบสนอง"},
+  {n:"intention", v:"intend", a:"intentional", th:"ความตั้งใจ"},
+  {n:"assumption", v:"assume", a:"assumed", th:"ข้อสันนิษฐาน"},
+  {n:"combination", v:"combine", a:"combined", th:"การรวมกัน"},
+  {n:"abandonment", v:"abandon", a:"abandoned", th:"การละทิ้ง"},
+  {n:"betrayal", v:"betray", a:"—", th:"การทรยศ"},
+];
+
+const UNIT1_WORDS = [
+  {w:"sufficient", pos:"adj.", th:"เพียงพอ (synonym: enough)"},
+  {w:"occur", pos:"v.", th:"เกิดขึ้น (synonym: happen)"},
+  {w:"initially", pos:"adv.", th:"ในตอนแรก (synonym: first)"},
+  {w:"outstanding", pos:"adj.", th:"โดดเด่น ยอดเยี่ยม (synonym: excellent)"},
+  {w:"encounter", pos:"v./n.", th:"พบเจอโดยไม่คาดคิด (synonym: meet)"},
+  {w:"circumstance", pos:"n.", th:"สถานการณ์ (synonym: situation)"},
+  {w:"suspicious", pos:"adj.", th:"น่าสงสัย (antonym: certain)"},
+  {w:"ideal", pos:"adj.", th:"ในอุดมคติ สมบูรณ์แบบ"},
+  {w:"relief", pos:"n.", th:"ความโล่งใจ (antonym: tension)"},
+  {w:"strength", pos:"n.", th:"จุดแข็ง (antonym: weakness)"},
+  {w:"overall", pos:"adj./adv.", th:"โดยรวม"},
+  {w:"award", pos:"n.", th:"รางวัล (antonym: penalty)"},
+];
+
+const UNIT2_WORDS_A = [
+  {w:"perspective", pos:"n.", th:"มุมมอง วิธีคิด"},
+  {w:"aside from", pos:"phrase", th:"นอกเหนือจาก ยกเว้น"},
+  {w:"extensive", pos:"adj.", th:"กว้างขวาง ครอบคลุม"},
+  {w:"quite", pos:"adv.", th:"ค่อนข้าง"},
+  {w:"instant", pos:"adj.", th:"ทันทีทันใด ไม่ล่าช้า"},
+  {w:"attractive", pos:"adj.", th:"น่าดึงดูด น่าสนใจ"},
+  {w:"stunning", pos:"adj.", th:"สวยงามตะลึง"},
+  {w:"proud", pos:"adj.", th:"ภาคภูมิใจ"},
+];
+const UNIT2_WORDS_B = [
+  {w:"unsophisticated", pos:"adj.", th:"เรียบง่าย ไม่ซับซ้อน"},
+  {w:"seek", pos:"v.", th:"ค้นหา"},
+  {w:"tremendous", pos:"adj.", th:"มหาศาล ใหญ่โต"},
+  {w:"drown", pos:"v.", th:"จมน้ำตาย"},
+  {w:"capture", pos:"v.", th:"จับกุม ยึดครอง"},
+  {w:"determine", pos:"v.", th:"ค้นหาความจริง / ตัดสิน"},
+  {w:"confirm", pos:"v.", th:"ยืนยัน"},
+  {w:"insignificant", pos:"adj.", th:"ไม่สำคัญ เล็กน้อย"},
+];
+const UNIT2_WORDS_C = [
+  {w:"remarkable", pos:"adj.", th:"น่าทึ่ง น่าจดจำ"},
+  {w:"dreadful", pos:"adj.", th:"น่ากลัว แย่มาก"},
+  {w:"exotic", pos:"adj.", th:"แปลกตา ต่างถิ่น"},
+  {w:"destination", pos:"n.", th:"จุดหมายปลายทาง"},
+  {w:"voyage", pos:"n.", th:"การเดินทางทางเรือ"},
+  {w:"priceless", pos:"adj.", th:"ล้ำค่า ประเมินค่าไม่ได้"},
+  {w:"astonishing", pos:"adj.", th:"น่าประหลาดใจ"},
+  {w:"port", pos:"n.", th:"ท่าเรือ"},
+  {w:"feature", pos:"n./v.", th:"ลักษณะเด่น / นำเสนอ"},
+  {w:"shipwreck", pos:"n.", th:"เรืออับปาง"},
+  {w:"pirate", pos:"n.", th:"โจรสลัด"},
+];
+
+/* =========================================================================
+   CONTENT DATA — GRAMMAR
+   ========================================================================= */
+const UNIT1_GRAMMAR = [
+  {
+    title:"Present Perfect: Simple vs Continuous",
+    points:[
+      "<b>Simple</b> (have/has + V3) เน้นผลลัพธ์หรือสิ่งที่เสร็จสิ้นแล้ว",
+      "<b>Continuous</b> (have/has been + V-ing) เน้นระยะเวลาที่ทำต่อเนื่อง",
+      "<b>just</b> = เพิ่งเกิดขึ้น วางก่อนกริยาหลัก",
+      "<b>yet</b> = ยังไม่เกิดขึ้น ใช้ในประโยคปฏิเสธ/คำถาม วางท้ายประโยค",
+      "<b>already</b> = เกิดขึ้นเร็วกว่าที่คาด วางก่อนกริยาหลักหรือท้ายประโยค",
+      "<b>still</b> = ยังคงดำเนินอยู่ (มักบ่งบอกความคาดไม่ถึง) วางก่อนกริยาหลัก",
+    ],
+    example:"I've been playing tennis since I was 14. / She has already completed the assignment."
+  },
+  {
+    title:"Relative Clauses: Defining vs Non-defining",
+    points:[
+      "<b>Defining clause</b> — ไม่มีจุลภาค (comma) ให้ข้อมูลที่จำเป็นต่อการระบุว่าเป็น “ใคร/อันไหน”",
+      "<b>Non-defining clause</b> — มีจุลภาคคั่น ให้ข้อมูลเพิ่มเติมที่ไม่จำเป็นต่อการระบุตัวตน (มักบอกว่ามีสิ่งนั้นสิ่งเดียว)",
+      "คำว่า <b>that</b> ใช้แทน who/which ได้เฉพาะใน defining clause เท่านั้น",
+    ],
+    example:"His uncle, who works in a bank, is coming to visit. (มีลุงคนเดียว) / The girl who was standing at the door called my name. (ระบุว่าเป็นคนไหน)"
+  },
+  {
+    title:"เครื่องหมายวรรคตอนที่พบบ่อย",
+    points:[
+      "Apostrophe (') ใช้แสดงความเป็นเจ้าของ เช่น my brother's bicycle",
+      "It's = it is / Its = ของมัน (คนละความหมายกัน ห้ามสับสน)",
+      "ขึ้นต้นประโยคและชื่อเฉพาะต้องขึ้นต้นด้วยตัวพิมพ์ใหญ่เสมอ",
+    ],
+    example:"It's to the north of the city. / I borrowed my brother's bicycle."
+  }
+];
+
+const UNIT2_GRAMMAR = [
+  {
+    title:"Past Perfect: Simple vs Continuous",
+    points:[
+      "<b>Simple</b> (had + V3) ใช้บอกเหตุการณ์ที่เสร็จสิ้นก่อนอีกเหตุการณ์หนึ่งในอดีต",
+      "<b>Continuous</b> (had been + V-ing) เน้นระยะเวลาที่ดำเนินอยู่ก่อนจุดหนึ่งในอดีต",
+      "มักใช้คู่กับ before / by the time / when เพื่อเรียงลำดับเหตุการณ์สองเหตุการณ์ในอดีต",
+    ],
+    example:"She had quit her old job before she applied for a new one. / He had been studying for five years by the time he graduated."
+  },
+  {
+    title:"Linking Words (คำเชื่อมความ)",
+    points:[
+      "<b>Aside from</b> = นอกเหนือจาก ยกเว้น",
+      "<b>Nonetheless</b> = แสดงความขัดแย้งกับประโยคก่อนหน้า มักขึ้นต้นประโยค",
+      "<b>Furthermore</b> = เพิ่มเติมความคิดหรือประเด็นจากที่กล่าวไปแล้ว",
+      "<b>Therefore</b> = แสดงผลลัพธ์ที่มาจากข้อเท็จจริง/การกระทำก่อนหน้า",
+    ],
+    example:"The weather looked bad that morning. Nonetheless, they decided to sail at noon."
+  },
+  {
+    title:"Fact vs Opinion",
+    points:[
+      "<b>Fact</b> คือข้อความที่ตรวจสอบ/พิสูจน์ได้ตามความจริง",
+      "<b>Opinion</b> คือความคิดเห็นส่วนตัว มักมีคำแสดงความรู้สึกหรือการประเมินค่า เช่น seem, great, would",
+    ],
+    example:"Fact: It took 6 days to reach New York by ship. / Opinion: The journey seemed to take forever."
+  }
+];
+
+const UNIT2_READING_SUMMARY = {
+  title:"การอ่านจับใจความ: The Whydah Shipwreck",
+  text:"ในปี ค.ศ. 1717 กัปตันโจรสลัด Samuel Bellamy แล่นเรือ Whydah ซึ่งเป็นเรือที่เขายึดมาได้ เมื่อเจอพายุใหญ่นอกชายฝั่ง Cape Cod เรือจึงอับปางลง Bellamy และลูกเรือส่วนใหญ่จมน้ำเสียชีวิต ซากเรือถูกฝังอยู่ใต้ทรายนานกว่า 260 ปี ก่อนจะถูกค้นพบ การค้นพบนี้สำคัญมากเพราะเผยให้เห็นวัฒนธรรมโจรสลัดที่แท้จริง — บันทึกแสดงให้เห็นว่าพวกเขาแบ่งปันหน้าที่และทรัพย์สินกันอย่างเป็นธรรมกว่าที่คนทั่วไปเข้าใจ ปัจจุบัน Whydah ยังคงเป็นซากเรือโจรสลัดเพียงลำเดียวที่ได้รับการยืนยันอย่างเป็นทางการ"
+};
+
+/* =========================================================================
+   REVIEW VIEW RENDERING
+   ========================================================================= */
+function renderReview(unit){
+  document.querySelectorAll(".u-btn").forEach(b=>b.classList.toggle("active", +b.dataset.unit===unit));
+  const el = document.getElementById("reviewContent");
+  el.innerHTML = "";
+
+  if(unit===1){
+    el.insertAdjacentHTML("beforeend", `
+      <div class="unit-hero u1">
+        <div class="tag">UNIT 1</div>
+        <h2>Getting Ready for College</h2>
+        <p>คำศัพท์และไวยากรณ์สำหรับเตรียมความพร้อมก่อนสัมภาษณ์เข้ามหาวิทยาลัย</p>
+      </div>`);
+
+    el.insertAdjacentHTML("beforeend", accordionVocabFamilies("คำศัพท์: Word Families", UNIT1_FAMILIES));
+    el.insertAdjacentHTML("beforeend", accordionVocabList("คำศัพท์: Synonym / Antonym", UNIT1_WORDS));
+    el.insertAdjacentHTML("beforeend", accordionGrammar("ไวยากรณ์", UNIT1_GRAMMAR));
+  } else {
+    el.insertAdjacentHTML("beforeend", `
+      <div class="unit-hero u2">
+        <div class="tag">UNIT 2</div>
+        <h2>Time to Set Sail</h2>
+        <p>คำศัพท์และไวยากรณ์จากเรื่องราวการเดินเรือและเรืออับปางในประวัติศาสตร์</p>
+      </div>`);
+
+    el.insertAdjacentHTML("beforeend", accordionVocabList("คำศัพท์ชุดที่ 1", UNIT2_WORDS_A));
+    el.insertAdjacentHTML("beforeend", accordionVocabList("คำศัพท์ชุดที่ 2", UNIT2_WORDS_B));
+    el.insertAdjacentHTML("beforeend", accordionVocabList("คำศัพท์ชุดที่ 3", UNIT2_WORDS_C));
+    el.insertAdjacentHTML("beforeend", accordionGrammar("ไวยากรณ์", UNIT2_GRAMMAR));
+    el.insertAdjacentHTML("beforeend", accordionReading("การอ่านจับใจความ", UNIT2_READING_SUMMARY));
+  }
+  bindAccordions();
+}
+
+function accordionVocabFamilies(title, rows){
+  const trs = rows.map(r=>`<tr><td class="en">${r.n}</td><td>${r.v}</td><td>${r.a}</td><td>${r.th}</td></tr>`).join("");
+  return `<div class="accordion">
+    <div class="accordion-head"><h3>${title}</h3><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></div>
+    <div class="accordion-body"><div class="accordion-inner">
+      <table class="vocab-table"><thead><tr><th>Noun</th><th>Verb</th><th>Adjective</th><th>ความหมาย</th></tr></thead><tbody>${trs}</tbody></table>
+    </div></div>
+  </div>`;
+}
+function accordionVocabList(title, words){
+  const chips = words.map(w=>`<div class="word-chip"><span class="w">${w.w}</span><span class="meta">${w.pos} · ${w.th}</span></div>`).join("");
+  return `<div class="accordion">
+    <div class="accordion-head"><h3>${title}</h3><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></div>
+    <div class="accordion-body"><div class="accordion-inner"><div class="word-chip-grid">${chips}</div></div></div>
+  </div>`;
+}
+function accordionGrammar(title, cards){
+  const inner = cards.map(c=>`
+    <div class="gram-card">
+      <h4>${c.title}</h4>
+      <ul>${c.points.map(p=>`<li>${p}</li>`).join("")}</ul>
+      <div class="ex">${c.example}</div>
+    </div>`).join("");
+  return `<div class="accordion">
+    <div class="accordion-head"><h3>${title}</h3><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></div>
+    <div class="accordion-body"><div class="accordion-inner">${inner}</div></div>
+  </div>`;
+}
+function accordionReading(title, r){
+  return `<div class="accordion">
+    <div class="accordion-head"><h3>${title}</h3><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></div>
+    <div class="accordion-body"><div class="accordion-inner">
+      <div class="gram-card"><h4>${r.title}</h4><p style="font-size:13.5px; line-height:1.7; color:var(--ink-900); margin-top:6px;">${r.text}</p></div>
+    </div></div>
+  </div>`;
+}
+function bindAccordions(){
+  document.querySelectorAll(".accordion-head").forEach(h=>{
+    h.onclick = ()=> h.parentElement.classList.toggle("open");
+  });
+  // open first by default
+  const first = document.querySelector(".accordion");
+  if(first) first.classList.add("open");
+}
+document.querySelectorAll(".u-btn").forEach(b=>{
+  b.addEventListener("click", ()=>renderReview(+b.dataset.unit));
+});
+
+/* =========================================================================
+   GLOSSARY SEARCH (across all vocabulary, both units)
+   ========================================================================= */
+const GLOSSARY_ALL = [
+  ...UNIT1_FAMILIES.flatMap(f=>{
+    const arr = [{w:f.n, pos:"n.", th:f.th, unit:1}];
+    if(f.v!=="—") arr.push({w:f.v, pos:"v.", th:f.th, unit:1});
+    if(f.a!=="—") arr.push({w:f.a, pos:"adj.", th:f.th, unit:1});
+    return arr;
+  }),
+  ...UNIT1_WORDS.map(w=>({...w, unit:1})),
+  ...UNIT2_WORDS_A.map(w=>({...w, unit:2})),
+  ...UNIT2_WORDS_B.map(w=>({...w, unit:2})),
+  ...UNIT2_WORDS_C.map(w=>({...w, unit:2})),
+];
+
+const glossaryInput = document.getElementById("glossarySearchInput");
+const glossaryResults = document.getElementById("glossaryResults");
+const reviewMain = document.getElementById("reviewMain");
+glossaryInput.addEventListener("input", ()=>{
+  const term = glossaryInput.value.trim().toLowerCase();
+  if(term.length===0){
+    glossaryResults.style.display = "none";
+    reviewMain.style.display = "block";
+    return;
+  }
+  reviewMain.style.display = "none";
+  glossaryResults.style.display = "block";
+  const matches = GLOSSARY_ALL.filter(w => w.w.toLowerCase().includes(term) || w.th.toLowerCase().includes(term));
+  if(matches.length===0){
+    glossaryResults.innerHTML = `<div class="glossary-empty">ไม่พบคำศัพท์ที่ตรงกับ “${glossaryInput.value}”</div>`;
+    return;
+  }
+  glossaryResults.innerHTML = matches.map(w=>`
+    <div class="word-chip">
+      <span class="w">${w.w}</span>
+      <span class="meta"><span class="pill pill-teal" style="margin-right:6px;">Unit ${w.unit}</span>${w.pos} · ${w.th}</span>
+    </div>`).join("");
+});
+
+/* =========================================================================
+   FLASHCARDS
+   ========================================================================= */
+const ALL_FLASHCARDS = [
+  ...UNIT1_WORDS.map(w=>({...w, unit:1})),
+  ...UNIT1_FAMILIES.filter(f=>f.v!=="—").map(f=>({w:f.v, pos:"v.", th:f.th, unit:1})),
+  ...UNIT2_WORDS_A.map(w=>({...w, unit:2})),
+  ...UNIT2_WORDS_B.map(w=>({...w, unit:2})),
+  ...UNIT2_WORDS_C.map(w=>({...w, unit:2})),
+];
+
+let fcState = { unitFilter:"all", order:[], index:0, flipped:false };
+const FC_KEY = "nf6_flashcard_known";
+
+function getKnownSet(){
+  try{ return new Set(JSON.parse(localStorage.getItem(FC_KEY) || "[]")); }catch(e){ return new Set(); }
+}
+function saveKnownSet(set){
+  localStorage.setItem(FC_KEY, JSON.stringify([...set]));
+}
+
+function initFlashcards(){
+  const filterBar = document.getElementById("fcFilters");
+  filterBar.innerHTML = `
+    <button class="fc-filter active" data-f="all">ทั้งหมด</button>
+    <button class="fc-filter" data-f="1">Unit 1</button>
+    <button class="fc-filter" data-f="2">Unit 2</button>
+    <button class="fc-filter" data-f="new">เฉพาะที่ยังไม่แม่น</button>
+  `;
+  filterBar.querySelectorAll(".fc-filter").forEach(btn=>{
+    btn.onclick = ()=>{
+      filterBar.querySelectorAll(".fc-filter").forEach(b=>b.classList.remove("active"));
+      btn.classList.add("active");
+      fcState.unitFilter = btn.dataset.f;
+      setupFcDeck();
+    };
+  });
+  setupFcDeck();
+}
+
+function setupFcDeck(){
+  const known = getKnownSet();
+  let pool = ALL_FLASHCARDS.map((w,i)=>({...w, id:i}));
+  if(fcState.unitFilter==="1") pool = pool.filter(w=>w.unit===1);
+  else if(fcState.unitFilter==="2") pool = pool.filter(w=>w.unit===2);
+  else if(fcState.unitFilter==="new") pool = pool.filter(w=>!known.has(cardKey(w)));
+
+  fcState.order = pool;
+  fcState.index = 0;
+  fcState.flipped = false;
+  renderFcCard();
+}
+function cardKey(w){ return w.unit+"_"+w.w; }
+
+function renderFcCard(){
+  const stage = document.getElementById("fcStage");
+  const known = getKnownSet();
+  updateFcProgress(known);
+
+  if(fcState.order.length===0){
+    stage.innerHTML = `<div class="fc-empty">🎉 เยี่ยมมาก! จำได้ครบทุกคำในหมวดนี้แล้ว<br><br><button class="btn btn-ghost" id="fcResetBtn">ดูคำศัพท์ทั้งหมดอีกครั้ง</button></div>`;
+    document.getElementById("fcResetBtn").onclick = ()=>{
+      document.querySelector('.fc-filter[data-f="all"]').click();
+    };
+    return;
+  }
+  if(fcState.index >= fcState.order.length) fcState.index = 0;
+  const card = fcState.order[fcState.index];
+
+  stage.innerHTML = `
+    <div class="flip-card" id="flipCard">
+      <div class="flip-inner">
+        <div class="flip-face flip-front">
+          <div class="word">${card.w}</div>
+          <div class="pos-tag pill pill-teal">${card.pos}</div>
+          <div class="hint">แตะเพื่อดูความหมาย</div>
+        </div>
+        <div class="flip-face flip-back">
+          <div class="th">${card.th.split(" (")[0]}</div>
+          <div class="note">${card.th.includes("(") ? "("+card.th.split(" (")[1] : ""}</div>
+        </div>
+      </div>
+    </div>
+    <div class="fc-actions">
+      <button class="btn fc-unknown" id="fcUnknownBtn">ยังไม่แม่น</button>
+      <button class="btn fc-know" id="fcKnowBtn">จำได้แล้ว</button>
+    </div>
+    <div class="fc-nav">
+      <button id="fcPrev" aria-label="ก่อนหน้า"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <span class="fc-count">${fcState.index+1} / ${fcState.order.length}</span>
+      <button id="fcNext" aria-label="ถัดไป"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></button>
+    </div>
+  `;
+  document.getElementById("flipCard").onclick = ()=>{
+    document.getElementById("flipCard").classList.toggle("flipped");
+  };
+  document.getElementById("fcPrev").onclick = ()=> stepFc(-1);
+  document.getElementById("fcNext").onclick = ()=> stepFc(1);
+  document.getElementById("fcKnowBtn").onclick = ()=> markFc(card, true);
+  document.getElementById("fcUnknownBtn").onclick = ()=> markFc(card, false);
+}
+function stepFc(dir){
+  fcState.index = (fcState.index + dir + fcState.order.length) % fcState.order.length;
+  renderFcCard();
+}
+function markFc(card, known){
+  const set = getKnownSet();
+  const key = cardKey(card);
+  if(known) set.add(key); else set.delete(key);
+  saveKnownSet(set);
+  if(fcState.unitFilter==="new"){
+    fcState.order = fcState.order.filter(c=>cardKey(c)!==key);
+    if(fcState.index >= fcState.order.length) fcState.index = Math.max(0, fcState.order.length-1);
+  } else {
+    stepFc(1);
+    return;
+  }
+  renderFcCard();
+}
+function updateFcProgress(known){
+  const total = ALL_FLASHCARDS.length;
+  const masteredCount = [...new Set(ALL_FLASHCARDS.map(cardKey))].filter(k=>known.has(k)).length;
+  document.getElementById("fcProgressFill").style.width = Math.round(masteredCount/total*100)+"%";
+  document.getElementById("fcProgressText").textContent = `${masteredCount} / ${total} คำ`;
+  document.getElementById("fcMasteredText").textContent = `จำได้ ${masteredCount} คำ`;
+  document.getElementById("statMastered").textContent = masteredCount;
+}
+
+/* =========================================================================
+   QUIZ DATA — parallel practice test (4 parts, different items from final exam)
+   ========================================================================= */
+const READING_PASSAGE_1 = {
+  label:"Passage 1 (Questions 1–5)",
+  text:"Applying to university can feel overwhelming, but a little preparation goes a long way. Most interviewers are not trying to trick you — they simply want to understand your goals and how you think. Before the interview, research the course and the university so you can ask thoughtful questions. During the interview, listen carefully and take a moment to think before you answer; there is no need to rush. Afterward, send a short thank-you message to show your appreciation. Remember that confidence, not perfection, is what interviewers usually remember most."
+};
+const READING_PASSAGE_2 = {
+  label:"Passage 2 (Questions 6–10)",
+  text:"Before modern GPS technology, sailors relied on the stars, compasses, and lighthouses to find their way across the ocean. Lighthouses were built along dangerous coastlines to warn ships of rocks and shallow water. Each lighthouse had a unique pattern of flashing light so that sailors could identify their exact location at night. Many lighthouses were operated by keepers who lived in isolation for months at a time, maintaining the light and watching for ships in distress. Although most lighthouses are now automated, some remain open to visitors who want to learn about this important part of maritime history."
+};
+
+const QUIZ_PARTS = [
+  {
+    id:"p1", name:"Conversational Communication", th:"บทสนทนาและการสื่อสาร", count:10,
+    icon:'<path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>',
+    questions:[
+      { q:"Interviewer: “What motivates you to keep studying, even when it's difficult?” Which is the most appropriate response?",
+        options:["I don't really have a reason.","I want to build a better future for myself and my family.","Nothing motivates me.","I only study the night before tests."], a:1,
+        exp:"คำตอบที่ดีควรแสดงเหตุผล/แรงบันดาลใจเชิงบวกที่ชัดเจน ไม่ใช่คำตอบเชิงลบหรือคลุมเครือ" },
+      { q:"A: “Do you prefer working alone or in a team?”  B: ___",
+        options:["I never work with anyone.","Teams are a waste of time.","I don't understand the question.","I enjoy working in a team because we can share ideas."], a:3,
+        exp:"ควรตอบด้วยเหตุผลเชิงบวกที่แสดงทัศนคติที่ดีต่อการทำงานร่วมกับผู้อื่น" },
+      { q:"Interviewer: “Tell me about a challenge you have overcome.” Which is the most appropriate response?",
+        options:["Last year, I struggled with public speaking, but I practiced every week until I felt confident.","I have never faced any challenges.","Challenges are not important to talk about.","I prefer not to share personal stories."], a:0,
+        exp:"คำถามนี้ต้องการตัวอย่างที่เป็นรูปธรรม พร้อมวิธีที่คุณจัดการกับปัญหานั้น" },
+      { q:"A: “What do you hope to study at university?”  B: ___",
+        options:["I'm not sure, I haven't thought about it.","University isn't for me.","I'm planning to study engineering because I love solving problems.","I already finished university."], a:2,
+        exp:"ควรตอบด้วยเป้าหมายที่ชัดเจนและเหตุผลประกอบ แสดงความตั้งใจจริง" },
+      { q:"A: “How did you prepare for this interview?”  B: ___",
+        options:["I didn't prepare at all.","My friend told me not to worry about it.","I forgot the interview was today.","I researched the college and practiced common interview questions."], a:3,
+        exp:"คำตอบที่ดีควรแสดงการเตรียมตัวอย่างเป็นรูปธรรม เช่น การค้นคว้าข้อมูลล่วงหน้า" },
+      { q:"Choose the correctly ordered question: your / is / What / greatest / strength / ?",
+        options:["What your greatest strength is?","What is your greatest strength?","Is what your greatest strength?","Greatest is what your strength?"], a:1,
+        exp:"คำถามที่ขึ้นต้นด้วย Wh-word ต้องตามด้วยกริยาช่วย (is) แล้วจึงตามด้วยประธาน: What is your greatest strength?" },
+      { q:"Choose the correctly ordered question: five / where / in / yourself / you / do / see / years / ?",
+        options:["Do you see where yourself in five years?","In five years where yourself see you do?","Where do you see yourself in five years?","Where see yourself do you in five years?"], a:2,
+        exp:"โครงสร้างคำถาม: Wh-word + do + subject + verb: Where do you see yourself in five years?" },
+      { q:"Choose the correctly ordered question: exams / for / How / prepare / you / do / ?",
+        options:["How do you prepare for exams?","How you do prepare for exams?","Prepare exams for how do you?","Do exams prepare how you?"], a:0,
+        exp:"โครงสร้างคำถาม: Wh-word + do + subject + verb + for + noun" },
+      { q:"A: “Why should we accept you into this program?”  B: ___",
+        options:["I'm not really sure why.","You probably shouldn't.","Because my parents told me to apply.","Because I am hardworking, curious, and always eager to learn new things."], a:3,
+        exp:"ควรตอบด้วยคุณสมบัติเชิงบวกของตนเองที่เชื่อมโยงกับโปรแกรมที่สมัคร" },
+      { q:"Choose the correctly ordered question: subjects / enjoy / school / you / at / do / which / ?",
+        options:["Do which subjects enjoy you at school?","Which subjects do you enjoy at school?","At school which do you enjoy subjects?","Enjoy which subjects do you at school?"], a:1,
+        exp:"โครงสร้างคำถาม: Which + noun + do + subject + verb + at + place" },
+    ]
+  },
+  {
+    id:"p2", name:"Vocabulary in Context", th:"คำศัพท์ในบริบท", count:10,
+    icon:'<path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v18H6.5A2.5 2.5 0 0 0 4 22.5V4.5z"/><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>',
+    questions:[
+      { q:"The scholarship program is offered by a well-known educational ___ in the capital.",
+        options:["betrayal","voyage","institution","destination"], a:2, exp:"institution = สถาบัน (เช่น สถาบันการศึกษา)" },
+      { q:"The market for smartphones has become extremely ___, with dozens of brands fighting for customers.",
+        options:["competitive","unsophisticated","dreadful","insignificant"], a:0, exp:"competitive = ที่มีการแข่งขันสูง" },
+      { q:"She didn't ___ to hurt anyone; it was simply a misunderstanding.",
+        options:["capture","drown","confirm","intend"], a:3, exp:"intend = ตั้งใจหรือวางแผนจะทำสิ่งใดสิ่งหนึ่ง" },
+      { q:"He felt ___ when his best friend shared his secret with everyone at school.",
+        options:["proud","betrayed","attractive","stunning"], a:1, exp:"betrayed = รู้สึกถูกทรยศ (มาจาก betray)" },
+      { q:"The two flavors, when ___, create a surprisingly delicious dessert.",
+        options:["abandoned","captured","combined","determined"], a:2, exp:"combined = ที่ถูกรวมเข้าด้วยกัน (มาจาก combine)" },
+      { q:"Under normal ___, I would say yes, but this situation is different.",
+        options:["circumstances","destinations","features","voyages"], a:0, exp:"circumstances = สถานการณ์หรือเงื่อนไขต่าง ๆ" },
+      { q:"Winning the scholarship was the ___ outcome for her years of hard work.",
+        options:["suspicious","dreadful","insignificant","ideal"], a:3, exp:"ideal = ดีที่สุด สมบูรณ์แบบตามที่ต้องการ" },
+      { q:"The museum's most striking ___ is a life-sized model of a pirate ship.",
+        options:["voyage","feature","port","circumstance"], a:1, exp:"feature = ลักษณะเด่นหรือจุดที่โดดเด่นของสิ่งใดสิ่งหนึ่ง" },
+      { q:"The night market sold ___ fruits that most tourists had never seen before.",
+        options:["unsophisticated","exotic","dreadful","insignificant"], a:1, exp:"exotic = แปลกตา มาจากต่างถิ่น ไม่คุ้นเคย" },
+      { q:"The old photographs are ___ to our family because they can never be replaced.",
+        options:["insignificant","suspicious","priceless","tremendous"], a:2, exp:"priceless = ล้ำค่าจนประเมินราคาไม่ได้" },
+    ]
+  },
+  {
+    id:"p3", name:"Reading Comprehension", th:"ความเข้าใจในการอ่าน", count:10,
+    icon:'<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>',
+    questions:[
+      { q:"According to the passage, what do interviewers mainly want to understand?",
+        options:["Your family background","Your goals and how you think","Your exam scores","Your favorite subjects"], a:1, passage:READING_PASSAGE_1,
+        exp:"ย่อหน้าแรกระบุไว้ชัดเจนว่าผู้สัมภาษณ์ต้องการเข้าใจเป้าหมายและวิธีคิดของผู้สมัคร" },
+      { q:"What should you do before the interview?",
+        options:["Avoid thinking about the university","Memorize a speech word for word","Ask a friend to attend with you","Research the course and the university"], a:3, passage:READING_PASSAGE_1,
+        exp:"passage แนะนำให้ค้นคว้าข้อมูลเกี่ยวกับหลักสูตรและมหาวิทยาลัยก่อนวันสัมภาษณ์" },
+      { q:"What does the passage suggest you do during the interview?",
+        options:["Listen carefully and think before answering","Answer as fast as possible","Interrupt the interviewer often","Avoid asking any questions"], a:0, passage:READING_PASSAGE_1,
+        exp:"passage แนะนำให้ฟังอย่างตั้งใจและคิดก่อนตอบ ไม่ต้องรีบ" },
+      { q:"What should you do after the interview, according to the passage?",
+        options:["Forget about it completely","Call the interviewer immediately","Send a short thank-you message","Ask for the result right away"], a:2, passage:READING_PASSAGE_1,
+        exp:"หลังสัมภาษณ์ควรส่งข้อความขอบคุณสั้น ๆ ตามที่ passage แนะนำ" },
+      { q:"According to the passage, what do interviewers usually remember most?",
+        options:["Perfect answers","Confidence","Formal clothing","Long answers"], a:1, passage:READING_PASSAGE_1,
+        exp:"ประโยคสุดท้ายของ passage ระบุว่าความมั่นใจคือสิ่งที่ผู้สัมภาษณ์จดจำมากที่สุด" },
+      { q:"What did sailors rely on before GPS technology, according to the passage?",
+        options:["Radio signals only","Satellite maps","Modern radar systems","Stars, compasses, and lighthouses"], a:3, passage:READING_PASSAGE_2,
+        exp:"ประโยคแรกของ passage ระบุว่านักเดินเรือใช้ดวงดาว เข็มทิศ และประภาคารนำทางก่อนยุค GPS" },
+      { q:"Why were lighthouses built along dangerous coastlines?",
+        options:["To warn ships of rocks and shallow water","To attract tourists","To provide electricity to nearby towns","To study ocean currents"], a:0, passage:READING_PASSAGE_2,
+        exp:"passage ระบุว่าประภาคารถูกสร้างเพื่อเตือนเรือเรื่องโขดหินและน้ำตื้น" },
+      { q:"How could sailors identify their exact location at night?",
+        options:["By radio contact with the shore","By the color of the ocean","By each lighthouse's unique flashing pattern","By the shape of the coastline"], a:2, passage:READING_PASSAGE_2,
+        exp:"แต่ละประภาคารมีรูปแบบแสงกะพริบเฉพาะตัว ทำให้นักเดินเรือระบุตำแหน่งได้ตอนกลางคืน" },
+      { q:"What was one duty of a lighthouse keeper?",
+        options:["Building new lighthouses","Maintaining the light and watching for ships in distress","Selling souvenirs to tourists","Training new sailors"], a:1, passage:READING_PASSAGE_2,
+        exp:"ผู้ดูแลประภาคารมีหน้าที่ดูแลไฟและเฝ้าระวังเรือที่ประสบภัย" },
+      { q:"What can visitors do at some lighthouses today, according to the passage?",
+        options:["Operate the light manually","Take a sailing course","Meet the original keepers","Learn about maritime history"], a:3, passage:READING_PASSAGE_2,
+        exp:"ปัจจุบันบางแห่งเปิดให้นักท่องเที่ยวเข้าชมเพื่อเรียนรู้ประวัติศาสตร์ทางทะเล" },
+    ]
+  },
+  {
+    id:"p4", name:"Structure and Writing Skills", th:"โครงสร้างประโยคและการเขียน", count:10,
+    icon:'<path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/>',
+    questions:[
+      { q:"“We have finished the report.” — Add (already) in the correct position.",
+        options:["We have already finished the report.","We have finished already the report.","Already we have finished the report.","We have finished the report already, have we."], a:0,
+        exp:"already มักวางไว้ระหว่าง have และกริยาช่อง 3 (have already + V3)" },
+      { q:"“Have you called him?” — Add (yet) in the correct position.",
+        options:["Have you yet called him?","Yet have you called him?","Have you called him yet?","Have you called yet him?"], a:2,
+        exp:"yet ใช้ในประโยคคำถาม/ปฏิเสธ และมักวางไว้ท้ายประโยคเสมอ" },
+      { q:"Which sentence uses a non-defining relative clause correctly?",
+        options:["The book that I borrowed was excellent.","My sister, who lives in Chiang Mai, is a doctor.","The teacher who taught us math retired last year.","The laptop that broke down is being repaired."], a:1,
+        exp:"non-defining clause ใช้จุลภาคคั่นและให้ข้อมูลเพิ่มเติมที่ไม่จำเป็นต่อการระบุตัวตน" },
+      { q:"“My sister, who lives in Chiang Mai, is a doctor.” What does this tell us?",
+        options:["The speaker has more than one sister.","Chiang Mai has many doctors.","The sister is not a doctor.","The speaker has only one sister."], a:3,
+        exp:"การใช้ comma + who (non-defining) บ่งบอกว่าผู้พูดมีพี่สาว/น้องสาวเพียงคนเดียว" },
+      { q:"Choose the correct form: “By the time the movie started, we ___ already ___ our seats.”",
+        options:["had / found","have / found","has / find","had / finding"], a:0,
+        exp:"เหตุการณ์ที่เกิดก่อนอีกเหตุการณ์หนึ่งในอดีตใช้ Past Perfect (had + V3)" },
+      { q:"Choose the correct form: “They ___ for over three hours when the rain finally stopped.”",
+        options:["had walked","have walked","had been walking","walk"], a:2,
+        exp:"เน้นระยะเวลาที่ต่อเนื่องก่อนอีกเหตุการณ์ในอดีต จึงใช้ Past Perfect Continuous" },
+      { q:"Correct the tense error: “When I got home, I realized I was leaving my phone at school.”",
+        options:["...I realized I have left my phone at school.","...I realized I am leaving my phone at school.","No correction is needed.","...I realized I had left my phone at school."], a:3,
+        exp:"การลืมโทรศัพท์เกิดขึ้นก่อนการรู้ตัว จึงต้องใช้ Past Perfect (had left)" },
+      { q:"Choose the correct linking word: “The trip was expensive. ___, we all agreed it was worth every baht.”",
+        options:["Aside from","Nonetheless","Furthermore","Since"], a:1,
+        exp:"Nonetheless ใช้แสดงความขัดแย้งกับสิ่งที่กล่าวไปก่อนหน้า" },
+      { q:"Choose the correct linking word: “The hotel has a swimming pool. ___, it offers free breakfast every morning.”",
+        options:["Furthermore","Nonetheless","Aside from","Although"], a:0,
+        exp:"Furthermore ใช้เพิ่มเติมข้อมูลหรือประเด็นจากที่กล่าวไปแล้ว" },
+      { q:"Which is the correctly punctuated sentence?",
+        options:["Its raining outside, so bring an umbrella.","Its' raining outside, so bring an umbrella.","It's raining outside, so bring an umbrella.","It is'nt raining outside, so bring an umbrella."], a:2,
+        exp:"It's = It is (การหดคำ) ต่างจาก Its ที่แปลว่า 'ของมัน'" },
+    ]
+  },
+];
+
+const FULL_MOCK = {
+  id:"full", name:"ชุดเต็ม 4 พาท (Full Mock)", th:"จำลองสอบปลายภาคแบบเต็มรูปแบบ ต่อเนื่องทั้ง 40 ข้อ", count:40,
+  icon:'<path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z"/>',
+  questions: QUIZ_PARTS.flatMap(p=>p.questions),
+};
+
+const QUIZ_KEY = "nf6_quiz_history";
+function getQuizHistory(){
+  try{ return JSON.parse(localStorage.getItem(QUIZ_KEY) || "{}"); }catch(e){ return {}; }
+}
+function saveQuizResult(partId, scorePct){
+  const hist = getQuizHistory();
+  if(!hist[partId]) hist[partId] = { attempts:0, best:0, last:0 };
+  hist[partId].attempts += 1;
+  hist[partId].best = Math.max(hist[partId].best, scorePct);
+  hist[partId].last = scorePct;
+  localStorage.setItem(QUIZ_KEY, JSON.stringify(hist));
+}
+
+function shuffleArray(arr){
+  const a = arr.slice();
+  for(let i=a.length-1; i>0; i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+// Build a shuffled working copy of a part's questions: reorders options (remapping
+// the correct index) and, for parts without reading passages, reorders questions too
+// (passage-based questions keep their original order so passages stay grouped).
+function shuffleQuestionSet(part){
+  const hasPassages = part.questions.some(q=>q.passage);
+  let questions = part.questions.map(q=>{
+    const order = shuffleArray([0,1,2,3]);
+    return {
+      q:q.q, exp:q.exp, passage:q.passage,
+      options: order.map(i=>q.options[i]),
+      a: order.indexOf(q.a),
+    };
+  });
+  if(!hasPassages) questions = shuffleArray(questions);
+  return questions;
+}
+
+function showQuizParts(){
+  document.getElementById("quizPartsScreen").style.display = "block";
+  document.getElementById("quizRunnerScreen").style.display = "none";
+  document.getElementById("quizResultScreen").style.display = "none";
+  const hist = getQuizHistory();
+
+  renderWeakSuggestion(hist);
+
+  const list = document.getElementById("quizPartsList");
+  const featuredHist = hist[FULL_MOCK.id];
+  const featuredCard = `<div class="card quiz-part-card featured" data-part="${FULL_MOCK.id}">
+      <div class="qp-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${FULL_MOCK.icon}</svg></div>
+      <div class="qp-info">
+        <h3>${FULL_MOCK.name}</h3>
+        <p>${FULL_MOCK.th} · ${FULL_MOCK.count} ข้อ</p>
+        ${featuredHist ? `<div class="qp-best">คะแนนดีที่สุด ${featuredHist.best}%</div>` : ""}
+      </div>
+      <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+    </div>`;
+
+  const partCards = QUIZ_PARTS.map(p=>{
+    const h = hist[p.id];
+    return `<div class="card quiz-part-card" data-part="${p.id}">
+      <div class="qp-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${p.icon}</svg></div>
+      <div class="qp-info">
+        <h3>${p.name}</h3>
+        <p>${p.th} · ${p.count} ข้อ</p>
+        ${h ? `<div class="qp-best">คะแนนดีที่สุด ${h.best}%</div>` : ""}
+      </div>
+      <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+    </div>`;
+  }).join("");
+
+  list.innerHTML = featuredCard + partCards;
+  list.querySelectorAll(".quiz-part-card").forEach(card=>{
+    card.onclick = ()=> startQuiz(card.dataset.part);
+  });
+  updateHomeStats();
+}
+
+function renderWeakSuggestion(hist){
+  const slot = document.getElementById("weakSuggestSlot");
+  if(!slot) return;
+  const entries = QUIZ_PARTS.map(p=>({ id:p.id, name:p.name, last: hist[p.id] ? hist[p.id].last : null }))
+    .filter(e=>e.last!==null);
+  if(entries.length===0){ slot.innerHTML=""; return; }
+  const weakest = entries.reduce((min,e)=> e.last < min.last ? e : min, entries[0]);
+  if(weakest.last >= 80){ slot.innerHTML=""; return; }
+  slot.innerHTML = `<div class="card weak-suggest" id="weakSuggestCard">
+    <div class="ws-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg></div>
+    <div>
+      <h3>ควรเน้นทบทวนเพิ่ม: ${weakest.name}</h3>
+      <p>คะแนนล่าสุด ${weakest.last}% — แตะเพื่อฝึกพาทนี้อีกครั้ง</p>
+    </div>
+  </div>`;
+  document.getElementById("weakSuggestCard").onclick = ()=>{ goTo("quiz"); startQuiz(weakest.id); };
+}
+
+let currentQuiz = null;
+let quizTimerInterval = null;
+function startQuiz(partId){
+  const part = partId===FULL_MOCK.id ? FULL_MOCK : QUIZ_PARTS.find(p=>p.id===partId);
+  const shuffled = shuffleQuestionSet(part);
+  currentQuiz = { part: {...part, questions: shuffled}, index:0, answers:[], locked:false, startTime: Date.now() };
+  document.getElementById("quizPartsScreen").style.display = "none";
+  document.getElementById("quizResultScreen").style.display = "none";
+  document.getElementById("quizRunnerScreen").style.display = "block";
+  renderQuizQuestion();
+  startQuizTimer();
+}
+
+function startQuizTimer(){
+  clearInterval(quizTimerInterval);
+  quizTimerInterval = setInterval(()=>{
+    const el = document.getElementById("quizTimerText");
+    if(!el || !currentQuiz){ clearInterval(quizTimerInterval); return; }
+    el.textContent = formatElapsed(Date.now() - currentQuiz.startTime);
+  }, 1000);
+}
+function formatElapsed(ms){
+  const totalSec = Math.floor(ms/1000);
+  const m = Math.floor(totalSec/60);
+  const s = totalSec%60;
+  return `${m}:${s.toString().padStart(2,"0")}`;
+}
+
+function renderQuizQuestion(){
+  const { part, index } = currentQuiz;
+  const q = part.questions[index];
+  const runner = document.getElementById("quizRunnerScreen");
+  const letters = ["A","B","C","D"];
+
+  runner.innerHTML = `
+    <div class="quiz-runner-head">
+      <button class="quiz-close" id="quizCloseBtn" aria-label="ปิด"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+      <div class="quiz-progress-track"><div class="quiz-progress-fill" style="width:${(index/part.questions.length)*100}%"></div></div>
+      <div class="quiz-qnum">${index+1} / ${part.questions.length}</div>
+      <div class="quiz-timer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg><span id="quizTimerText">0:00</span></div>
+    </div>
+    <div class="card quiz-question-card">
+      <div class="qlabel">${part.name}</div>
+      ${q.passage ? `<div class="quiz-passage"><b style="font-style:normal;">${q.passage.label}</b><br>${q.passage.text}</div>` : ""}
+      <h3>${q.q}</h3>
+      <div class="quiz-options" id="quizOptions">
+        ${q.options.map((opt,i)=>`
+          <button class="quiz-option" data-i="${i}">
+            <span class="opt-letter">${letters[i]}</span><span>${opt}</span>
+          </button>`).join("")}
+      </div>
+      <div class="quiz-feedback" id="quizFeedback"></div>
+      <div class="quiz-explain" id="quizExplain">${q.exp ? `<b>คำอธิบาย:</b> ${q.exp}` : ""}</div>
+      <div class="quiz-footer">
+        <button class="btn btn-primary" id="quizNextBtn" disabled>ถัดไป</button>
+      </div>
+    </div>
+  `;
+  document.getElementById("quizCloseBtn").onclick = ()=> { clearInterval(quizTimerInterval); showQuizParts(); };
+  const optBtns = runner.querySelectorAll(".quiz-option");
+  optBtns.forEach(btn=>{
+    btn.onclick = ()=>{
+      if(currentQuiz.locked) return;
+      currentQuiz.locked = true;
+      const chosen = +btn.dataset.i;
+      currentQuiz.answers[index] = chosen;
+      optBtns.forEach(b=>{
+        b.classList.add("disabled");
+        b.disabled = true;
+        const bi = +b.dataset.i;
+        if(bi === q.a) b.classList.add("correct");
+        else if(bi === chosen) b.classList.add("wrong");
+      });
+      const fb = document.getElementById("quizFeedback");
+      fb.classList.add("show");
+      if(chosen === q.a){
+        fb.classList.add("ok");
+        fb.textContent = "ถูกต้อง! เยี่ยมมาก";
+      } else {
+        fb.classList.add("bad");
+        fb.textContent = `ยังไม่ถูก — คำตอบที่ถูกคือ ${letters[q.a]}. ${q.options[q.a]}`;
+      }
+      if(q.exp) document.getElementById("quizExplain").classList.add("show");
+      document.getElementById("quizNextBtn").disabled = false;
+    };
+  });
+  document.getElementById("quizNextBtn").onclick = ()=>{
+    if(index+1 < part.questions.length){
+      currentQuiz.locked = false;
+      currentQuiz.index += 1;
+      renderQuizQuestion();
+    } else {
+      finishQuiz();
+    }
+  };
+}
+
+function finishQuiz(){
+  clearInterval(quizTimerInterval);
+  const { part, answers, startTime } = currentQuiz;
+  const elapsed = formatElapsed(Date.now() - startTime);
+  let correct = 0;
+  part.questions.forEach((q,i)=>{ if(answers[i]===q.a) correct++; });
+  const pct = Math.round((correct/part.questions.length)*100);
+  saveQuizResult(part.id, pct);
+
+  const runnerScreen = document.getElementById("quizRunnerScreen");
+  runnerScreen.style.display = "none";
+  runnerScreen.innerHTML = "";
+  const resultScreen = document.getElementById("quizResultScreen");
+  resultScreen.style.display = "block";
+
+  let msg = "ลองทบทวนเนื้อหาส่วนนี้เพิ่มอีกนิดนะ";
+  if(pct>=90) msg = "ยอดเยี่ยมมาก! พร้อมสำหรับข้อสอบจริงแล้ว 🎉";
+  else if(pct>=70) msg = "ทำได้ดีมาก ใกล้เต็มแล้ว!";
+  else if(pct>=50) msg = "มาถูกทางแล้ว ลองทบทวนอีกรอบ";
+
+  const letters=["A","B","C","D"];
+  const reviewRows = part.questions.map((q,i)=>{
+    const ok = answers[i]===q.a;
+    return `<div class="review-item">
+      <div class="rq">${i+1}. ${q.q}</div>
+      <div class="ra">คำตอบของคุณ: <b class="${ok?'ok':'bad'}">${letters[answers[i]]}. ${q.options[answers[i]]}</b>${ok? "" : `<br>คำตอบที่ถูก: <b class="ok">${letters[q.a]}. ${q.options[q.a]}</b>`}${q.exp ? `<br><span style="color:var(--teal-600);">คำอธิบาย: ${q.exp}</span>` : ""}</div>
+    </div>`;
+  }).join("");
+
+  resultScreen.innerHTML = `
+    <div class="card result-hero">
+      <div class="result-score">${correct}<span>/${part.questions.length}</span></div>
+      <div class="result-msg">${msg}</div>
+      <p style="font-size:12.5px; color:var(--ink-600); margin-top:6px;">ใช้เวลา ${elapsed} นาที</p>
+      <div class="result-bar-track"><div class="result-bar-fill" style="width:${pct}%"></div></div>
+      <div class="result-actions">
+        <button class="btn btn-ghost" id="backToPartsBtn">เลือกพาทอื่น</button>
+        <button class="btn btn-primary" id="retryQuizBtn">ทำใหม่อีกครั้ง</button>
+      </div>
+    </div>
+    <div class="card review-list" style="margin-top:16px;">${reviewRows}</div>
+  `;
+  document.getElementById("backToPartsBtn").onclick = ()=> showQuizParts();
+  document.getElementById("retryQuizBtn").onclick = ()=> startQuiz(part.id);
+  updateHomeStats();
+}
+
+/* =========================================================================
+   HOME STATS
+   ========================================================================= */
+function updateHomeStats(){
+  const known = getKnownSet();
+  const masteredCount = [...new Set(ALL_FLASHCARDS.map(cardKey))].filter(k=>known.has(k)).length;
+  document.getElementById("statMastered").textContent = masteredCount;
+
+  const hist = getQuizHistory();
+  const entries = Object.values(hist);
+  const attempts = entries.reduce((s,e)=>s+e.attempts,0);
+  document.getElementById("statQuizzes").textContent = attempts;
+  const avgBest = entries.length ? Math.round(entries.reduce((s,e)=>s+e.last,0)/entries.length) : 0;
+  document.getElementById("statBest").textContent = avgBest+"%";
+
+  const streakText = document.getElementById("headerStreakText");
+  if(attempts===0 && masteredCount===0) streakText.textContent = "เริ่มทบทวน";
+  else streakText.textContent = `${masteredCount} คำ · ${attempts} ครั้ง`;
+
+  renderWeakSuggestion(hist);
+}
+
+/* =========================================================================
+   INIT
+   ========================================================================= */
+buildNav();
+goTo("home");
+updateHomeStats();
+</script>
+</body>
+</html>
