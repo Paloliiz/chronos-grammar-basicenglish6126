@@ -69,15 +69,28 @@
         .btn-dark { background: #334155; color: white; }
         .btn-dark:active:not(:disabled) { background: #475569; }
 
-        .btn-nav-container { display: flex; justify-content: space-between; gap: 10px; margin-top: 20px; }
+        .btn-nav-container { display: flex; justify-content: space-between; gap: 8px; margin-top: 20px; }
 
         .review-content { background: var(--bg-card); padding: 25px 20px; border-radius: 12px; min-height: 320px; border: 1px solid #334155; }
-        .penalty-alert { background: rgba(239,68,68,0.1); border: 1px solid var(--neon-red); padding: 12px; border-radius: 8px; text-align: center; color: #fca5a5; margin-bottom: 20px; font-size: 0.95rem; }
+        .log-title { font-size: 1.3rem; font-weight: 700; color: white; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #334155; padding-bottom: 10px; }
+        
+        .timeline-box { padding: 15px; border-radius: 8px; margin-bottom: 15px; background: rgba(15,23,42,0.5); border-left: 4px solid; }
+        .t-simple { border-color: var(--neon-cyan); }
+        .t-cont { border-color: var(--neon-orange); }
+        
+        .comp-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; color: #cbd5e1; }
+        .comp-table th { padding: 10px; text-align: left; border-bottom: 2px solid #334155; width: 50%; }
+        .comp-table td { padding: 12px 10px; border-bottom: 1px solid #1e293b; vertical-align: top; }
+
+        .penalty-alert { background: rgba(239,68,68,0.1); border: 1px solid var(--danger); padding: 12px; border-radius: 8px; text-align: center; color: #fca5a5; margin-bottom: 20px; font-size: 0.95rem; }
 
         .status-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #334155; padding-bottom: 10px; }
         .timer-box { font-family: 'Poppins', sans-serif; font-weight: 700; color: var(--neon-cyan); font-size: 1.2rem; background: #020617; padding: 4px 12px; border-radius: 8px; border: 1px solid #334155; }
-        .timer-box.warning { color: var(--neon-red); border-color: var(--neon-red); animation: pulse 1s infinite; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+        .timer-box.warning { color: var(--danger); border-color: var(--danger); animation: pulse 1s infinite; }
+        
+        /* แถบ Progress Bar */
+        .progress-track { width: 100%; height: 6px; background: #334155; margin-bottom: 20px; border-radius: 3px; overflow: hidden; }
+        .progress-fill { height: 100%; background: var(--neon-cyan); width: 0%; transition: width 0.3s ease; }
 
         .question-wrapper { position: relative; margin-bottom: 25px; }
         .question-text { font-size: 1.25rem; font-weight: 500; line-height: 1.6; text-align: center; color: #f8fafc; position: relative; z-index: 1;}
@@ -95,12 +108,12 @@
         .cert-title { font-size: 1.2rem; font-weight: 700; color: var(--neon-cyan); margin-bottom: 10px; letter-spacing: 2px; }
         .cert-name { font-size: 1.6rem; font-weight: bold; color: white; margin: 10px 0; }
         .score-display { font-size: 4.5rem; font-weight: 800; color: var(--success); font-family: 'Poppins', sans-serif; line-height: 1; margin: 15px 0; text-shadow: 0 0 20px rgba(16,185,129,0.3); }
-        .score-display.fail { color: var(--neon-red); text-shadow: 0 0 20px rgba(239,68,68,0.3); }
+        .score-display.fail { color: var(--danger); text-shadow: 0 0 20px rgba(239,68,68,0.3); }
 
         .review-list { margin-top: 30px; text-align: left; }
         .review-item { padding: 15px; border-radius: 12px; margin-bottom: 15px; background: #1e293b; border-left: 4px solid; }
         .review-correct { border-color: var(--success); }
-        .review-wrong { border-color: var(--neon-red); background: rgba(239,68,68,0.05); }
+        .review-wrong { border-color: var(--danger); background: rgba(239,68,68,0.05); }
 
         #countdown-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(2,6,23,0.95); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; }
         .count-number { font-size: 8rem; font-weight: 800; color: var(--neon-cyan); font-family: 'Poppins', sans-serif; text-shadow: 0 0 30px rgba(6,182,212,0.5); }
@@ -137,7 +150,7 @@
         <div style="text-align: center; margin-top: 20px;">
             <div style="font-size: 4rem; margin-bottom: 10px; text-shadow: 0 0 20px rgba(6,182,212,0.4);">⏳</div>
             <h2 class="title" style="color: var(--neon-cyan);">TIME ANOMALY DETECTOR</h2>
-            <p class="subtitle">Past Perfect Tenses: Simple vs Continuous<br>BASIC ENGLISH 6 | Teacher Saruta</p>
+            <p class="subtitle">Perfect Tenses: Present vs Past vs Continuous<br>BASIC ENGLISH 6 | Teacher Saruta</p>
             
             <div style="margin-bottom: 30px;">
                 <p style="color: var(--text-muted); margin-bottom: 5px; font-size: 0.95rem;">Agent ID (รหัสประจำตัวนักเรียน 5 หลัก)</p>
@@ -151,33 +164,15 @@
         </div>
     </div>
 
-    <!-- SCREEN 2: BRIEFING -->
+    <!-- SCREEN 2: REVIEW SLIDER -->
     <div id="screen-review" class="app-screen">
-        <div id="retake-warning" class="penalty-alert hidden">
-            ⚠️ <b>TIME ANOMALY DETECTED (การซ่อมครั้งที่ <span id="warn-attempt"></span>)</b><br>
-            ระบบจะหักพลังงาน <span id="warn-penalty"></span> แต้มจากคะแนนดิบของคุณ
-        </div>
-
-        <div class="review-content" id="review-content">
-            <div style="text-align: center; padding-top: 10px;">
-                <h2 style="color: white; font-size: 1.5rem; margin-bottom: 5px;">AGENT BRIEFING</h2>
-                <p style="color: var(--neon-cyan); margin-bottom: 25px;">ภารกิจ: วิเคราะห์โครงสร้างเส้นเวลา (Perfect Tenses)</p>
-                <div style="text-align: left; background: #020617; padding: 20px; border-radius: 12px; border: 1px solid #334155;">
-                    <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 10px;">เป้าหมายของการเชื่อมต่อในวันนี้:</p>
-                    <p style="color: #cbd5e1; margin-bottom: 8px;">1. แยกแยะ <b>Present Perfect</b> (ดึงมาถึงปัจจุบัน) vs <b>Past Perfect</b> (อดีตซ้อนอดีต)</p>
-                    <p style="color: #cbd5e1; margin-bottom: 8px;">2. แยกแยะ <b>Past Perfect Simple</b> (จบแล้วสมบูรณ์) vs <b>Past Perfect Continuous</b> (เน้นทำต่อเนื่อง)</p>
-                    <p style="color: #cbd5e1; margin-bottom: 8px;">3. ระวัง <b>Stative Verbs</b> (เช่น know, have) ที่ห้ามเติม -ing</p>
-                    <br>
-                    <b style="color: var(--neon-cyan);">พารามิเตอร์ภารกิจ:</b>
-                    <ul style="margin-left: 20px; margin-top: 5px; font-size: 0.95rem; color: var(--text-muted); line-height: 1.8;">
-                        <li>แบบทดสอบ 15 ข้อ / เวลา 15 นาที</li>
-                        <li>เกณฑ์การผ่าน (Restore Timeline) คือ <b>10/15</b></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
+        <div class="review-content" id="review-content"></div>
         
-        <button class="btn-action btn-cyan" id="btn-start-mission" style="margin-top: 20px;" onclick="startCountdown()" disabled>SYNCING DATA... (3s)</button>
+        <div class="btn-nav-container" id="nav-review-controls">
+            <button class="btn-action btn-dark" style="flex: 1;" id="btn-prev-review" onclick="changeReviewPage(-1)">&lt; PREV</button>
+            <button class="btn-action btn-dark" style="flex: 2;" id="btn-next-review" onclick="changeReviewPage(1)">NEXT LOG &gt;</button>
+        </div>
+        <button class="btn-action btn-cyan hidden" id="btn-start-mission" style="margin-top: 20px;" onclick="startCountdown()">BEGIN MISSION ⏱️</button>
     </div>
 
     <!-- SCREEN 3: QUIZ -->
@@ -186,6 +181,8 @@
             <span id="question-type" style="color: var(--text-muted); font-weight: 500;">Sector 1/15</span>
             <div class="timer-box" id="timer-box">⏱️ <span id="time-left">15:00</span></div>
         </div>
+        
+        <div class="progress-track"><div class="progress-fill" id="progress-bar"></div></div>
         
         <div class="question-wrapper">
             <div class="question-text" id="question-text">Loading temporal data...</div>
@@ -198,10 +195,11 @@
             <p style="text-align: center; color: var(--neon-orange); font-size: 0.85rem; margin-top: -15px; margin-bottom: 15px;">* พิมพ์ตัวพิมพ์เล็ก เว้นวรรคให้ถูกต้อง เช่น had been walking</p>
         </div>
         
+        <!-- ✨ แผงควบคุม มีปุ่ม "แผงข้อสอบ" -->
         <div class="btn-nav-container" id="quiz-nav-controls">
-            <button class="btn-action btn-dark" style="flex: 1;" id="btn-prev-q" onclick="navigateQuiz(-1)">&lt; ย้อนกลับ</button>
-            <button class="btn-action btn-orange hidden" style="flex: 1.5;" id="btn-return-sum" onclick="showSummaryScreen()">กลับหน้าสรุป 📋</button>
-            <button class="btn-action btn-cyan" style="flex: 2;" id="btn-next-q" onclick="navigateQuiz(1)">ถัดไป ➡️</button>
+            <button class="btn-action btn-dark" style="flex: 1; padding: 16px 5px; font-size: 1rem;" id="btn-prev-q" onclick="navigateQuiz(-1)">&lt; ย้อนกลับ</button>
+            <button class="btn-action btn-orange" style="flex: 1.2; padding: 16px 5px; font-size: 1rem; color: #020617;" id="btn-view-all" onclick="jumpToSummary()">📋 แผงข้อสอบ</button>
+            <button class="btn-action btn-cyan" style="flex: 1.4; padding: 16px 5px; font-size: 1rem;" id="btn-next-q" onclick="navigateQuiz(1)">ถัดไป ➡️</button>
         </div>
     </div>
 
@@ -211,7 +209,7 @@
         <p class="subtitle" style="margin-bottom: 10px;">ตรวจสอบความเรียบร้อยก่อนกู้เส้นเวลา</p>
         
         <div style="background: var(--bg-card); padding: 20px; border-radius: 12px; border: 1px solid #334155;">
-            <p style="text-align: center; color: var(--text-muted); font-size: 0.9rem;">คลิกที่ตัวเลขเพื่อกลับไปทบทวนแก้ไขข้อนั้น</p>
+            <p style="text-align: center; color: var(--text-muted); font-size: 0.9rem;">คลิกที่ตัวเลขเพื่อกระโดดไปทำข้อนั้น</p>
             <div class="summary-grid" id="summary-grid"></div>
             <div style="display: flex; justify-content: center; gap: 15px; font-size: 0.85rem; margin-top: 10px;">
                 <span style="color: var(--neon-cyan);">🟦 ทำแล้ว</span>
@@ -220,7 +218,7 @@
         </div>
 
         <div class="btn-nav-container">
-            <button class="btn-action btn-dark" style="flex: 1;" onclick="goToQuestion(currentQuestions.length - 1)">&lt; ย้อนกลับ</button>
+            <button class="btn-action btn-dark" style="flex: 1;" onclick="goToQuestion(currentIdx)">&lt; กลับไปทำต่อ</button>
             <button class="btn-action btn-cyan" style="flex: 2;" onclick="showResult()">SUBMIT (ส่งข้อสอบ) 🚀</button>
         </div>
     </div>
@@ -235,25 +233,30 @@
                 <div style="font-size: 0.95rem; color: var(--neon-cyan); margin-bottom: 15px;">Agent ID: <span id="cert-id" style="font-weight:bold;">00000</span></div>
                 <div class="score-display"><span id="final-score-pass">10</span></div>
             </div>
+            <button class="btn-action btn-dark" style="margin-top:20px;" onclick="window.location.href='index.html'">RETURN TO HQ (กลับหน้าหลัก)</button>
         </div>
 
         <div id="result-fail" class="hidden text-center">
             <div style="font-size: 4rem; text-align: center; margin-bottom: 10px;">💥</div>
-            <h2 class="title" style="color: var(--neon-red);">TEMPORAL PARADOX</h2>
+            <h2 class="title" style="color: var(--danger);">TEMPORAL PARADOX</h2>
             <div class="score-display fail" style="text-align: center;"><span id="final-score-fail">5</span></div>
-            <button class="btn-action btn-dark" onclick="window.location.href='index.html'">RETURN TO HQ (กลับหน้าหลัก)</button>
+            <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 15px;">คุณทำคะแนนไม่ถึงเกณฑ์ที่กำหนด กรุณาตรวจสอบเฉลยด้านล่างก่อนเริ่มภารกิจใหม่</p>
+            
+            <div style="display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap;">
+                <button class="btn-action btn-dark" style="flex: 1; min-width: 140px;" onclick="window.location.href='index.html'">กลับหน้าหลัก</button>
+                <button class="btn-action btn-cyan" style="flex: 2; min-width: 180px;" id="btn-retry" disabled>RETRY IN 60s</button>
+            </div>
         </div>
         
-        <div class="stat-box" style="display: flex; justify-content: space-around; background: #020617; padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #334155;">
-            <div style="text-align: center; font-size: 0.9rem; color: var(--text-muted);">Raw Score<b id="display-raw" style="display: block; font-size: 1.2rem; color: white;">0</b></div>
-            <div style="text-align: center; font-size: 0.9rem; color: var(--text-muted);">Penalty<b id="display-penalty" style="display: block; font-size: 1.2rem; color: var(--neon-red);">0</b></div>
-            <div style="text-align: center; font-size: 0.9rem; color: var(--text-muted);">Target<b style="display: block; font-size: 1.2rem; color: white;">10</b></div>
+        <div class="stat-box" style="display: flex; justify-content: space-around; background: #020617; padding: 15px; border-radius: 12px; margin-top: 20px; margin-bottom: 20px; border: 1px solid #334155;">
+            <div style="text-align: center; font-size: 0.9rem; color: var(--text-muted);">Raw Score<b id="display-raw" style="display: block; font-size: 1.2rem; color: white;">0/15</b></div>
+            <div style="text-align: center; font-size: 0.9rem; color: var(--text-muted);">Accuracy<b id="display-accuracy" style="display: block; font-size: 1.2rem; color: var(--neon-orange);">0%</b></div>
+            <div style="text-align: center; font-size: 0.9rem; color: var(--text-muted);">Time Used<b id="display-time-used" style="display: block; font-size: 1.2rem; color: var(--neon-cyan);">00:00</b></div>
         </div>
 
         <div id="score-message" style="text-align: center; margin-bottom: 20px; font-size: 0.95rem; color: var(--neon-cyan);"></div>
         
-        <button class="btn-action btn-orange hidden" id="btn-review-answers" style="margin-bottom: 15px;" onclick="toggleReview()">🔍 VIEW LOGS (ดูเฉลย)</button>
-        <button class="btn-action btn-dark" onclick="location.reload()">DISCONNECT</button>
+        <button class="btn-action btn-orange hidden" style="color: #020617;" id="btn-review-answers" style="margin-bottom: 15px;" onclick="toggleReview()">🔍 VIEW LOGS (ดูเฉลย)</button>
         <div id="review-answers-box" class="review-list hidden"></div>
     </div>
 </div>
@@ -264,7 +267,6 @@
 </div>
 
 <script>
-    // 🛡️ ระบบบล็อก In-App Browser 
     function detectInAppBrowser() {
         const ua = navigator.userAgent || navigator.vendor || window.opera;
         if ((ua.indexOf("FBAN") > -1) || (ua.indexOf("FBAV") > -1) || (ua.indexOf("Line") > -1) || (ua.indexOf("Instagram") > -1)) {
@@ -274,11 +276,15 @@
                 loginScreen.innerHTML = `
                     <div style="text-align: center; margin-top: 30px; padding: 20px;">
                         <div style="font-size: 4rem; margin-bottom: 15px; text-shadow: 0 0 20px rgba(239,68,68,0.5);">🚫</div>
-                        <h2 style="color: var(--neon-red); font-family: 'Poppins', sans-serif; font-size: 1.5rem;">ACCESS DENIED</h2>
+                        <h2 style="color: var(--danger); font-family: 'Poppins', sans-serif; font-size: 1.5rem;">ACCESS DENIED</h2>
                         <p style="color: var(--neon-cyan); font-weight: bold; margin-bottom: 20px;">ไม่สามารถทำภารกิจผ่านแอป LINE / Facebook ได้</p>
-                        <div style="background: rgba(239,68,68,0.1); border: 1px solid var(--neon-red); padding: 20px; border-radius: 12px; text-align: left;">
+                        
+                        <div style="background: rgba(239,68,68,0.1); border: 1px solid var(--danger); padding: 20px; border-radius: 12px; text-align: left;">
                             <p style="color: white; font-size: 1rem; margin-bottom: 10px;"><b>วิธีแก้ไขเพื่อเข้าสู่ระบบ:</b></p>
-                            <p style="color: var(--text-muted); font-size: 0.95rem;">1. มองหาปุ่ม <b>จุด 3 จุด (...)</b> หรือปุ่มแชร์ ที่มุมหน้าจอ<br><br>2. เลือกเมนู <b>"เปิดในเบราว์เซอร์เริ่มต้น"</b> หรือ <b>"Open in Safari / Chrome"</b></p>
+                            <p style="color: var(--text-muted); font-size: 0.95rem;">
+                                1. มองหาปุ่ม <b>จุด 3 จุด (...)</b> หรือปุ่มแชร์ ที่มุมหน้าจอ<br><br>
+                                2. เลือกเมนู <b>"เปิดในเบราว์เซอร์เริ่มต้น"</b> หรือ <b>"Open in Safari / Chrome"</b>
+                            </p>
                         </div>
                     </div>
                 `;
@@ -290,13 +296,14 @@
 
     window.addEventListener('DOMContentLoaded', (event) => { detectInAppBrowser(); });
     
-    // ⚠️ นำ URL ของ Apps Script ชีทใหม่มาใส่ตรงนี้ค่ะ
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbzttz04ItD6niWC401YiXUFs07LF_GyHY0TpOBhoo9wAMkFhDhwsfzW2aBKKKZFmgI2/exec'; 
+    // ⚠️ นำ URL ของ Apps Script มาใส่ตรงนี้ค่ะ
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbzmHGD5_Asnl9AVwX-VJi3V38iLo6DZ0XCyVowvFuKpvojfj_8qVn6zgLwwDDubiHui/exec'; 
+    const sheetTargetName = 'Perfect_Tenses'; 
     const PASS_CRITERIA = 10; 
+    const RETRY_COOLDOWN_SECONDS = 60; 
 
-    // ฐานข้อมูลนักเรียน ม.6 (Official Property of English Dept. - 2026)
+    // ฐานข้อมูลนักเรียน ม.6
     const studentDB = {
-        // ม.6/1
         "11702": { name: "นาย นที ภัสสรรัชนีกร" }, "11703": { name: "นาย เบญจมิณทร์ เชิดฉิน" }, "11710": { name: "นาย ศักดิธัช ทิพย์โอสถ" },
         "11736": { name: "นาย พงศกร อานุการ" }, "11763": { name: "นาย ทวีรัตน์ สิงห์โต" }, "11796": { name: "นาย ภูมิพัฒน์ คณาญาติ" },
         "11824": { name: "นาย จีรวัตร คีรีวงษ์" }, "11958": { name: "นาย พชรพล หนสมสุข" }, "12733": { name: "นาย ภัทรชนน นาทีชัยชนะ" },
@@ -309,7 +316,6 @@
         "11812": { name: "นางสาว ปิยะธิดา บุญชาเรียง" }, "11816": { name: "นางสาว วิชยาพร โพธิ์นิมิตร" }, "11818": { name: "นางสาว ศิรภัสทรา ไชยชาติ" },
         "11847": { name: "นางสาว พิชญ์สินี สุภโส" }, "11927": { name: "นางสาว ณัฐกานต์ ผายอุบล" }, "11934": { name: "นางสาว วันนาวี นะ" },
         "12734": { name: "นางสาว จิราภรณ์ สมบุญ" }, "12737": { name: "นางสาว วิไลวรรณ จันดี" },
-        // ม.6/2
         "11698": { name: "นาย ก้องภพ หนาแน่น" }, "11707": { name: "นาย ภูริณัฐ สุวรรณสน" }, "11730": { name: "นาย เจษฎา พรมวงษา" },
         "11737": { name: "นาย ศิวกร สุขประสงค์" }, "11792": { name: "นาย ธราวัฒน์ สืบจาก" }, "11794": { name: "นาย พีรัชชัย สอนจันดา" },
         "11822": { name: "นาย ขวัญชัย ทับทิม" }, "11825": { name: "นาย ชัยสิทธิ์ ภู่แสร์" }, "11828": { name: "นาย ธีรเดช รูปสะอาด" },
@@ -322,7 +328,6 @@
         "11841": { name: "นางสาว ขวัญพร พรมสมบุญ" }, "11871": { name: "นางสาว จรรยนาถ จันทร์ศรี" }, "11928": { name: "นางสาว สุพรรษา จันทร์สอน" },
         "12739": { name: "นางสาว กัญญารัตน์ มูลกระจก" }, "12740": { name: "นางสาว ปนัดดา ศรีจำปา" }, "12741": { name: "นางสาว ยศยา ผดุงวาฬ" },
         "12742": { name: "นางสาว วนิสา พูลเพิ่ม" }, "12743": { name: "นางสาว ศศินิภา สีม่วง" }, "12744": { name: "นางสาว ศิรินทิพย์ ชาติวงค์" },
-        // ม.6/3
         "11699": { name: "นาย กิตติชัย หัสดง" }, "11712": { name: "นาย สิรภัทร นุ่มนวล" }, "11798": { name: "นาย ศรัณต์ อำไพวรรณ" },
         "11800": { name: "นาย เศรษฐพิชญ์ ศรีหงษา" }, "11830": { name: "นาย ปิติภัทร แผนคง" }, "11855": { name: "นาย เจษฎา สมจิตร" },
         "11857": { name: "นาย ชุติพนธ์ เพิ่มศรี" }, "11859": { name: "นาย ทัศนัย เรียงนอก" }, "12747": { name: "นาย ราชันย์ บัวสิม" },
@@ -334,7 +339,6 @@
         "11926": { name: "นางสาว พิชชาพร เดชพลกรัง" }, "11929": { name: "นางสาว ธันยพร อริสุ" }, "12749": { name: "นางสาว กุสุมา กันหานุ" },
         "12750": { name: "นางสาว ธีญดา ครองหมู่" }, "12751": { name: "นางสาว สุพัชชา ปุราถาเน" }, "12752": { name: "นางสาว สุภารัตน์ ปาระมัส" },
         "12754": { name: "นางสาว อริศรา รูปพรม" }, "12781": { name: "นางสาว พิจิตรา แน่นอน" }, "12786": { name: "นางสาว สลิล สุวภากุลเศรษฐ์" },
-        // ม.6/4
         "11700": { name: "นาย ณัฐวุฒิ น่ารัก" }, "11701": { name: "นาย ดนุสรณ์ นันทะสาโร" }, "11704": { name: "นาย ไพรรัตน์ เวชมะโน" },
         "11734": { name: "นาย ปกรณ์ แก้วอุดร" }, "11770": { name: "นาย ศิวกรณ์ สระแก้ว" }, "11853": { name: "นาย กฤติพงศ์ พลไพ" },
         "11854": { name: "นาย กิตติกรณ์ โพธิ์แก้ว" }, "11860": { name: "นาย ธีรภัทร แซ่งั่น" }, "11925": { name: "นาย อภิเดช บุตรแสน" },
@@ -347,41 +351,86 @@
         "12767": { name: "นางสาว วรางคณา ดอกกลอย" }, "12768": { name: "นางสาว วิภาวดี บุตรไธสง" }, "12769": { name: "นางสาว แสงอรุณ พิงไธสง" }
     };
 
-    // 🌟 คลังข้อสอบ Tenses 15 ข้อ (ฉบับคำใบ้เชิงวิเคราะห์)
+    // 🌟 คลังข้อสอบ Tenses 15 ข้อ
     const quizPool = [
-        // MCQ - Past Perfect vs Past Perfect Cont. 
         { type: "mcq", q: "She _______ her old job before she applied for a new one.", options: ["had quit", "had been quitting"], ans: 0, exp: "การลาออก (quit) เป็นเหตุการณ์ที่จบไปแล้วสมบูรณ์ก่อนที่จะไปสมัครงานใหม่ ไม่ได้ทำอย่างต่อเนื่อง จึงใช้ Past Perfect Simple" },
         { type: "mcq", q: "He _______ for five years by the time he graduated.", options: ["had studied", "had been studying"], ans: 1, exp: "มีคำบอกระยะเวลา 'for five years' เน้นความต่อเนื่องของการเรียนก่อนที่จะจบการศึกษา จึงใช้ Past Perfect Continuous" },
         { type: "mcq", q: "I _______ for a long time when the train finally arrived.", options: ["had waited", "had been waiting"], ans: 1, exp: "เน้นระยะเวลาที่รอคอยอย่างต่อเนื่อง 'for a long time' ก่อนที่รถไฟจะมาถึง จึงใช้ Past Perfect Continuous" },
         { type: "mcq", q: "I _______ as relaxed as I did on that vacation.", options: ["had never felt", "had never been feeling"], ans: 0, exp: "กริยาที่แสดงความรู้สึก (Stative Verbs) เช่น feel, know, have มักไม่ใช้ในรูป Continuous (-ing)" },
         { type: "mcq", q: "They _______ when someone rang the doorbell.", options: ["had slept", "had been sleeping"], ans: 1, exp: "พวกเขากำลังนอนหลับอย่างต่อเนื่องมาสักระยะหนึ่ง ก่อนที่จะมีคนมากดกริ่งประตูแทรก (เน้นความต่อเนื่องในอดีต)" },
-
-        // MCQ - Error Correction & Stative Verbs 
         { type: "mcq", q: "We were great buddies. We _______ each other for years.", options: ["had known", "had been knowing"], ans: 0, exp: "คำว่า 'know' (รู้จัก) เป็น Stative Verb แสดงสถานะและความรู้สึก ไม่สามารถเติม -ing ได้ จึงต้องใช้ Past Perfect Simple เท่านั้น" },
         { type: "mcq", q: "It was strange to see Alice with short hair because she _______ long hair.", options: ["had always had", "had always been having"], ans: 0, exp: "คำว่า 'have' ที่แปลว่า 'มี' เป็น Stative Verb ไม่สามารถใช้ในรูป Continuous (-ing) ได้" },
         { type: "mcq", q: "When I arrived at the bus stop, she _______ for an hour.", options: ["had already waited", "had already been waiting"], ans: 1, exp: "เน้นย้ำความต่อเนื่องของการรอคอย 'for an hour' ก่อนที่ฉันจะไปถึง" },
         { type: "mcq", q: "I was very disappointed when the concert was canceled. I _______ forward to it for months.", options: ["had looked", "had been looking"], ans: 1, exp: "มีการรอคอยอย่างต่อเนื่อง 'for months' ก่อนที่คอนเสิร์ตจะถูกยกเลิก จึงใช้ Past Perfect Continuous" },
-
-        // Present vs Past Perfect 
         { type: "mcq", q: "I _______ to Madagascar three times in the last year.", options: ["have traveled", "had traveled"], ans: 0, exp: "เหตุการณ์ในอดีตที่ส่งผลหรือนับจำนวนครั้งสะสมมาจนถึง 'ปัจจุบัน' (in the last year) ต้องใช้ Present Perfect (have/has + V.3)" },
         { type: "mcq", q: "I _______ already _______ to the store before my brother woke up.", options: ["have / been", "had / been"], ans: 1, exp: "มี 2 เหตุการณ์ในอดีต: ไปร้านค้า (เกิดก่อน) และน้องชายตื่น (เกิดทีหลัง) สิ่งที่เกิดก่อนต้องใช้ Past Perfect (had + V.3)" },
-
-        // FIB - Constructing sentences 
         { type: "fib", q: "Type the correct form <u>(Past Perfect Continuous)</u>:<br><br>I _______________ (wait) for two hours when my friend finally arrived.", ans: ["had been waiting"], exp: "โครงสร้าง Past Perfect Continuous คือ had + been + V.ing ใช้เน้นความต่อเนื่อง" },
         { type: "fib", q: "Type the correct form <u>(Past Perfect Simple)</u>:<br><br>I _______________ (drink) three cups of coffee before I ate some cake.", ans: ["had drunk"], exp: "โครงสร้าง Past Perfect Simple คือ had + V.3 (ช่อง 3 ของ drink คือ drunk)" },
         { type: "fib", q: "Type the correct form <u>(Past Perfect Continuous)</u>:<br><br>I _______________ (walk) to school when the school bell rang.", ans: ["had been walking"], exp: "โครงสร้าง Past Perfect Continuous คือ had + been + V.ing" },
         { type: "fib", q: "Type the correct form <u>(Past Perfect Simple)</u>:<br><br>She _______________ (draw) 10 pictures by the time she had to go to bed.", ans: ["had drawn"], exp: "โครงสร้าง Past Perfect Simple คือ had + V.3 (ช่อง 3 ของ draw คือ drawn)" }
     ];
 
+    // 📖 หน้าสไลด์รีวิวก่อนสอบ (อ้างอิงเนื้อหาจากที่เคยให้ไว้)
+    const reviewPages = [
+        `<div style="text-align: center; padding-top: 10px;">
+            <h2 style="color: white; font-size: 1.5rem; margin-bottom: 5px;">AGENT BRIEFING</h2>
+            <p style="color: var(--neon-cyan); margin-bottom: 25px;">ภารกิจ: วิเคราะห์โครงสร้างเส้นเวลา (Perfect Tenses)</p>
+            <div style="text-align: left; background: #020617; padding: 20px; border-radius: 12px; border: 1px solid #334155;">
+                <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 10px;">เป้าหมายของการเชื่อมต่อในวันนี้:</p>
+                <p>1. แยกแยะ Present Perfect (มาถึงปัจจุบัน) vs Past Perfect (อดีตซ้อนอดีต)</p>
+                <p>2. แยกแยะ Past Perfect Simple (จบแล้ว) vs Continuous (เน้นทำต่อเนื่อง)</p>
+                <p>3. หลีกเลี่ยงกับดักเส้นเวลา (Stative Verbs ห้ามเติม -ing)</p>
+            </div>
+        </div>`,
+        `<div class="log-title"><span style="color: var(--neon-cyan);">LOG 01:</span> PRESENT vs PAST PERFECT</div>
+        <div class="timeline-box t-simple">
+            <h4 style="color: var(--neon-cyan); margin-bottom: 5px;">Present Perfect (have/has + V.3)</h4>
+            <p style="font-size: 0.95rem; color: var(--text-muted);">เหตุการณ์ในอดีตที่ <b>"ส่งผลมาถึงปัจจุบัน"</b> หรือนับจำนวนครั้งสะสมถึงตอนนี้</p>
+            <p style="font-size: 0.95rem; margin-top: 10px;">🔵 I have traveled to Madagascar 3 times in the last year.</p>
+        </div>
+        <div class="timeline-box t-cont" style="border-color: var(--neon-orange);">
+            <h4 style="color: var(--neon-orange); margin-bottom: 5px;">Past Perfect (had + V.3)</h4>
+            <p style="font-size: 0.95rem; color: var(--text-muted);"><b>"อดีตซ้อนอดีต"</b> สิ่งที่เกิดก่อนต้องใช้ Past Perfect เกิดทีหลังใช้ V.2 เสมอ</p>
+            <p style="font-size: 0.95rem; margin-top: 10px;"><span style="color:var(--neon-orange);">🟠 I had already been to the store</span> before my brother woke up.</p>
+        </div>`,
+        `<div class="log-title"><span style="color: var(--neon-purple);">LOG 02:</span> SIMPLE vs CONTINUOUS</div>
+        <div class="timeline-box t-simple" style="border-color: #3b82f6;">
+            <h4 style="color: #3b82f6; margin-bottom: 5px;">Past Perfect Simple (had + V.3)</h4>
+            <p style="font-size: 0.95rem; color: var(--text-muted);">เน้น <b>"ผลลัพธ์ว่าจบไปแล้วอย่างสมบูรณ์"</b></p>
+            <p style="font-size: 0.95rem; margin-top: 10px;">She had quit her old job before she applied for a new one.</p>
+        </div>
+        <div class="timeline-box t-cont">
+            <h4 style="color: var(--neon-purple); margin-bottom: 5px;">Past Perfect Continuous (had been + V.ing)</h4>
+            <p style="font-size: 0.95rem; color: var(--text-muted);">เน้น <b>"ความต่อเนื่องระยะเวลา"</b> (มีบอกเวลาชัดเจน เช่น for, since)</p>
+            <p style="font-size: 0.95rem; margin-top: 10px;">I had been waiting for a long time when the train finally arrived.</p>
+        </div>`,
+        `<div class="log-title"><span style="color: var(--danger);">LOG 03:</span> STATIVE VERBS ⚠️</div>
+        <div class="timeline-box" style="border-color: var(--danger); background: rgba(239,68,68,0.05);">
+            <h4 style="color: var(--danger); margin-bottom: 5px;">คำต้องห้าม! ห้ามเติม -ing</h4>
+            <p style="font-size: 0.95rem; color: var(--text-muted);">กริยาบอกความรู้สึก ความคิด ความเป็นเจ้าของ (know, have, want, like, feel) <b>ต้องใช้ Simple เท่านั้น!</b></p>
+            <p style="font-size: 0.95rem; margin-top: 10px;">❌ ผิด: <s>I had been knowing him for years.</s></p>
+            <p style="font-size: 0.95rem; margin-top: 5px;">✅ ถูกต้อง: I <u>had known</u> him for years.</p>
+        </div>`,
+        `<div class="log-title"><span style="color: white;">SYSTEM READY</span> 🚀</div>
+        <div style="background: #020617; padding: 20px; border-radius: 12px; border: 1px solid #334155; margin-bottom: 20px;">
+            <b style="color: var(--neon-cyan);">พารามิเตอร์ภารกิจ (Rules):</b>
+            <ul style="margin-left: 20px; margin-top: 10px; font-size: 0.95rem; color: var(--text-muted); line-height: 1.8;">
+                <li>แบบทดสอบ 15 ข้อ / เวลา 15 นาที</li>
+                <li>เกณฑ์การผ่าน (Restore Timeline) คือ <b>10/15</b></li>
+                <li><b>ไม่มีหักคะแนนสอบซ่อม</b> ทำใหม่กี่รอบก็ได้จนกว่าจะผ่าน!</li>
+            </ul>
+        </div>`
+    ];
+
+    let currentReviewPage = 0;
     let currentQuestions = [];
     let currentIdx = 0;
     let scores = { total: 0 };
     let hasSubmitted = false;
     let timerInterval;
-    let timeLeft = 900; // 15 นาที
+    let timeLeft = 900; 
     let studentName = ""; 
     let userAnswers = []; 
-    let attemptCount = 1; let penaltyScore = 0; 
     let reviewCooldownTimer;
     let isProcessingCooldown = false; 
 
@@ -391,6 +440,8 @@
         window.scrollTo(0, 0);
     }
 
+    function shuffleArray(array) { return array.sort(() => Math.random() - 0.5); }
+
     async function handleLogin() {
         const studentId = document.getElementById('student-id').value.trim();
         const studentFirstName = document.getElementById('student-firstname').value.trim();
@@ -398,10 +449,9 @@
 
         if(!studentId || !studentFirstName) { alert("กรุณากรอกรหัสประจำตัว และชื่อจริงให้ครบถ้วนค่ะ"); return; }
         
-        // แอดมิน (Director Ploy)
         if(studentId === "7238") {
             if(studentFirstName !== "พะโล้") { alert("❌ Clearance Denied: ชื่อ Director ไม่ถูกต้อง"); return; }
-            studentName = "คุณครูศรุตา จันทเกตุ"; attemptCount = 1; penaltyScore = 0;
+            studentName = "คุณครูศรุตา จันทเกตุ"; 
             document.getElementById('user-badge').innerText = "DIRECTOR";
             startReviewPhase(); return;
         }
@@ -414,24 +464,18 @@
         btnLogin.innerText = "CONNECTING... ⏳"; btnLogin.disabled = true;
 
         try {
-            const response = await fetch(scriptURL + "?studentId=" + studentId);
+            const response = await fetch(scriptURL + "?studentId=" + studentId + "&sheetName=" + sheetTargetName);
             const data = await response.json();
             
-            if(data.exists) {
-                if(data.maxScore >= PASS_CRITERIA) {
-                    alert(`✅ คุณสอบผ่านเกณฑ์แล้วด้วยคะแนน ${data.maxScore}/15\nTimeline ของคุณเสถียรแล้ว ไม่สามารถกู้ซ้ำได้ค่ะ`);
-                    document.getElementById('student-id').value = ''; document.getElementById('student-firstname').value = ''; 
-                } else {
-                    attemptCount = data.attempts + 1; penaltyScore = attemptCount - 1; 
-                    studentName = studentDB[studentId].name; 
-                    document.getElementById('user-badge').innerText = studentName; startReviewPhase();
-                }
+            if(data.exists && data.maxScore >= PASS_CRITERIA) {
+                alert(`✅ คุณสอบผ่านเกณฑ์แล้วด้วยคะแนน ${data.maxScore}/15\nTimeline ของคุณเสถียรแล้ว ไม่สามารถกู้ซ้ำได้ค่ะ`);
+                document.getElementById('student-id').value = ''; document.getElementById('student-firstname').value = ''; 
             } else {
-                attemptCount = 1; penaltyScore = 0; studentName = studentDB[studentId].name;
+                studentName = studentDB[studentId].name; 
                 document.getElementById('user-badge').innerText = studentName; startReviewPhase();
             }
         } catch (error) {
-            studentName = studentDB[studentId].name; attemptCount = 1; penaltyScore = 0;
+            studentName = studentDB[studentId].name;
             document.getElementById('user-badge').innerText = studentName; startReviewPhase();
         }
 
@@ -439,24 +483,52 @@
     }
 
     function startReviewPhase() {
-        if(penaltyScore > 0) document.getElementById('retake-warning').classList.remove('hidden');
-        showScreen('screen-review');
+        currentReviewPage = 0;
+        updateReviewUI(); showScreen('screen-review');
+    }
+
+    function changeReviewPage(step) { currentReviewPage += step; updateReviewUI(); }
+
+    function updateReviewUI() {
+        const contentBox = document.getElementById('review-content');
+        contentBox.classList.remove('fade-in'); void contentBox.offsetWidth; contentBox.classList.add('fade-in');
+        contentBox.innerHTML = reviewPages[currentReviewPage];
         
+        const btnPrev = document.getElementById('btn-prev-review');
+        const btnNext = document.getElementById('btn-next-review');
         const btnStart = document.getElementById('btn-start-mission');
+        const navContainer = document.getElementById('nav-review-controls');
+
+        btnPrev.style.visibility = (currentReviewPage === 0) ? 'hidden' : 'visible';
+
+        clearInterval(reviewCooldownTimer);
+        let targetBtn = (currentReviewPage === reviewPages.length - 1) ? btnStart : btnNext;
+        
+        if(currentReviewPage === reviewPages.length - 1) {
+            navContainer.classList.add('hidden'); btnStart.classList.remove('hidden');
+        } else {
+            navContainer.classList.remove('hidden'); btnStart.classList.add('hidden');
+        }
+
         const studentId = document.getElementById('student-id').value.trim();
         let cd = (studentId === "7238") ? 0 : 3; 
 
-        btnStart.disabled = true;
-        btnStart.innerText = `SYNCING DATA... (${cd}s)`;
+        targetBtn.disabled = true;
+        targetBtn.innerText = `SYNCING DATA... (${cd}s)`;
 
-        if(cd === 0) { btnStart.disabled = false; btnStart.innerText = "BEGIN MISSION ⏱️"; } 
+        if(cd === 0) { enableReviewBtn(targetBtn); } 
         else {
             reviewCooldownTimer = setInterval(() => {
                 cd--;
-                if (cd > 0) { btnStart.innerText = `SYNCING DATA... (${cd}s)`; } 
-                else { clearInterval(reviewCooldownTimer); btnStart.disabled = false; btnStart.innerText = "BEGIN MISSION ⏱️"; }
+                if (cd > 0) { targetBtn.innerText = `SYNCING DATA... (${cd}s)`; } 
+                else { clearInterval(reviewCooldownTimer); enableReviewBtn(targetBtn); }
             }, 1000);
         }
+    }
+
+    function enableReviewBtn(targetBtn) {
+        targetBtn.disabled = false;
+        targetBtn.innerText = (currentReviewPage === reviewPages.length - 1) ? "BEGIN MISSION ⏱️" : `NEXT LOG > (${currentReviewPage + 1}/${reviewPages.length})`;
     }
 
     function startCountdown() {
@@ -470,14 +542,13 @@
             else {
                 clearInterval(cInt); document.getElementById('countdown-overlay').classList.add('hidden');
                 generateQuizSession(); 
-                document.getElementById('btn-return-sum').classList.add('hidden'); 
                 showScreen('screen-quiz'); renderQuestion(); startTimer();
             }
         }, 1000);
     }
 
     function generateQuizSession() {
-        currentQuestions = [...quizPool].sort(() => Math.random() - 0.5);
+        currentQuestions = shuffleArray([...quizPool]);
         userAnswers = new Array(currentQuestions.length).fill(null);
         currentIdx = 0;
     }
@@ -508,7 +579,8 @@
 
     function renderQuestion() {
         const q = currentQuestions[currentIdx];
-        document.getElementById('question-type').innerText = `Data ${currentIdx + 1}/${currentQuestions.length}`;
+        document.getElementById('question-type').innerText = `Sector ${currentIdx + 1}/${currentQuestions.length}`;
+        document.getElementById('progress-bar').style.width = `${((currentIdx) / currentQuestions.length) * 100}%`;
         
         const qText = document.getElementById('question-text');
         qText.classList.remove('fade-in'); void qText.offsetWidth; qText.classList.add('fade-in');
@@ -527,8 +599,7 @@
         btnNext.innerText = (currentIdx === currentQuestions.length - 1) ? "ตรวจสอบคำตอบ 📝" : "ถัดไป ➡️";
 
         if (q.type === "mcq") {
-            optionsContainer.classList.remove('hidden'); 
-            fibContainer.classList.add('hidden');
+            optionsContainer.classList.remove('hidden'); fibContainer.classList.add('hidden');
             
             q.options.forEach((opt, index) => {
                 const btn = document.createElement('button');
@@ -545,8 +616,7 @@
                 optionsContainer.appendChild(btn);
             });
         } else {
-            optionsContainer.classList.add('hidden'); 
-            fibContainer.classList.remove('hidden');
+            optionsContainer.classList.add('hidden'); fibContainer.classList.remove('hidden');
             fibInput.value = userAnswers[currentIdx] !== null ? userAnswers[currentIdx] : '';
             
             fibInput.oninput = () => { userAnswers[currentIdx] = fibInput.value; };
@@ -587,6 +657,15 @@
         }, 300); 
     }
 
+    function jumpToSummary() {
+        if (isProcessingCooldown) return;
+        const q = currentQuestions[currentIdx];
+        if (q && q.type === "fib") {
+            userAnswers[currentIdx] = document.getElementById('fib-input').value;
+        }
+        showSummaryScreen();
+    }
+
     function showSummaryScreen() {
         showScreen('screen-summary');
         const grid = document.getElementById('summary-grid');
@@ -612,7 +691,6 @@
     function goToQuestion(index) {
         currentIdx = index;
         showScreen('screen-quiz');
-        document.getElementById('btn-return-sum').classList.remove('hidden'); 
         renderQuestion();
     }
 
@@ -630,7 +708,7 @@
                 userAnswerText = (ans !== null && ans !== undefined) ? q.options[ans] : "-";
             } else {
                 if(ans) {
-                    const cleanAns = ans.trim().toLowerCase().replace(/\s+/g, ' ');
+                    const cleanAns = ans.trim().toLowerCase().replace(/\s+/g, ' ').replace(/[.,]/g, '');
                     isCorrect = q.ans.some(a => a.toLowerCase() === cleanAns);
                     userAnswerText = ans;
                 } else {
@@ -641,33 +719,52 @@
             if(isCorrect) { scores.total++; }
 
             userAnswersRecord.push({
-                question: q.q, 
-                userAnswer: userAnswerText, isCorrect: isCorrect, 
-                correctAnswer: (q.type === "mcq") ? q.options[q.ans] : q.ans.join(" / "),
+                question: q.q, userAnswer: userAnswerText, isCorrect: isCorrect, 
+                correctAnswer: (q.type === "mcq") ? q.options[q.ans] : q.ans.join(" หรือ "),
                 explanation: q.exp
             });
         });
     }
 
+    function retryMission() {
+        hasSubmitted = false;
+        userAnswers = [];
+        currentIdx = 0;
+        document.getElementById('result-fail').classList.add('hidden');
+        document.getElementById('review-answers-box').classList.add('hidden');
+        document.getElementById('btn-review-answers').classList.add('hidden');
+        startReviewPhase(); 
+    }
+
     function showResult() {
         if (hasSubmitted) return;
+        
+        if (timeLeft > 0) {
+            const unans = userAnswers.filter(a => a === null || a === "").length;
+            if(unans > 0) {
+                if(!confirm(`คุณยังมีข้อสอบที่ไม่ได้ทำอีก ${unans} ข้อ ยืนยันที่จะส่งกระดาษคำตอบใช่หรือไม่?`)) return;
+            }
+        }
+
         hasSubmitted = true;
-        if (typeof timerInterval !== 'undefined') clearInterval(timerInterval);
+        clearInterval(timerInterval);
         calculateFinalScore();
 
         let rawScore = scores.total;
-        finalCalculatedScore = rawScore - penaltyScore;
-        if(finalCalculatedScore < 0) finalCalculatedScore = 0;
+        let accuracy = Math.round((rawScore / currentQuestions.length) * 100);
+        let timeSpent = 900 - timeLeft;
+        let m = Math.floor(timeSpent / 60);
+        let s = timeSpent % 60;
 
         showScreen('screen-result');
         const reviewBtn = document.getElementById('btn-review-answers');
         reviewBtn.classList.add('hidden'); 
         
-        if (finalCalculatedScore >= PASS_CRITERIA) {
+        if (rawScore >= PASS_CRITERIA) {
             document.getElementById('result-pass').classList.remove('hidden');
             document.getElementById('cert-id').innerText = document.getElementById('student-id').value;
             document.getElementById('cert-name').innerText = studentName;
-            document.getElementById('final-score-pass').innerText = finalCalculatedScore;
+            document.getElementById('final-score-pass').innerText = rawScore;
             
             var duration = 3 * 1000; var end = Date.now() + duration;
             (function frame() {
@@ -677,11 +774,29 @@
             }());
         } else {
             document.getElementById('result-fail').classList.remove('hidden');
-            document.getElementById('final-score-fail').innerText = finalCalculatedScore;
+            document.getElementById('final-score-fail').innerText = rawScore;
+            
+            const retryBtn = document.getElementById('btn-retry');
+            retryBtn.disabled = true;
+            let cooldown = RETRY_COOLDOWN_SECONDS;
+            retryBtn.innerText = `RETRY IN ${cooldown}s`;
+            
+            const cdInterval = setInterval(() => {
+                cooldown--;
+                if(cooldown > 0) {
+                    retryBtn.innerText = `RETRY IN ${cooldown}s`;
+                } else {
+                    clearInterval(cdInterval);
+                    retryBtn.innerText = "RETRY MISSION 🔄";
+                    retryBtn.disabled = false;
+                    retryBtn.onclick = retryMission;
+                }
+            }, 1000);
         }
         
-        document.getElementById('display-raw').innerText = rawScore;
-        document.getElementById('display-penalty').innerText = `-${penaltyScore}`;
+        document.getElementById('display-raw').innerText = `${rawScore}/15`;
+        document.getElementById('display-accuracy').innerText = `${accuracy}%`;
+        document.getElementById('display-time-used').innerText = `${m}:${s < 10 ? '0'+s : s}`;
         
         generateReviewList(); submitScoreToSheet(reviewBtn);
     }
@@ -689,31 +804,29 @@
     function generateReviewList() {
         const reviewBox = document.getElementById('review-answers-box');
         reviewBox.innerHTML = '';
-        
         const isAdmin = (document.getElementById('student-id').value === "7238");
+        const showFullAnswers = (scores.total >= PASS_CRITERIA || isAdmin); 
 
         userAnswersRecord.forEach((record, index) => {
             const itemDiv = document.createElement('div');
             itemDiv.className = `review-item ${record.isCorrect ? 'review-correct' : 'review-wrong'}`;
-            let html = `<div style="font-weight: 600; margin-bottom: 5px; color:#fff;">Data ${index + 1}: ${record.question}</div>
-                <div style="color: ${record.isCorrect ? 'var(--success)' : 'var(--neon-red)'};"><b>คำตอบของคุณ:</b> ${record.userAnswer} ${record.isCorrect ? '✅' : '❌'}</div>`;
+            let html = `<div style="font-weight: 600; margin-bottom: 5px; color:#fff;">ข้อ ${index + 1}: ${record.question}</div>
+                <div style="color: ${record.isCorrect ? 'var(--success)' : 'var(--danger)'};"><b>คำตอบของคุณ:</b> ${record.userAnswer} ${record.isCorrect ? '✅' : '❌'}</div>`;
 
             if (!record.isCorrect) {
-                if (isAdmin) {
-                    html += `<div style="color: var(--neon-cyan); margin-top: 5px;"><b>[DIRECTOR ONLY] เฉลย:</b> ${record.correctAnswer}</div>`;
-                }
-                
-                html += `
-                    <div style="background: rgba(6, 182, 212, 0.1); border: 1px dashed var(--neon-cyan); padding: 12px; border-radius: 8px; margin-top: 10px;">
-                        <b style="color: var(--neon-cyan); font-size: 0.95rem;">💡 คำใบ้เพื่อวิเคราะห์:</b>
-                        <div style="color: #cbd5e1; font-size: 0.95rem; margin-top: 5px;">${record.explanation}</div>
+                if (showFullAnswers) {
+                    html += `<div style="color: var(--neon-cyan); margin-top: 5px;"><b>คำตอบที่ถูกต้อง:</b> ${record.correctAnswer}</div>
+                        <div style="color: var(--text-muted); font-size: 0.95rem; margin-top: 5px;"><b>คำอธิบาย:</b> ${record.explanation}</div>`;
+                } else {
+                    html += `<div class="hint-box" style="margin-top:10px; background: rgba(6, 182, 212, 0.1); padding: 12px; border-radius: 8px; border: 1px dashed var(--neon-cyan);">
+                        <b style="color: var(--neon-cyan);">💡 คำใบ้เพื่อวิเคราะห์:</b>
+                        <div style="color: #cbd5e1; margin-top: 5px;">${record.explanation}</div>
                     </div>`;
+                }
             } else {
-                html += `<div style="color: var(--text-muted); font-size: 0.95rem; margin-top: 5px;"><b>เกร็ดความรู้:</b> ${record.explanation}</div>`;
+                html += `<div style="color: var(--text-muted); font-size: 0.95rem; margin-top: 5px;"><b>คำอธิบายเสริม:</b> ${record.explanation}</div>`;
             }
-            
-            itemDiv.innerHTML = html; 
-            reviewBox.appendChild(itemDiv);
+            itemDiv.innerHTML = html; reviewBox.appendChild(itemDiv);
         });
     }
 
@@ -722,17 +835,15 @@
     function submitScoreToSheet(reviewBtn) {
         const studentId = document.getElementById('student-id').value;
         const messageEl = document.getElementById('score-message');
-        
-        if(scriptURL === 'https://script.google.com/macros/s/AKfycbzmHGD5_Asnl9AVwX-VJi3V38iLo6DZ0XCyVowvFuKpvojfj_8qVn6zgLwwDDubiHui/exec') { 
-            messageEl.innerHTML = "⚠️ ทดสอบระบบออฟไลน์"; messageEl.style.color = "var(--neon-orange)";
-            if(reviewBtn) reviewBtn.classList.remove('hidden'); return; 
-        }
 
         messageEl.innerHTML = "กำลังส่งข้อมูลเข้าระบบศูนย์กลาง... ⏳";
-        const formData = new FormData();
-        formData.append('studentId', studentId); formData.append('scoreTotal', finalCalculatedScore); 
+        
+        const params = new URLSearchParams();
+        params.append('sheetName', sheetTargetName);
+        params.append('studentId', studentId); 
+        params.append('scoreTotal', scores.total); 
 
-        fetch(scriptURL, { method: 'POST', body: formData })
+        fetch(scriptURL, { method: 'POST', body: params })
             .then(response => {
                 messageEl.innerHTML = "✅ บันทึกข้อมูลเส้นเวลาสำเร็จ!"; messageEl.style.color = "var(--success)";
                 if(reviewBtn) reviewBtn.classList.remove('hidden'); 
@@ -742,9 +853,9 @@
             });
     }
 
-    // 🛡️ ระบบ Anti-Cheat 
+    window.addEventListener('beforeunload', function (e) { if (currentIdx > 0 && !hasSubmitted) { e.preventDefault(); e.returnValue = ''; } });
+    
     let tabSwitchCount = 0;
-    let finalCalculatedScore = 0;
     let pendingModalData = null; 
 
     document.addEventListener("visibilitychange", function() {
@@ -755,7 +866,8 @@
             
             if (tabSwitchCount === 1) {
                 pendingModalData = {
-                    icon: "⚠️", title: "TIME ANOMALY",
+                    icon: "⚠️",
+                    title: "TIME ANOMALY",
                     message: "ตรวจพบการสลับหน้าจอ พับจอ หรือเปิดแอปพลิเคชันอื่นทับซ้อน<br>หากตรวจพบอีกเป็นครั้งที่ 2 ระบบจะส่งข้อสอบทันที!"
                 };
             } 
@@ -770,30 +882,51 @@
                 calculateFinalScore();
                 
                 let rawScore = scores.total;
-                finalCalculatedScore = rawScore - penaltyScore;
-                if(finalCalculatedScore < 0) finalCalculatedScore = 0;
+                let accuracy = Math.round((rawScore / currentQuestions.length) * 100);
+                let timeSpent = 900 - timeLeft;
+                let m = Math.floor(timeSpent / 60);
+                let s = timeSpent % 60;
                 
                 showScreen('screen-result');
                 const reviewBtn = document.getElementById('btn-review-answers');
                 
-                if (finalCalculatedScore >= PASS_CRITERIA) {
+                if (rawScore >= PASS_CRITERIA) {
                     document.getElementById('result-pass').classList.remove('hidden');
                     document.getElementById('cert-id').innerText = document.getElementById('student-id').value;
                     document.getElementById('cert-name').innerText = studentName;
-                    document.getElementById('final-score-pass').innerText = finalCalculatedScore;
+                    document.getElementById('final-score-pass').innerText = rawScore;
                 } else {
                     document.getElementById('result-fail').classList.remove('hidden');
-                    document.getElementById('final-score-fail').innerText = finalCalculatedScore;
+                    document.getElementById('final-score-fail').innerText = rawScore;
+                    
+                    const retryBtn = document.getElementById('btn-retry');
+                    retryBtn.disabled = true;
+                    let cooldown = RETRY_COOLDOWN_SECONDS;
+                    retryBtn.innerText = `RETRY IN ${cooldown}s`;
+                    
+                    const cdInterval = setInterval(() => {
+                        cooldown--;
+                        if(cooldown > 0) {
+                            retryBtn.innerText = `RETRY IN ${cooldown}s`;
+                        } else {
+                            clearInterval(cdInterval);
+                            retryBtn.innerText = "RETRY MISSION 🔄";
+                            retryBtn.disabled = false;
+                            retryBtn.onclick = retryMission;
+                        }
+                    }, 1000);
                 }
                 
-                document.getElementById('display-raw').innerText = rawScore;
-                document.getElementById('display-penalty').innerText = `-${penaltyScore}`;
+                document.getElementById('display-raw').innerText = `${rawScore}/15`;
+                document.getElementById('display-accuracy').innerText = `${accuracy}%`;
+                document.getElementById('display-time-used').innerText = `${m}:${s < 10 ? '0'+s : s}`;
                 
                 generateReviewList(); 
                 setTimeout(() => { submitScoreToSheet(reviewBtn); }, 100);
 
                 pendingModalData = {
-                    icon: "🚨", title: "SECURITY BREACH",
+                    icon: "🚨",
+                    title: "SECURITY BREACH",
                     message: "ตรวจพบการสลับหน้าจอซ้ำซ้อนเกินกำหนด!<br>ระบบได้ทำการยึดกระดาษคำตอบและส่งผลลัพธ์โดยอัตโนมัติแล้ว"
                 };
             }
@@ -801,13 +934,10 @@
         else if (!document.hidden && pendingModalData) {
             const data = pendingModalData;
             pendingModalData = null; 
-            setTimeout(() => { showCustomModal(data.icon, data.title, data.message); }, 300);
+            setTimeout(() => {
+                showCustomModal(data.icon, data.title, data.message);
+            }, 300);
         }
-    });
-
-    window.addEventListener('blur', function() {
-        const isTakingQuiz = document.getElementById('screen-quiz').classList.contains('active');
-        if (isTakingQuiz && !hasSubmitted && tabSwitchCount === 0) { console.log("Loss of focus detected."); }
     });
 
     function showCustomModal(icon, title, message, callback) {
@@ -832,25 +962,6 @@
         };
     }
 </script>
-</body>
-</html><!DOCTYPE html>
-<html lang="th">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CHRONOS: Perfect Tenses Anomaly - Khao Chakan Witthayakhom</title>
-    <link href="https://script.google.com/macros/s/AKfycbzmHGD5_Asnl9AVwX-VJi3V38iLo6DZ0XCyVowvFuKpvojfj_8qVn6zgLwwDDubiHui/exechttps://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <style>
-        :root {
-            --bg-space: #020617; --bg-panel: #0f172a; --bg-card: #1e293b;  
-            --neon-cyan: #06b6d4; --neon-orange: #f59e0b; --neon-red: #ef4444; --success: #10b981;
-            --text-main: #f8fafc; --text-muted: #94a3b8;
-            --radius: 16px;
-        }
 
-        * { 
-            box-sizing: border-box; margin: 0; padding: 0; 
-            -webkit-tap-highlight-color: transparent;
-            user-select: none; -webkit-user-select: none; 
-            -m
+</body>
+</html>
